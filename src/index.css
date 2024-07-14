@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
+@import url('Normalise.css');
+
+body{
+  font-family: "Fira Code", monospace;
+  background-image: url("images/background.png");
+  width: 100%;
+  height: 100%;
+}
+
+.navbar{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  height: 44px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+}
+
+nav{
+  padding: 7px;
+}
+
+.navbar--name{
+
+  font-style: normal;
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 44px;
+  height: 44px;
+  width: 220px;
+  padding-left: 50px;
+  margin-right: 100px;
+
+  color: #607B96;
+
+}
+
+.navbar--links{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+margin-right:auto;
+height: 44px;
+
+flex: none;
+order: 0;
+flex-grow: 0;
+
+}
+
+.navbar--link{
+  font-style: normal;
+  font-weight: 450;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-top: 0px;
+  border-bottom: 0px;
+  height: 30px;
+  width: 100px;
+  padding: 0px 32px 0px 32px;
+  margin: 0px;
+  line-height: 30px;
+  text-align: center;
+
+  color: #607B96;
+}
+
+#hello{
+  height: 44px;
+  line-height: 44px;
+  border-right: 0px;
+}
+
+#about-me{
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 0px;
+  border-top: 0px;
+}
+
+#projects{
+  height: 44px;
+  line-height: 44px;
+  border-left: 0px;
+}
+
+.navbar--contact{
+  font-style: normal;
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 44px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-top: 0px;
+  border-right: 0px;
+  border-bottom: 0px;
+  padding: 0px 32px 0px 32px;
+
+color: #607B96;
+}
