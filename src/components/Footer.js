@@ -7,7 +7,7 @@ export default function Footer(){
                     <li className="footer--link" id="linkedin"><i class="fa fa-linkedin-square"></i></li>
                     <li className="footer--link" id="insta"><i class="fa fa-instagram"></i></li>
                 </section>
-                <li className="footer--git"><i class="fa fa-github"></i>abhi-ragh</li>
+                <li className="footer--git"><i class="fa fa-github"></i> abhi-ragh</li>
             </ul>
         </nav>
     )
