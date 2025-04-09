@@ -9,7 +9,7 @@ function Body() {
         </p>
         <div className="social-icons fade-in-up">
           <a
-            href="https://github.com/your-github-username"
+            href="https://github.com/abhi-ragh"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
@@ -17,7 +17,7 @@ function Body() {
             <FaGithub size={30} />
           </a>
           <a
-            href="https://www.linkedin.com/in/your-linkedin-username"
+            href="https://www.linkedin.com/in/abhi-ragh"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
