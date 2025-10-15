@@ -1,0 +1,25 @@
+stages:
+    - build
+    - deploy
+
+build_dev:
+    stage: build
+    tags:
+        - local
+    only:
+        - dev
+        - stage
+    script:
+        - docker build -t $DOCKER_USER/portfolio .
+
+build_stage:
+    stage: deploy
+    tags:
+        - local
+    only:
+        - dev
+        - stage
+    script:
+        - docker stop portfolio || true
+        - docker rm portfolio || true
+        - docker run -d -p 5173:5173 --name portfolio $DOCKER_USER/portfolio
