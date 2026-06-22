@@ -1,100 +1,89 @@
-import BaseCard from '../ui/BaseCard';
 import styled from '@emotion/styled';
-import { useParallax } from '../../hooks/useParallax';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
-import { motion } from 'framer-motion';
+import { SectionGrid, LeftMargin, MainContent, MetaLabel, MetaValue } from '../layout/SectionGrid';
+import kochiPhoto from '../../kochi_port_monsoon.jpg';
 
-const AboutContainer = styled.section`
-  padding: 6rem 0;
-  background-color: #0A0E1A;
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 40px,
-    rgba(139, 148, 158, 0.05) 40px,
-    rgba(139, 148, 158, 0.05) 41px
-  );
-  position: relative;
-
-  &::before {
-    content: "01010101010101010101010101010101";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0.03;
-    font-family: 'Roboto Mono', monospace;
-    word-wrap: break-word;
-    line-height: 1.5;
-  }
-`;
-
-const Container = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-`;
-
-const AboutTitle = styled.h2`
-  font-size: 2.5rem;
-  font-family: 'Google Sans', sans-serif;
+const SectionLabel = styled.div`
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #00FF41;
-  border-bottom: 2px solid #00FF41;
-  padding-bottom: 0.5rem;
-  margin-bottom: 2rem;
-`;
-
-const AboutContent = styled.div`
-  color: #FFFFFF;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 1.125rem;
-  line-height: 1.7;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 1.5rem;
-  font-family: 'Roboto Mono', monospace;
-  color: #FBBC04;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   margin-bottom: 0.5rem;
 `;
 
-const About = () => {
-  const parallaxSpeed = 0.3;
-  const yPos = useParallax(parallaxSpeed);
-  const [ref, isInView] = useScrollAnimation();
+const SectionTitle = styled.h2`
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 2.5rem;
 
+  @media (min-width: 768px) {
+    font-size: 3rem;
+  }
+`;
+
+const PhotoContainer = styled.div`
+  max-width: 720px;
+  margin-bottom: 1.5rem;
+  /* Visual break from grid: tilt photo slightly */
+  transform: rotate(-0.8deg);
+  transition: transform 0.3s ease;
+  
+  border: 1px solid var(--ink);
+  background-color: var(--chalk);
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(26, 26, 26, 0.05);
+
+  &:hover {
+    transform: rotate(0deg) scale(1.01);
+  }
+`;
+
+const PhotoImage = styled.img`
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(10%) contrast(95%);
+`;
+
+const PhotoCaption = styled.p`
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0.9;
+  max-width: 600px;
+  margin-top: 1rem;
+  padding-left: 0.25rem;
+`;
+
+const About = () => {
   return (
-    <AboutContainer id="about" style={{ backgroundPositionY: yPos }}>
-      <Container>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <BaseCard>
-            <AboutTitle># ABOUT ME</AboutTitle>
-            <AboutContent>
-              <p style={{ marginBottom: '1.5rem' }}>
-                My name is Abhiragh A R, a BTech undergraduate in Computer Science and Engineering at Musaliar College of Engineering and Polytechnic.
-              </p>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <SectionTitle>Education:</SectionTitle>
-                <p><span style={{ color: '#00FF41' }}>└─></span> Bachelor of Technology</p>
-                <p style={{ marginLeft: '1.5rem' }}>Computer Science Engineering (2021-2025)</p>
-              </div>
-              <div>
-                <SectionTitle>Current Status:</SectionTitle>
-                <p><span style={{ color: '#00FF41' }}>└─></span> Associate System Engineer Intern</p>
-                <p style={{ marginLeft: '1.5rem' }}>Bridge Global Software Solutions</p>
-                <p style={{ marginLeft: '1.5rem' }}>[June 2025 - Present]</p>
-              </div>
-            </AboutContent>
-          </BaseCard>
-        </motion.div>
-      </Container>
-    </AboutContainer>
+    <SectionGrid id="about">
+      <LeftMargin>
+        <div>
+          <MetaLabel>Medium</MetaLabel>
+          <MetaValue>Fujifilm X-T30</MetaValue>
+        </div>
+        <div>
+          <MetaLabel>Also</MetaLabel>
+          <MetaValue>Pencil + ink</MetaValue>
+        </div>
+      </LeftMargin>
+      <MainContent>
+        <SectionLabel>Outside work</SectionLabel>
+        <SectionTitle>Photos & art</SectionTitle>
+        <PhotoContainer>
+          <PhotoImage src={kochiPhoto} alt="Kochi port just before monsoon rain" />
+        </PhotoContainer>
+        <PhotoCaption>
+          Shot this waiting for the ferry. The light does something strange just before the rain.
+        </PhotoCaption>
+      </MainContent>
+    </SectionGrid>
   );
 };
 

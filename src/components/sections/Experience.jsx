@@ -1,169 +1,101 @@
-import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
+import { SectionGrid, LeftMargin, MainContent, MetaLabel, MetaValue } from '../layout/SectionGrid';
 
-const experienceData = [
-  {
-    role: 'Associate System Engineer (Intern)',
-    company: 'Bridge Global Software',
-    date: 'June 2025 - Present',
-    tasks: [
-      'Linux/Windows admin',
-      'CI/CD pipelines',
-      'Docker containerization',
-      'Cloud platforms',
-      'MySQL database mgmt',
-    ],
-  },
-];
-
-const ExperienceContainer = styled.section`
-  padding: 6rem 0;
-  background-color: #0A0E1A;
-`;
-
-const Container = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-`;
-
-const ExperienceTitle = styled.h2`
-  font-size: 2.5rem;
-  font-family: 'Google Sans', sans-serif;
+const SectionLabel = styled.div`
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   font-weight: 500;
-  text-align: center;
-  margin-bottom: 4rem;
-`;
-
-const TimelineContainer = styled.div`
-  position: relative;
-`;
-
-const TimelineLine = styled.div`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 100%;
-  width: 2px;
-  background-color: #00FF41;
-`;
-
-const ExperienceItem = styled.div`
-  margin-bottom: 4rem;
-  display: flex;
-  justify-content: center;
-`;
-
-const ExperienceCard = styled(motion.div)`
-  width: 100%;
-  max-width: 42rem;
-  background-color: #1E2430;
-  border: 1px solid #00FF41;
-  border-radius: 0.5rem;
-  padding: 2rem;
-  box-shadow: 0 0 10px rgba(0, 255, 65, 0.5),
-              0 0 20px rgba(0, 255, 65, 0.3),
-              inset 0 0 10px rgba(0, 255, 65, 0.1);
-  position: relative;
-`;
-
-const TimelineDot = styled.div`
-  position: absolute;
-  left: -3.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1rem;
-  height: 1rem;
-  background-color: #FBBC04;
-  border-radius: 9999px;
-`;
-
-const TimelineConnector = styled.div`
-  position: absolute;
-  left: -3rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.2rem;
-  height: 2px;
-  background-color: #FBBC04;
-`;
-
-const Role = styled.h3`
-  font-size: 1.5rem;
-  font-family: 'Roboto Mono', monospace;
-  color: #FBBC04;
-`;
-
-const Company = styled.p`
-  color: #8B949E;
+  color: var(--rust);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   margin-bottom: 0.5rem;
 `;
 
-const TaskList = styled.ul`
-  color: #FFFFFF;
-  list-style: none;
-  padding-left: 0;
-`;
-
-const Task = styled(motion.li)`
-  position: relative;
-  padding-left: 1.5rem;
-  &:before {
-    content: '>';
-    position: absolute;
-    left: 0;
-    color: #00FF41;
+const SectionTitle = styled.h2`
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 2.5rem;
+  
+  @media (min-width: 768px) {
+    font-size: 3rem;
   }
 `;
 
-const Experience = () => {
-  const [ref, isInView] = useScrollAnimation();
+const LogContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--ink);
+`;
 
+const LogRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 80px 120px 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  
+  transition: background-color 0.2s ease;
+  &:hover {
+    background-color: rgba(192, 71, 47, 0.03);
+  }
+`;
+
+const CommitHash = styled.span`
+  color: var(--rust);
+  font-weight: 500;
+`;
+
+const CommitDate = styled.span`
+  color: var(--ink);
+  opacity: 0.6;
+`;
+
+const CommitMsg = styled.span`
+  color: var(--ink);
+`;
+
+const logEntries = [
+  { hash: 'a3f91c', date: 'Jun 2025', desc: '503 incident – nginx fd exhaustion, Novo AU prod' },
+  { hash: 'b82d04', date: 'May 2025', desc: 'Built IAM governance audit tool w/ WeasyPrint PDF output' },
+  { hash: 'c11f7e', date: 'May 2025', desc: 'NAT Gateway -> NAT instance migration, t4g.medium' },
+  { hash: 'd9a3b1', date: 'Apr 2025', desc: 'S3 VPC Gateway Endpoint setup, us-east-2 Dev + Release' },
+  { hash: 'e04c22', date: 'Apr 2025', desc: 'Trend Micro XDR – certutil.exe MITRE T1105 false positive' }
+];
+
+const Experience = () => {
   return (
-    <ExperienceContainer id="experience">
-      <Container>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <ExperienceTitle>EXPERIENCE_LOG</ExperienceTitle>
-          <TimelineContainer>
-            <TimelineLine />
-            {experienceData.map((item, index) => (
-              <ExperienceItem key={index}>
-                <ExperienceCard
-                  initial={{ opacity: 0, x: -100 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <TimelineConnector />
-                  <TimelineDot />
-                  <Role>{item.role}</Role>
-                  <Company>{item.company} | {item.date}</Company>
-                  <TaskList>
-                    {item.tasks.map((task, i) => (
-                      <Task
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
-                        viewport={{ once: true }}
-                      >
-                        {task}
-                      </Task>
-                    ))}
-                  </TaskList>
-                </ExperienceCard>
-              </ExperienceItem>
-            ))}
-          </TimelineContainer>
-        </motion.div>
-      </Container>
-    </ExperienceContainer>
+    <SectionGrid id="experience">
+      <LeftMargin>
+        <div>
+          <MetaLabel>Period</MetaLabel>
+          <MetaValue>2023 – now</MetaValue>
+        </div>
+      </LeftMargin>
+      <MainContent>
+        <SectionLabel>Experience</SectionLabel>
+        <SectionTitle>Project log</SectionTitle>
+        <LogContainer>
+          {logEntries.map((entry) => (
+            <LogRow key={entry.hash}>
+              <CommitHash>{entry.hash}</CommitHash>
+              <CommitDate>{entry.date}</CommitDate>
+              <CommitMsg>{entry.desc}</CommitMsg>
+            </LogRow>
+          ))}
+        </LogContainer>
+      </MainContent>
+    </SectionGrid>
   );
 };
 

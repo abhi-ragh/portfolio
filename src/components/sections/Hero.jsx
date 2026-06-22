@@ -1,81 +1,99 @@
-import { ChevronDown } from 'lucide-react';
-import { Link } from 'react-scroll';
-import TerminalWindow from '../ui/TerminalWindow';
-import AsciiArt from '../ui/AsciiArt';
 import styled from '@emotion/styled';
+import { SectionGrid, LeftMargin, MainContent, MetaLabel, MetaValue } from '../layout/SectionGrid';
 
-const HeroContainer = styled.section`
-  height: 100vh;
-  background-color: #0A0E1A;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+const HeroTitle = styled.h1`
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+
   @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    font-size: 5rem;
+    margin-top: 3rem;
   }
 `;
 
-const TerminalContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const AsciiArtContainer = styled.div`
-  display: none;
+const HeroSubtitle = styled.div`
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--rust);
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+  
   @media (min-width: 768px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1rem;
   }
 `;
 
-const ScrollDownLink = styled(Link)`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  animation: bounce 2s infinite;
-  cursor: pointer;
+const HeroDescription = styled.p`
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 580px;
+  margin-bottom: 2.5rem;
 
-  p {
-    color: #00FF41;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-    font-family: 'Roboto Mono', monospace;
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
   }
+`;
 
-  svg {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: 0 auto;
-    color: #00FF41;
+const ResumeButton = styled.a`
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  background-color: transparent;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: var(--rust);
+    border-color: var(--rust);
+    background-color: var(--chalk);
   }
 `;
 
 const Hero = () => {
   return (
-    <HeroContainer id="hero">
-      <TerminalContainer>
-        <TerminalWindow />
-      </TerminalContainer>
-      <AsciiArtContainer>
-        <AsciiArt />
-      </AsciiArtContainer>
-      <ScrollDownLink
-        to="about"
-        smooth={true}
-        duration={500}
-      >
-        <p>scroll down to initialize</p>
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      </ScrollDownLink>
-    </HeroContainer>
+    <SectionGrid id="hero">
+      <LeftMargin>
+        <div>
+          <MetaLabel>Location</MetaLabel>
+          <MetaValue>Kochi, Kerala</MetaValue>
+        </div>
+        <div>
+          <MetaLabel>Role</MetaLabel>
+          <MetaValue>Junior Engineer - Cloud</MetaValue>
+        </div>
+        <div>
+          <MetaLabel>Open to</MetaLabel>
+          <MetaValue>Contract</MetaValue>
+        </div>
+        <div>
+          <MetaLabel>Updated</MetaLabel>
+          <MetaValue>Jun 2025</MetaValue>
+        </div>
+      </LeftMargin>
+      <MainContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <HeroTitle>Abhiragh A R</HeroTitle>
+        <HeroSubtitle>Cloud Infrastructure · DevOps · Automation</HeroSubtitle>
+        <HeroDescription>
+          Somewhere between having fun implementing solutions and having fun breaking things.
+        </HeroDescription>
+        <div>
+          <ResumeButton href="#" target="_blank" rel="noopener noreferrer">
+            Download résumé →
+          </ResumeButton>
+        </div>
+      </MainContent>
+    </SectionGrid>
   );
 };
 

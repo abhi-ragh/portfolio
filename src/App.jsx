@@ -1,23 +1,25 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { Global, css } from '@emotion/react';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Hero from './components/sections/Hero';
-import LoadingScreen from './components/ui/LoadingScreen';
-
-import LoadingSpinner from './components/ui/LoadingSpinner';
-
-const About = lazy(() => import('./components/sections/About'));
-const Experience = lazy(() => import('./components/sections/Experience'));
-const Projects = lazy(() => import('./components/sections/Projects'));
-const Skills = lazy(() => import('./components/sections/Skills'));
-const Certifications = lazy(() => import('./components/sections/Certifications'));
-const Contact = lazy(() => import('./components/sections/Contact'));
+import Experience from './components/sections/Experience';
+import About from './components/sections/About';
+import Skills from './components/sections/Skills';
 
 const GlobalStyles = css`
-  @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --ink: #1A1A1A;
+    --paper: #F2EFE8;
+    --carbon: #2E2E2E;
+    --rust: #C0472F;
+    --chalk: #F9F7F3;
+    
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'IBM Plex Mono', monospace;
+  }
 
   * {
     margin: 0;
@@ -25,91 +27,59 @@ const GlobalStyles = css`
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--paper);
+  }
+
   body {
-    background-color: #0A0E1A;
-    color: #FFFFFF;
-    font-family: 'Roboto Mono', monospace;
-    font-weight: 300;
-    font-size: 16px;
-  }
-
-  h1 {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 72px;
-    font-weight: 700;
-  }
-
-  h2 {
-    font-family: 'Google Sans', sans-serif;
-    font-size: 48px;
-    font-weight: 500;
-  }
-
-  h3 {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 32px;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
     font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  code, pre {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  .terminal-glow {
-    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5),
-                0 0 20px rgba(0, 255, 65, 0.3),
-                inset 0 0 10px rgba(0, 255, 65, 0.1);
+  button {
+    font-family: inherit;
+    cursor: pointer;
   }
 
-  @keyframes glow-pulse {
-    0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.8); }
+  /* Simple scrollbar styling matching print aesthetic */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(-20px) translateX(10px); }
+  ::-webkit-scrollbar-track {
+    background: var(--paper);
   }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-30px);}
-    60% {transform: translateY(-15px);}
+  ::-webkit-scrollbar-thumb {
+    background: #D5D2CA;
+    border-radius: 3px;
   }
-
-  @keyframes gentle-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-2px); }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ink);
   }
 `;
 
 function App() {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <>
       <Global styles={GlobalStyles} />
       <Header />
-      <main>
+      <main style={{ marginTop: '80px' }}>
         <Hero />
-        <Suspense fallback={<LoadingSpinner />}>
-          <About />
-          <Experience />
-          <Projects />
-          <Skills />
-          <Certifications />
-          <Contact />
-        </Suspense>
+        <Experience />
+        <About />
+        <Skills />
       </main>
       <Footer />
     </>
