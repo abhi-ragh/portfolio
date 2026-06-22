@@ -70,11 +70,7 @@ const Hero = () => {
         </div>
         <div>
           <MetaLabel>Role</MetaLabel>
-          <MetaValue>Junior Engineer - Cloud</MetaValue>
-        </div>
-        <div>
-          <MetaLabel>Open to</MetaLabel>
-          <MetaValue>Contract</MetaValue>
+          <MetaValue>DevOps / Cloud</MetaValue>
         </div>
         <div>
           <MetaLabel>Updated</MetaLabel>

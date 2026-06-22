@@ -16,62 +16,63 @@ const SectionTitle = styled.h2`
   font-size: 2.5rem;
   font-weight: 400;
   color: var(--ink);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   
   @media (min-width: 768px) {
     font-size: 3rem;
   }
 `;
 
-const LogContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--ink);
+const JobTitle = styled.h3`
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
 `;
 
-const LogRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+const JobCompany = styled.div`
   font-family: var(--font-body);
   font-size: 0.875rem;
-  line-height: 1.5;
-
-  @media (min-width: 640px) {
-    grid-template-columns: 80px 120px 1fr;
-    gap: 1rem;
-    align-items: baseline;
-  }
-  
-  transition: background-color 0.2s ease;
-  &:hover {
-    background-color: rgba(192, 71, 47, 0.03);
-  }
-`;
-
-const CommitHash = styled.span`
   color: var(--rust);
+  margin-bottom: 1.5rem;
   font-weight: 500;
 `;
 
-const CommitDate = styled.span`
+const JobDescription = styled.p`
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
   color: var(--ink);
-  opacity: 0.6;
+  margin-bottom: 1.5rem;
+  max-width: 680px;
 `;
 
-const CommitMsg = styled.span`
-  color: var(--ink);
+const BulletList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-const logEntries = [
-  { hash: 'a3f91c', date: 'Jun 2025', desc: '503 incident – nginx fd exhaustion, Novo AU prod' },
-  { hash: 'b82d04', date: 'May 2025', desc: 'Built IAM governance audit tool w/ WeasyPrint PDF output' },
-  { hash: 'c11f7e', date: 'May 2025', desc: 'NAT Gateway -> NAT instance migration, t4g.medium' },
-  { hash: 'd9a3b1', date: 'Apr 2025', desc: 'S3 VPC Gateway Endpoint setup, us-east-2 Dev + Release' },
-  { hash: 'e04c22', date: 'Apr 2025', desc: 'Trend Micro XDR – certutil.exe MITRE T1105 false positive' }
-];
+const BulletItem = styled.li`
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink);
+  position: relative;
+  padding-left: 1.5rem;
+  max-width: 680px;
+
+  &:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--rust);
+  }
+`;
 
 const Experience = () => {
   return (
@@ -79,21 +80,37 @@ const Experience = () => {
       <LeftMargin>
         <div>
           <MetaLabel>Period</MetaLabel>
-          <MetaValue>2023 – now</MetaValue>
+          <MetaValue>2025 – present</MetaValue>
         </div>
       </LeftMargin>
       <MainContent>
         <SectionLabel>Experience</SectionLabel>
-        <SectionTitle>Project log</SectionTitle>
-        <LogContainer>
-          {logEntries.map((entry) => (
-            <LogRow key={entry.hash}>
-              <CommitHash>{entry.hash}</CommitHash>
-              <CommitDate>{entry.date}</CommitDate>
-              <CommitMsg>{entry.desc}</CommitMsg>
-            </LogRow>
-          ))}
-        </LogContainer>
+        <SectionTitle>Work history</SectionTitle>
+        
+        <JobTitle>Junior Engineer - Cloud</JobTitle>
+        <JobCompany>Saints and Masters</JobCompany>
+        
+        <JobDescription>
+          Designing and deploying secure, scalable, and automated cloud infrastructure. Bridging the gap between software builds and systems engineering to improve reliability and operational performance.
+        </JobDescription>
+        
+        <BulletList>
+          <BulletItem>
+            Provisioning and managing cloud-native infrastructure on AWS using Terraform to maintain architecture as code.
+          </BulletItem>
+          <BulletItem>
+            Building and optimizing CI/CD deployment pipelines using automated workflows to support continuous delivery.
+          </BulletItem>
+          <BulletItem>
+            Containerizing microservices and managing configuration configurations across multiple environments.
+          </BulletItem>
+          <BulletItem>
+            Writing infrastructure helper utilities and automation scripts using Bash and Python to eliminate repetitive toil.
+          </BulletItem>
+          <BulletItem>
+            Deploying telemetry setups using Prometheus and Grafana to track system resource utilization and alert on bottlenecks.
+          </BulletItem>
+        </BulletList>
       </MainContent>
     </SectionGrid>
   );

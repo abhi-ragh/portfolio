@@ -51,9 +51,12 @@ const skillsData = [
   'Terraform',
   'Docker',
   'Python',
-  'nginx',
+  'MySQL',
+  'Azure',
+  'Github Actions',
   'Prometheus',
   'Grafana',
+  'Alloy',
   'Linux',
   'Flask',
   'Git'
@@ -65,7 +68,7 @@ const Skills = () => {
       <LeftMargin>
         <div>
           <MetaLabel>Certs</MetaLabel>
-          <MetaValue>AWS SAA</MetaValue>
+          <MetaValue>(Coming soon)</MetaValue>
         </div>
       </LeftMargin>
       <MainContent>

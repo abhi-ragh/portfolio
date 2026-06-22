@@ -78,8 +78,8 @@ function App() {
       <main style={{ marginTop: '80px' }}>
         <Hero />
         <Experience />
-        <About />
         <Skills />
+        <About />
       </main>
       <Footer />
     </>
