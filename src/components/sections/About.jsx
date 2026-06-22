@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { SectionGrid, LeftMargin, MainContent } from '../layout/SectionGrid';
+import { supabase } from '../../supabaseClient';
 
 import kochiPhoto from '../../kochi_port_monsoon.jpg';
 import mountainSketch from '../../mountain_sketch.jpg';
@@ -36,9 +38,9 @@ const GalleryWrapper = styled.div`
 
 const HorizontalScroll = styled.div`
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
   overflow-x: auto;
-  padding: 1rem 0.5rem 2.5rem 0.5rem;
+  padding: 1.5rem 0.5rem 2.5rem 0.5rem;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   
@@ -55,15 +57,11 @@ const HorizontalScroll = styled.div`
 `;
 
 const CardContainer = styled.div`
-  flex: 0 0 280px;
+  flex: 0 0 auto;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   
-  @media (min-width: 640px) {
-    flex: 0 0 380px;
-  }
-
   /* Alternate tilts for organic field-note sketchbook feel */
   &:nth-of-type(odd) .image-frame {
     transform: rotate(-0.8deg);
@@ -83,57 +81,95 @@ const ImageFrame = styled.div`
   padding: 10px;
   box-shadow: 0 4px 15px rgba(26, 26, 26, 0.04);
   transition: transform 0.3s ease;
-  width: 100%;
-  aspect-ratio: 3/2;
-  overflow: hidden;
+  
+  /* Fixed height, auto width to scale to the image's ratio */
+  height: 220px;
+  width: fit-content;
+  display: block;
+
+  @media (min-width: 640px) {
+    height: 320px;
+  }
 `;
 
 const GalleryImage = styled.img`
-  width: 100%;
   height: 100%;
-  object-fit: cover;
+  width: auto;
+  display: block;
+  object-fit: contain; /* Displays the full image without cropping */
   filter: grayscale(10%) contrast(96%);
 `;
 
-const ImageCaption = styled.p`
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  color: var(--ink);
-  margin-top: 1rem;
-  padding-left: 0.25rem;
-`;
-
-const mediaItems = [
+const localItems = [
   {
     src: kochiPhoto,
-    alt: 'Kochi port dynamic sky',
-    caption: 'Shot this waiting for the ferry. Kochi port, Monsoon 2024.'
+    alt: 'Kochi port, Monsoon 2024'
   },
   {
     src: mountainSketch,
-    alt: 'Mountain range ink sketch',
-    caption: 'A quick notebook sketch of the Western Ghats peak contours.'
+    alt: 'Western Ghats contours'
   },
   {
     src: streetRain,
-    alt: 'Rainy street night in Kochi',
-    caption: 'Rain on MG Road, Kochi. Twilight.'
+    alt: 'MG Road at Twilight'
   },
   {
     src: brutalistSketch,
-    alt: 'Brutalist concrete building sketch with vines',
-    caption: 'Drafting brutalist structures overlapping with organic creepers.'
+    alt: 'Brutalist drafts'
   },
   {
     src: palmPhoto,
-    alt: 'Rain wet palm leaves close-up',
-    caption: 'Monsoon dew on wet palm leaves outside the window.'
+    alt: 'Monsoon dew'
   }
 ];
 
 const About = () => {
+  const [galleryItems, setGalleryItems] = useState(localItems);
+
+  useEffect(() => {
+    async function fetchSupabaseImages() {
+      if (!supabase) return;
+
+      try {
+        const { data: files, error } = await supabase.storage
+          .from('photos')
+          .list('', {
+            limit: 100,
+            sortBy: { column: 'name', order: 'asc' },
+          });
+
+        if (error) throw error;
+
+        if (files && files.length > 0) {
+          const items = files
+            .filter(file => file.name !== '.emptyFolderPlaceholder')
+            .map(file => {
+              const { data } = supabase.storage
+                .from('photos')
+                .getPublicUrl(file.name);
+
+              const cleanTitle = file.name
+                .substring(0, file.name.lastIndexOf('.'))
+                .replace(/[_-]/g, ' ');
+
+              return {
+                src: data.publicUrl,
+                alt: cleanTitle
+              };
+            });
+          
+          if (items.length > 0) {
+            setGalleryItems(items);
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase storage query failed, loading local media files:', err);
+      }
+    }
+
+    fetchSupabaseImages();
+  }, []);
+
   return (
     <SectionGrid id="about">
       <LeftMargin />
@@ -142,12 +178,11 @@ const About = () => {
         <SectionTitle>Photos & art</SectionTitle>
         <GalleryWrapper>
           <HorizontalScroll>
-            {mediaItems.map((item, index) => (
+            {galleryItems.map((item, index) => (
               <CardContainer key={index}>
                 <ImageFrame className="image-frame">
                   <GalleryImage src={item.src} alt={item.alt} />
                 </ImageFrame>
-                <ImageCaption>{item.caption}</ImageCaption>
               </CardContainer>
             ))}
           </HorizontalScroll>
