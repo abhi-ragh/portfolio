@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
 
 import kochiPhoto from '../../kochi_port_monsoon.jpg';
@@ -72,27 +73,50 @@ const MasonryContainer = styled.div`
   }
 `;
 
+const ArrowIndicator = styled.div`
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--ink);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+`;
+
 const CardContainer = styled.div`
   break-inside: avoid;
-  margin-bottom: 2.5rem;
+  margin-bottom: ${props => props.idx % 2 === 0 ? '3.5rem' : '2rem'}; /* Asymmetric offset heights */
   display: flex;
   flex-direction: column;
   
   /* Alternate tilts for organic sketchbook feel */
   &:nth-of-type(3n+1) .image-frame {
-    transform: rotate(-0.8deg);
+    transform: rotate(-1.5deg);
   }
   &:nth-of-type(3n+2) .image-frame {
-    transform: rotate(0.8deg);
+    transform: rotate(1.2deg);
   }
   &:nth-of-type(3n) .image-frame {
-    transform: rotate(-0.4deg);
+    transform: rotate(-0.8deg);
   }
 
-  &:hover .image-frame {
-    transform: rotate(0deg) scale(1.02);
-    box-shadow: 0 12px 30px rgba(26, 26, 26, 0.1);
-    border-color: var(--rust);
+  &:hover {
+    .image-frame {
+      transform: rotate(0deg) scale(1.02);
+      box-shadow: 0 12px 30px rgba(26, 26, 26, 0.15);
+      border-color: var(--rust);
+    }
+    
+    ${ArrowIndicator} {
+      background-color: var(--rust);
+      border-color: var(--rust);
+      color: var(--paper);
+      transform: rotate(-45deg); /* Point up-right on hover */
+    }
   }
 `;
 
@@ -104,6 +128,24 @@ const ImageFrame = styled.div`
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
   display: block;
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px dashed rgba(245, 243, 239, 0.15);
+  padding-bottom: 0.5rem;
+`;
+
+const CategoryTag = styled.span`
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 `;
 
 const GalleryImage = styled.img`
@@ -121,7 +163,7 @@ const Caption = styled.div`
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.8;
-  border-top: 1px dashed rgba(26, 26, 26, 0.25);
+  border-top: 1px dashed rgba(245, 243, 239, 0.15);
   padding-top: 0.5rem;
   word-break: break-word;
 `;
@@ -129,25 +171,64 @@ const Caption = styled.div`
 const localItems = [
   {
     src: kochiPhoto,
-    alt: 'Kochi port, Monsoon 2024'
+    alt: 'Kochi port, Monsoon 2024',
+    category: '[FILM PHOTOGRAPHY]'
   },
   {
     src: mountainSketch,
-    alt: 'Western Ghats contours'
+    alt: 'Western Ghats contours',
+    category: '[SKETCHBOOK DRAFT]'
   },
   {
     src: streetRain,
-    alt: 'MG Road at Twilight'
+    alt: 'MG Road at Twilight',
+    category: '[FILM PHOTOGRAPHY]'
   },
   {
     src: brutalistSketch,
-    alt: 'Brutalist drafts'
+    alt: 'Brutalist drafts',
+    category: '[SKETCHBOOK DRAFT]'
   },
   {
     src: palmPhoto,
-    alt: 'Monsoon dew'
+    alt: 'Monsoon dew',
+    category: '[FILM PHOTOGRAPHY]'
   }
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 90,
+      damping: 14
+    }
+  }
+};
+
+const getCategory = (name) => {
+  const lower = name.toLowerCase();
+  if (lower.includes('sketch') || lower.includes('contour') || lower.includes('draft') || lower.includes('art') || lower.includes('draw')) {
+    return '[SKETCHBOOK DRAFT]';
+  }
+  if (lower.includes('photo') || lower.includes('port') || lower.includes('rain') || lower.includes('dew') || lower.includes('kochi')) {
+    return '[FILM PHOTOGRAPHY]';
+  }
+  return '[DIGITAL CAPTURE]';
+};
 
 const GalleryPage = () => {
   const [galleryItems, setGalleryItems] = useState(localItems);
@@ -180,7 +261,8 @@ const GalleryPage = () => {
 
               return {
                 src: data.publicUrl,
-                alt: cleanTitle
+                alt: cleanTitle,
+                category: getCategory(file.name)
               };
             });
           
@@ -207,10 +289,24 @@ const GalleryPage = () => {
         </GalleryDescription>
       </SectionHeader>
       <MasonryWrapper>
-        <MasonryContainer>
+        <MasonryContainer 
+          as={motion.div}
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {galleryItems.map((item, index) => (
-            <CardContainer key={index}>
+            <CardContainer 
+              key={index}
+              idx={index}
+              as={motion.div}
+              variants={cardVariants}
+            >
               <ImageFrame className="image-frame">
+                <CardHeader>
+                  <CategoryTag>{item.category}</CategoryTag>
+                  <ArrowIndicator>&rarr;</ArrowIndicator>
+                </CardHeader>
                 <GalleryImage src={item.src} alt={item.alt} loading="lazy" />
                 <Caption>{item.alt}</Caption>
               </ImageFrame>
