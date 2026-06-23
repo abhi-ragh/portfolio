@@ -1,74 +1,69 @@
 import styled from '@emotion/styled';
 
 const FooterContainer = styled.footer`
-  border-top: 1px solid var(--ink);
   background-color: var(--paper);
   color: var(--ink);
-  padding: 2.5rem 1.5rem;
-`;
-
-const FooterContent = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
+  padding: 2rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: column;
   gap: 1rem;
-  
+  width: 100%;
+
   @media (min-width: 640px) {
     flex-direction: row;
     gap: 0;
+    padding: 2.5rem 2.5rem;
   }
 `;
 
 const FooterLeft = styled.div`
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  opacity: 0.8;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 `;
 
 const FooterLinks = styled.div`
   display: flex;
-  gap: 1rem;
-  font-family: var(--font-body);
-  font-size: 0.875rem;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
 `;
 
 const FooterLink = styled.a`
-  color: var(--rust);
-  transition: opacity 0.2s ease;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
+  color: var(--ink);
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  text-transform: uppercase;
 
-const FooterSeparator = styled.span`
-  opacity: 0.4;
+  &:hover {
+    opacity: 1;
+    color: var(--rust);
+  }
 `;
 
 const Footer = () => {
   return (
     <FooterContainer id="footer">
-      <FooterContent>
-        <FooterLeft>
-          abhiragh@portfolio
-        </FooterLeft>
-        <FooterLinks>
-          <FooterLink href="mailto:abhiragh0@gmail.com" target="_blank" rel="noopener noreferrer">
-            mail
-          </FooterLink>
-          <FooterSeparator>·</FooterSeparator>
-          <FooterLink href="https://github.com/abhi-ragh" target="_blank" rel="noopener noreferrer">
-            github
-          </FooterLink>
-          <FooterSeparator>·</FooterSeparator>
-          <FooterLink href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-            linkedin
-          </FooterLink>
-        </FooterLinks>
-      </FooterContent>
+      <FooterLeft>
+        kochi, kerala &mdash; 2026
+      </FooterLeft>
+      <FooterLinks>
+        <FooterLink href="https://github.com/abhi-ragh" target="_blank" rel="noopener noreferrer">
+          Github
+        </FooterLink>
+        <FooterLink href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+          Linkedin
+        </FooterLink>
+        <FooterLink href="mailto:abhiragh0@gmail.com" target="_blank" rel="noopener noreferrer">
+          Email
+        </FooterLink>
+      </FooterLinks>
     </FooterContainer>
   );
 };

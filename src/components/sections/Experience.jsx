@@ -1,118 +1,141 @@
 import styled from '@emotion/styled';
-import { SectionGrid, LeftMargin, MainContent, MetaLabel, MetaValue } from '../layout/SectionGrid';
+
+const SectionContainer = styled.section`
+  padding: 0;
+  width: 100%;
+`;
+
+const SectionHeader = styled.div`
+  padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  
+  @media (min-width: 640px) {
+    padding: 3.5rem 2.5rem 2rem 2.5rem;
+  }
+`;
 
 const SectionLabel = styled.div`
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--rust);
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0.6;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.15em;
 `;
 
-const SectionTitle = styled.h2`
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 400;
-  color: var(--ink);
-  margin-bottom: 2rem;
-  
-  @media (min-width: 768px) {
-    font-size: 3rem;
-  }
-`;
-
-const JobTitle = styled.h3`
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--ink);
-  margin-bottom: 0.25rem;
-`;
-
-const JobCompany = styled.div`
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  color: var(--rust);
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-`;
-
-const JobDescription = styled.p`
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--ink);
-  margin-bottom: 1.5rem;
-  max-width: 680px;
-`;
-
-const BulletList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
+const ProjectList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  border-top: 1px solid var(--ink);
 `;
 
-const BulletItem = styled.li`
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  line-height: 1.6;
+const ProjectRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--ink);
+  align-items: baseline;
+  gap: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--ink);
-  position: relative;
-  padding-left: 1.5rem;
-  max-width: 680px;
 
-  &:before {
-    content: "→";
-    position: absolute;
-    left: 0;
-    color: var(--rust);
+  @media (min-width: 640px) {
+    grid-template-columns: 1.3fr 2fr auto;
+    gap: 2rem;
+    padding: 1.75rem 2.5rem;
+  }
+
+  &:hover {
+    background-color: var(--ink);
+    color: var(--paper);
+    
+    .project-title {
+      color: var(--paper);
+    }
+    .project-desc {
+      color: var(--paper);
+      opacity: 0.9;
+    }
+    .project-year {
+      color: var(--paper);
+      opacity: 0.7;
+    }
   }
 `;
+
+const ProjectTitle = styled.div`
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--ink);
+  transition: color 0.2s ease;
+`;
+
+const ProjectDesc = styled.div`
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.0625rem;
+  color: var(--carbon);
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.2s ease;
+`;
+
+const ProjectYear = styled.div`
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--ink);
+  opacity: 0.6;
+  transition: color 0.2s ease, opacity 0.2s ease;
+
+  @media (min-width: 640px) {
+    text-align: right;
+  }
+`;
+
+const projectsData = [
+  {
+    title: 'MSP AWS Account Assessor',
+    desc: 'IAM audit tooling, multi-account',
+    year: '2025'
+  },
+  {
+    title: 'NAT Gateway migration',
+    desc: 'us-east-2, iptables, cost reduction',
+    year: '2024'
+  },
+  {
+    title: '503 incident investigation',
+    desc: 'nginx fd exhaustion, Novo AU',
+    year: '2024'
+  },
+  {
+    title: 'MSP Auditor Dashboard',
+    desc: 'Flask, SSE terminal streaming',
+    year: '2025'
+  },
+  {
+    title: 'Void / Voidpulse',
+    desc: 'Custom GNOME themes, Fedora',
+    year: '2024'
+  }
+];
 
 const Experience = () => {
   return (
-    <SectionGrid id="experience">
-      <LeftMargin>
-        <div>
-          <MetaLabel>Period</MetaLabel>
-          <MetaValue>2025 – present</MetaValue>
-        </div>
-      </LeftMargin>
-      <MainContent>
-        <SectionLabel>Experience</SectionLabel>
-        <SectionTitle>Work history</SectionTitle>
-        
-        <JobTitle>Junior Engineer - Cloud</JobTitle>
-        <JobCompany>Saints and Masters</JobCompany>
-        
-        <JobDescription>
-          Designing and deploying secure, scalable, and automated cloud infrastructure. Bridging the gap between software builds and systems engineering to improve reliability and operational performance.
-        </JobDescription>
-        
-        <BulletList>
-          <BulletItem>
-            Provisioning and managing cloud-native infrastructure on AWS using Terraform to maintain architecture as code.
-          </BulletItem>
-          <BulletItem>
-            Building and optimizing CI/CD deployment pipelines using automated workflows to support continuous delivery.
-          </BulletItem>
-          <BulletItem>
-            Containerizing microservices and managing configuration configurations across multiple environments.
-          </BulletItem>
-          <BulletItem>
-            Writing infrastructure helper utilities and automation scripts using Bash and Python to eliminate repetitive toil.
-          </BulletItem>
-          <BulletItem>
-            Deploying telemetry setups using Prometheus and Grafana to track system resource utilization and alert on bottlenecks.
-          </BulletItem>
-        </BulletList>
-      </MainContent>
-    </SectionGrid>
+    <SectionContainer id="experience">
+      <SectionHeader>
+        <SectionLabel>[01] Selected Work</SectionLabel>
+      </SectionHeader>
+      <ProjectList>
+        {projectsData.map((project, idx) => (
+          <ProjectRow key={idx}>
+            <ProjectTitle className="project-title">{project.title}</ProjectTitle>
+            <ProjectDesc className="project-desc">{project.desc}</ProjectDesc>
+            <ProjectYear className="project-year">{project.year}</ProjectYear>
+          </ProjectRow>
+        ))}
+      </ProjectList>
+    </SectionContainer>
   );
 };
 
