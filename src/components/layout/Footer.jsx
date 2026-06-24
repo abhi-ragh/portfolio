@@ -3,18 +3,18 @@ import styled from '@emotion/styled';
 const FooterContainer = styled.footer`
   background-color: var(--paper);
   color: var(--ink);
-  padding: 2rem 1.5rem;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
 
   @media (min-width: 640px) {
     flex-direction: row;
     gap: 0;
-    padding: 2.5rem 2.5rem;
+    padding: 1.25rem 2.5rem;
   }
 `;
 

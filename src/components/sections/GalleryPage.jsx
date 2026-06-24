@@ -12,6 +12,9 @@ import palmPhoto from '../../palm_photo.jpg';
 const GalleryContainer = styled.section`
   padding: 0;
   width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const SectionHeader = styled.div`
@@ -59,7 +62,7 @@ const MasonryWrapper = styled.div`
   }
 `;
 
-const MasonryContainer = styled.div`
+const MasonryContainer = styled(motion.div)`
   column-count: 1;
   column-gap: 2rem;
   width: 100%;
@@ -87,9 +90,9 @@ const ArrowIndicator = styled.div`
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 `;
 
-const CardContainer = styled.div`
+const CardContainer = styled(motion.div)`
   break-inside: avoid;
-  margin-bottom: ${props => props.idx % 2 === 0 ? '3.5rem' : '2rem'}; /* Asymmetric offset heights */
+  margin-bottom: ${props => props.$idx % 2 === 0 ? '3.5rem' : '2rem'}; /* Asymmetric offset heights */
   display: flex;
   flex-direction: column;
   
@@ -111,7 +114,7 @@ const CardContainer = styled.div`
       border-color: var(--rust);
     }
     
-    ${ArrowIndicator} {
+    .arrow-indicator {
       background-color: var(--rust);
       border-color: var(--rust);
       color: var(--paper);
@@ -255,9 +258,10 @@ const GalleryPage = () => {
                 .from('photos')
                 .getPublicUrl(file.name);
 
-              const cleanTitle = file.name
-                .substring(0, file.name.lastIndexOf('.'))
-                .replace(/[_-]/g, ' ');
+              const lastDot = file.name.lastIndexOf('.');
+              const cleanTitle = lastDot !== -1
+                ? file.name.substring(0, lastDot).replace(/[_-]/g, ' ')
+                : file.name.replace(/[_-]/g, ' ');
 
               return {
                 src: data.publicUrl,
@@ -290,7 +294,6 @@ const GalleryPage = () => {
       </SectionHeader>
       <MasonryWrapper>
         <MasonryContainer 
-          as={motion.div}
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -298,17 +301,11 @@ const GalleryPage = () => {
           {galleryItems.map((item, index) => (
             <CardContainer 
               key={index}
-              idx={index}
-              as={motion.div}
+              $idx={index}
               variants={cardVariants}
             >
               <ImageFrame className="image-frame">
-                <CardHeader>
-                  <CategoryTag>{item.category}</CategoryTag>
-                  <ArrowIndicator>&rarr;</ArrowIndicator>
-                </CardHeader>
                 <GalleryImage src={item.src} alt={item.alt} loading="lazy" />
-                <Caption>{item.alt}</Caption>
               </ImageFrame>
             </CardContainer>
           ))}

@@ -1,21 +1,46 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
-import { motion, AnimatePresence } from 'framer-motion';
 
-const SectionContainer = styled.section`
+const DashboardContainer = styled.section`
   padding: 0;
   width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
-const SectionHeader = styled.div`
-  padding: 2.5rem 1.5rem 1.5rem 1.5rem;
-  
-  @media (min-width: 640px) {
-    padding: 3.5rem 2.5rem 2rem 2.5rem;
+const DashboardGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 1.5rem;
+  gap: 1.75rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1.15fr 1fr;
+    padding: 2rem;
+    gap: 2.25rem;
+    align-items: center;
   }
 `;
 
-const SectionLabel = styled.div`
+const LeftColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+`;
+
+const RightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 1rem 0;
+
+  @media (min-width: 1024px) {
+    padding: 0;
+  }
+`;
+
+const PanelLabel = styled.div`
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
@@ -23,137 +48,20 @@ const SectionLabel = styled.div`
   opacity: 0.6;
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
 `;
 
-const LayoutSplit = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  border-top: 1px solid var(--ink);
-
-  @media (min-width: 1024px) {
-    grid-template-columns: 1.25fr 1fr;
-  }
-`;
-
-const ProjectList = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid var(--ink);
-
-  @media (min-width: 1024px) {
-    border-bottom: none;
-    border-right: 1px solid var(--ink);
-  }
-`;
-
-const ProjectRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(245, 243, 239, 0.15);
-  align-items: baseline;
-  gap: 0.5rem;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  color: var(--ink);
-  cursor: pointer;
-  transform: translateX(0);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  @media (min-width: 640px) {
-    grid-template-columns: 1.1fr 1fr auto;
-    gap: 1.5rem;
-    padding: 1.75rem 2.5rem;
-  }
-
-  background-color: ${props => props.isActive ? 'var(--ink)' : 'transparent'};
-  color: ${props => props.isActive ? 'var(--paper)' : 'var(--ink)'};
-
-  .project-title {
-    color: ${props => props.isActive ? 'var(--paper)' : 'var(--ink)'};
-    transform: ${props => props.isActive ? 'translateX(8px)' : 'translateX(0)'};
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .project-desc {
-    color: ${props => props.isActive ? 'var(--paper)' : 'var(--carbon)'};
-    opacity: ${props => props.isActive ? '0.9' : '0.85'};
-  }
-  .project-year {
-    color: ${props => props.isActive ? 'var(--paper)' : 'var(--ink)'};
-    opacity: ${props => props.isActive ? '0.7' : '0.6'};
-  }
-
-  &:hover {
-    background-color: var(--ink);
-    color: var(--paper);
-    transform: translateX(5px); /* Slips horizontally on hover */
-    
-    .project-title {
-      color: var(--paper);
-      transform: translateX(8px);
-    }
-    .project-desc {
-      color: var(--paper);
-      opacity: 0.9;
-    }
-    .project-year {
-      color: var(--paper);
-      opacity: 0.7;
-    }
-  }
-`;
-
-const ProjectTitle = styled.div`
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 500;
-`;
-
-const ProjectDesc = styled.div`
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.0625rem;
-`;
-
-const ProjectYear = styled.div`
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-
-  @media (min-width: 640px) {
-    text-align: right;
-  }
-`;
-
-const InspectorPanelWrapper = styled.div`
-  padding: 2rem 1.5rem;
-  background-color: var(--paper);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  @media (min-width: 640px) {
-    padding: 2.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    position: sticky;
-    top: 0;
-    height: 100%;
-  }
-`;
-
-const InspectorPanel = styled.div`
+// Unified Brutalist Card design pattern
+const BrutalistCard = styled.div`
   background-color: var(--chalk);
   border: 2px solid var(--ink);
-  padding: 1.5rem;
+  padding: 1.6rem;
   box-shadow: 6px 6px 0px var(--rust);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   width: 100%;
-  transform: rotate(0.8deg); /* Asymmetrical offset */
+  transform: rotate(${props => props.rot || '0deg'});
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
@@ -162,166 +70,294 @@ const InspectorPanel = styled.div`
   }
 `;
 
-const InspectorLabel = styled.div`
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  opacity: 0.5;
+const PanelWindowHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px dashed rgba(245, 243, 239, 0.2);
   padding-bottom: 0.5rem;
   margin-bottom: 0.25rem;
 `;
 
-const ArtifactCode = styled(motion.pre)`
+const PanelTitleText = styled.span`
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  color: var(--ink);
+`;
+
+const WindowDots = styled.div`
+  display: flex;
+  gap: 0.35rem;
+  
+  span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--ink);
+    opacity: 0.3;
+  }
+`;
+
+// right column infra stack tags
+const StackGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const StackTag = styled.span`
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--ink);
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
-  background-color: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(245, 243, 239, 0.1);
-  padding: 1rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--ink);
   border-radius: 4px;
+  cursor: default;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: rotate(${props => props.rot || '0deg'});
+
+  &:hover {
+    background-color: var(--rust);
+    border-color: var(--rust);
+    color: var(--ink);
+    transform: rotate(0deg) scale(1.08);
+    box-shadow: 4px 4px 0px var(--ink);
+  }
 `;
 
-const ArtifactHeader = styled(motion.div)`
+// timeline styles
+const Timeline = styled.div`
+  position: relative;
+  border-left: 2px dashed rgba(245, 243, 239, 0.15);
+  margin-left: 0.5rem;
+  padding-left: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+`;
+
+const TimelineItem = styled.div`
+  position: relative;
+`;
+
+const TimelineDot = styled.div`
+  position: absolute;
+  left: calc(-1.6rem - 6px);
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${props => props.isActive ? 'var(--rust)' : 'var(--ink)'};
+  border: 2px solid var(--paper);
+  box-shadow: ${props => props.isActive ? '0 0 8px var(--rust)' : 'none'};
+`;
+
+const JobTitle = styled.h4`
   font-family: var(--font-display);
   font-size: 1.125rem;
-  font-weight: 500;
-  color: var(--rust);
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
 `;
 
-const projectsData = [
-  {
-    title: 'MSP AWS Account Assessor',
-    desc: 'IAM audit tooling, multi-account',
-    year: '2025',
-    artifactTitle: 'scan_report.txt (organizational unit tree)',
-    artifactContent: `[ROOT ORGANISATIONAL UNIT]
- ├── production-core (account: 9482-xxxx)
- │    └── Alerts: 2 critical (IAM wildcard policy found)
- ├── staging-sandbox (account: 1109-xxxx)
- │    └── Alerts: 0 critical
- └── shared-services (account: 5543-xxxx)
-      └── Alerts: 1 warning (unrestricted SSH)`
-  },
-  {
-    title: 'NAT Gateway migration',
-    desc: 'us-east-2, iptables, cost reduction',
-    year: '2024',
-    artifactTitle: 'routes.tf (subnets router configuration)',
-    artifactContent: `# main.tf (redacted migration snippet)
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
+const JobCompany = styled.div`
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: var(--rust);
+  margin-top: 0.15rem;
+`;
 
--  route {
--    cidr_block     = "0.0.0.0/0"
--    nat_gateway_id = aws_nat_gateway.old.id
--  }
-+  route {
-+    cidr_block           = "0.0.0.0/0"
-+    network_interface_id = aws_instance.nat_instance.id
-+  }
-}`
-  },
-  {
-    title: '503 incident investigation',
-    desc: 'nginx fd exhaustion, Novo AU',
-    year: '2024',
-    artifactTitle: 'nginx_error.log & diagnostics',
-    artifactContent: `[error] 2045#2045: *529432 open() "/var/www/html/index.html"
-failed (24: Too many open files) while connecting to upstream
+const JobPeriod = styled.div`
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-top: 0.25rem;
+  color: var(--ink);
+`;
 
-abhiragh@nginx-lb:~$ ulimit -n
-1024  <-- Socket descriptor limit reached
-
-abhiragh@nginx-lb:~$ cat /etc/security/limits.conf
-* soft nofile 65535
-* hard nofile 65535`
-  },
-  {
-    title: 'MSP Auditor Dashboard',
-    desc: 'Flask, SSE terminal streaming',
-    year: '2025',
-    artifactTitle: 'event_stream.json (raw SSE payload)',
-    artifactContent: `{
-  "event": "terminal_stream",
-  "payload": {
-    "account": "msp-prod-01",
-    "command": "aws iam list-users",
-    "timestamp": 1782236045,
-    "status": "STREAMING",
-    "buffer": "usr_9921, usr_0294, usr_1190"
+const JobDetails = styled.ul`
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+  color: var(--carbon);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  
+  li {
+    list-style-type: square;
   }
-}`
-  },
-  {
-    title: 'Void / Voidpulse',
-    desc: 'Custom GNOME themes, Fedora',
-    year: '2024',
-    artifactTitle: 'theme_override.ini (GTK/GNOME specs)',
-    artifactContent: `[org/gnome/desktop/interface]
-gtk-theme='Void-Dark'
-icon-theme='Void-Paper'
-cursor-theme='Adwaita'
-font-name='Space Grotesk 10'
-monospace-font-name='IBM Plex Mono 10'`
-  }
+`;
+
+// inner container terminal blocks
+const InnerTerminalBlock = styled.div`
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(245, 243, 239, 0.1);
+  border-radius: 4px;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--carbon);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+  overflow: hidden;
+`;
+
+const BlockStatus = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--rust);
+  font-weight: bold;
+`;
+
+const stackData = [
+  'AWS', 'Terraform', 'Python', 'Linux', 'Docker', 'Bash', 'Nginx', 
+  'Ansible', 'Prometheus', 'Grafana', 'MySQL', 'PostgreSQL', 'IAM', 'VPC'
 ];
 
-const Experience = () => {
-  const [activeIdx, setActiveIdx] = useState(0);
+const tagRotations = ['-1.5deg', '1.2deg', '-0.8deg', '2deg', '-1.2deg', '0.8deg', '-2deg', '1.5deg'];
 
+const Experience = () => {
   return (
-    <SectionContainer id="experience">
-      <SectionHeader>
-        <SectionLabel>[01] Selected Work</SectionLabel>
-      </SectionHeader>
-      <LayoutSplit>
-        <ProjectList>
-          {projectsData.map((project, idx) => (
-            <ProjectRow 
-              key={idx} 
-              isActive={activeIdx === idx}
-              onMouseEnter={() => setActiveIdx(idx)}
-              onClick={() => setActiveIdx(idx)}
-            >
-              <ProjectTitle className="project-title">{project.title}</ProjectTitle>
-              <ProjectDesc className="project-desc">{project.desc}</ProjectDesc>
-              <ProjectYear className="project-year">{project.year}</ProjectYear>
-            </ProjectRow>
-          ))}
-        </ProjectList>
-        <InspectorPanelWrapper>
-          <InspectorPanel>
-            <InspectorLabel>Evidence Inspector</InspectorLabel>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeIdx}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', width: '100%' }}
-              >
-                <ArtifactHeader>
-                  {projectsData[activeIdx].title}
-                </ArtifactHeader>
-                <div style={{ fontSize: '0.8125rem', opacity: 0.6, fontFamily: 'var(--font-mono)', marginTop: '-0.25rem' }}>
-                  Artifact: {projectsData[activeIdx].artifactTitle}
-                </div>
-                <ArtifactCode>
-                  {projectsData[activeIdx].artifactContent}
-                </ArtifactCode>
-              </motion.div>
-            </AnimatePresence>
-          </InspectorPanel>
-        </InspectorPanelWrapper>
-      </LayoutSplit>
-    </SectionContainer>
+    <DashboardContainer>
+      <DashboardGrid>
+        {/* Left Column: Careers timeline */}
+        <LeftColumn>
+          {/* Careers Log Card */}
+          <div id="about">
+            <PanelLabel>[01] Professional Log</PanelLabel>
+            <BrutalistCard rot="0.5deg">
+              <PanelWindowHeader>
+                <PanelTitleText>CAREERS_LOG (TTY4)</PanelTitleText>
+                <WindowDots>
+                  <span />
+                  <span />
+                  <span />
+                </WindowDots>
+              </PanelWindowHeader>
+              <Timeline>
+                <TimelineItem>
+                  <TimelineDot isActive={true} />
+                  <JobTitle>Junior Engineer - Cloud</JobTitle>
+                  <JobCompany>Saints &amp; Masters</JobCompany>
+                  <JobPeriod>Nov 2025 - Present</JobPeriod>
+                  <JobDetails>
+                    <li>Automate cloud infrastructure provisioning, system security, and identity governance on AWS.</li>
+                    <li>Monitor cluster resources and system telemetry metrics with Prometheus &amp; Grafana.</li>
+                    <li>Perform alert diagnostic logs triage to resolve critical environment incident occurrences.</li>
+                  </JobDetails>
+                </TimelineItem>
+
+                <TimelineItem>
+                  <TimelineDot isActive={false} />
+                  <JobTitle>DevOps Intern</JobTitle>
+                  <JobCompany>Nubinix / Saints &amp; Masters</JobCompany>
+                  <JobPeriod>June 2025 - Nov 2025</JobPeriod>
+                  <JobDetails>
+                    <li>Orchestrated container builds and testing pipelines via automated CI/CD workflows.</li>
+                    <li>Optimized internal egress routing with customized NAT setups, reducing network costs.</li>
+                    <li>Configured load balancers, secure gateways, and local system environments.</li>
+                  </JobDetails>
+                </TimelineItem>
+
+                <TimelineItem>
+                  <TimelineDot isActive={false} />
+                  <JobTitle>Associate System Engineer Intern</JobTitle>
+                  <JobCompany>Bridge Global Software Solutions</JobCompany>
+                  <JobPeriod>Jan 2025 - June 2025</JobPeriod>
+                  <JobDetails>
+                    <li>Administered OS servers (Linux &amp; Windows) for system audits and permissions setup.</li>
+                    <li>Maintained databases (MySQL) handling backups, migration validation, and maintenance chores.</li>
+                    <li>Created scripts for operational automations and local system monitoring alerts.</li>
+                  </JobDetails>
+                </TimelineItem>
+              </Timeline>
+            </BrutalistCard>
+          </div>
+        </LeftColumn>
+
+        {/* Right Column: Stack, Evidence Workspace (WIP) & Certifications */}
+        <RightColumn>
+          {/* Infrastructure Stack Card */}
+          <div>
+            <PanelLabel>[02] System Stack</PanelLabel>
+            <BrutalistCard rot="-0.6deg">
+              <PanelWindowHeader>
+                <PanelTitleText>INFRA_STACK (TTY3)</PanelTitleText>
+                <WindowDots>
+                  <span />
+                  <span />
+                  <span />
+                </WindowDots>
+              </PanelWindowHeader>
+              <StackGrid>
+                {stackData.map((tag, idx) => (
+                  <StackTag 
+                    key={tag} 
+                    rot={tagRotations[idx % tagRotations.length]}
+                  >
+                    [{tag}]
+                  </StackTag>
+                ))}
+              </StackGrid>
+            </BrutalistCard>
+          </div>
+
+          {/* Redesigned Evidence Workspace (Work In Progress) */}
+          <div id="experience">
+            <PanelLabel>[03] Evidence Workspace</PanelLabel>
+            <BrutalistCard rot="0.8deg">
+              <PanelWindowHeader>
+                <PanelTitleText>EVIDENCE_WORKSPACE (TTY2)</PanelTitleText>
+                <WindowDots>
+                  <span />
+                  <span />
+                  <span />
+                </WindowDots>
+              </PanelWindowHeader>
+              <InnerTerminalBlock>
+                <BlockStatus>
+                  <span className="terminal-cursor" style={{ width: '8px', height: '8px', margin: 0 }} />
+                  <span>[STATUS: WIP]</span>
+                </BlockStatus>
+                <div>evidence_dir/: Indexes offline...</div>
+                <div style={{ opacity: 0.5 }}>&gt; Work in progress</div>
+              </InnerTerminalBlock>
+            </BrutalistCard>
+          </div>
+
+          {/* Certifications Log Card */}
+          <div>
+            <PanelLabel>[04] Certifications Log</PanelLabel>
+            <BrutalistCard rot="-0.7deg">
+              <PanelWindowHeader>
+                <PanelTitleText>CERTIFICATIONS (TTY5)</PanelTitleText>
+                <WindowDots>
+                  <span />
+                  <span />
+                  <span />
+                </WindowDots>
+              </PanelWindowHeader>
+              <InnerTerminalBlock>
+                <BlockStatus>
+                  <span className="terminal-cursor" style={{ width: '8px', height: '8px', margin: 0 }} />
+                  <span>[STATUS: PENDING]</span>
+                </BlockStatus>
+                <div>certifications_log.db: Fetching assets...</div>
+                <div style={{ opacity: 0.5 }}>&gt; Coming Soon</div>
+              </InnerTerminalBlock>
+            </BrutalistCard>
+          </div>
+        </RightColumn>
+      </DashboardGrid>
+    </DashboardContainer>
   );
 };
 

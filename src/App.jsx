@@ -1,11 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Component } from 'react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Footer from './components/layout/Footer';
 import Hero from './components/sections/Hero';
 import Experience from './components/sections/Experience';
-import About from './components/sections/About';
 import GalleryPage from './components/sections/GalleryPage';
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', color: '#ff0000', backgroundColor: '#000', fontFamily: 'monospace', border: '2px solid red', margin: '2rem', borderRadius: '4px' }}>
+          <h2 style={{ marginBottom: '1rem', color: '#ff3b30' }}>React Render Crash Detected</h2>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: '#ffffff' }}>
+            {this.state.error ? this.state.error.stack || this.state.error.message : 'Unknown Error'}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const GlobalStyles = css`
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap');
@@ -355,29 +383,6 @@ function App() {
           </MiddleContainer>
 
           <div>
-            <StatusPanel>
-              <StatusRow>
-                <StatusLabel>OS</StatusLabel>
-                <StatusValue>Fedora 43 Workstation</StatusValue>
-              </StatusRow>
-              <StatusRow>
-                <StatusLabel>Uptime</StatusLabel>
-                <StatusValue>247 days</StatusValue>
-              </StatusRow>
-              <StatusRow>
-                <StatusLabel>Glass</StatusLabel>
-                <StatusValue>Olympus OM-1 (50mm)</StatusValue>
-              </StatusRow>
-              <StatusRow>
-                <StatusLabel>Listening</StatusLabel>
-                <StatusValue style={{ color: 'var(--rust)' }}>Boards of Canada - Dayvan Cowboy &bull;</StatusValue>
-              </StatusRow>
-              <StatusRow>
-                <StatusLabel>Status</StatusLabel>
-                <StatusValue>Fixin' deployment pipelines</StatusValue>
-              </StatusRow>
-            </StatusPanel>
-
             <NavList>
               <NavItem onClick={() => handleNavClick('experience')}>
                 <span>[01]</span> Work
@@ -397,13 +402,11 @@ function App() {
 
         <RightPanel id="right-panel" ref={rightPanelRef}>
           {currentRoute === '#gallery' ? (
-            <GalleryPage />
+            <ErrorBoundary>
+              <GalleryPage />
+            </ErrorBoundary>
           ) : (
-            <>
-              <Experience />
-              <SectionSeparator />
-              <About />
-            </>
+            <Experience />
           )}
           <SectionSeparator />
           <Footer />
