@@ -343,8 +343,9 @@ function App() {
     const element = document.getElementById(id);
     if (element) {
       if (rightPanelRef.current && window.innerWidth >= 768) {
+        const offsetAdjustment = window.innerWidth >= 1024 ? 56 : 32;
         rightPanelRef.current.scrollTo({
-          top: element.offsetTop,
+          top: element.offsetTop - offsetAdjustment,
           behavior: 'smooth'
         });
       } else {
@@ -406,7 +407,7 @@ function App() {
               <GalleryPage />
             </ErrorBoundary>
           ) : (
-            <Experience />
+            <Experience parentRef={rightPanelRef} />
           )}
           <SectionSeparator />
           <Footer />
