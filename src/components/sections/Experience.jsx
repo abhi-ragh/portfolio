@@ -29,65 +29,87 @@ const LayoutContainer = styled.div`
 const DashboardViewport = styled.div`
   width: 100%;
   box-sizing: border-box;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
   
   @media (min-width: 1024px) {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    padding: 2rem 2.5rem;
   }
 `;
 
 const DashboardGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 1rem;
   width: 100%;
-  box-sizing: border-box;
+  max-width: 1450px;
+  margin: 0 auto;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+  }
 
   @media (min-width: 1024px) {
-    grid-template-columns: 1.15fr 0.85fr;
-    padding: 2.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    gap: 2.25rem;
-    align-items: center; /* Center boxes vertically in viewport */
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.15rem;
   }
 `;
 
 const DashLabel = styled(motion.div)`
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--ink);
   opacity: 0.6;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-const TimelineWindowWrapper = styled(motion.div)`
+const WidgetGridCell = styled(motion.div)`
+  grid-column: span 1;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  
+  min-width: 0;
+
+  @media (min-width: 640px) {
+    grid-column: span ${props => props.$smSpan || props.$span || 6};
+    grid-row: span ${props => props.$smRowSpan || props.$rowSpan || 1};
+  }
+
   @media (min-width: 1024px) {
-    height: 650px; /* Taller balanced height */
+    grid-column: span ${props => props.$lgSpan || props.$span || 4};
+    grid-row: span ${props => props.$lgRowSpan || props.$rowSpan || 1};
   }
 `;
 
-const RightColumnWrapper = styled(motion.div)`
+const WidgetWindowWrapper = styled(motion.div)`
+  background-color: ${props => props.$bg || '#080808'};
+  border: ${props => props.$border || '1px solid rgba(245, 243, 239, 0.15)'};
+  box-shadow: ${props => props.$shadow || '4px 6px 16px rgba(0, 0, 0, 0.85), inset 1px 1px 0px rgba(255, 255, 255, 0.04)'};
+  border-radius: 8px;
+  padding: 1.15rem 1.25rem;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  gap: 1.5rem;
   justify-content: space-between;
-
-  @media (min-width: 1024px) {
-    height: 650px; /* Taller balanced height */
-  }
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 `;
 
 const TerminalWindow = styled.div`
@@ -808,8 +830,35 @@ const Experience = ({ parentRef }) => {
   });
 
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [gridDimensions, setGridDimensions] = useState({ cols: 4, rows: 3 });
+
   useEffect(() => {
-    const checkScreen = () => setIsLargeScreen(window.innerWidth >= 1024);
+    const checkScreen = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+      
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const sidebarWidth = width >= 1024 ? 520 : (width >= 768 ? 450 : 0);
+      const rightWidth = width - sidebarWidth;
+      const rightHeight = height - 72;
+
+      let cols = 3;
+      if (rightWidth >= 1200) cols = 7;
+      else if (rightWidth >= 950) cols = 6;
+      else if (rightWidth >= 750) cols = 5;
+      else if (rightWidth >= 550) cols = 4;
+      else if (rightWidth >= 380) cols = 3;
+      else cols = 2;
+
+      let rows = 3;
+      if (rightHeight >= 950) rows = 4;
+      else if (rightHeight >= 680) rows = 3;
+      else rows = 2;
+
+      setGridDimensions({ cols, rows });
+    };
+
     checkScreen();
     window.addEventListener('resize', checkScreen);
     return () => window.removeEventListener('resize', checkScreen);
@@ -861,153 +910,324 @@ const Experience = ({ parentRef }) => {
 
   const activeSnaps = snaps.length > 0 ? snaps : localFallbackSnaps;
 
-  // Pixel scroll-offset-driven transformations (for Desktop only)
-  const otherOpacity = useTransform(scrollY, [0, 260], [1, 0]);
-  const otherX = useTransform(scrollY, [0, 260], [0, 60]);
+  // Unified dashboard scroll animations for desktop
+  const dashOpacity = useTransform(scrollY, [0, 220], [1, 0]);
+  const dashScale = useTransform(scrollY, [0, 220], [1, 0.94]);
+  const dashY = useTransform(scrollY, [0, 220], [0, -40]);
   
   const labelOpacity = useTransform(scrollY, [0, 160], [0.6, 0]);
 
-  // EXPERIENCE CONTROL CENTER WINDOW ZOOM ANIMATION
-  // Scale zooms up from 1x to 1.32x as user scrolls down the first screenful
-  const expScale = useTransform(scrollY, [0, 420], [1, 1.32]);
-  
-  // Moves the left-aligned Careers window smoothly to the horizontal center as it zooms
-  const expX = useTransform(scrollY, [0, 420], ["0%", "45%"]); 
-  
-  // Stays fully visible, then fades away completely to make way for detailed view below
-  const expOpacity = useTransform(scrollY, [0, 280, 450], [1, 1, 0]);
-  const expRotate = useTransform(scrollY, [0, 420], [0.5, 0]);
+  const bentoWidgets = [
+    {
+      id: 'careers',
+      title: 'CURRENT_ROLE (TTY4)',
+      lgSpan: 7,
+      lgRowSpan: 3,
+      smSpan: 6,
+      bg: '#0E1017',
+      border: '2px solid var(--rust)',
+      shadow: '6px 8px 0px var(--rust), 0 10px 30px rgba(0,0,0,0.85)',
+      rot: '-1.4deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', height: '100%', minHeight: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--rust)', fontWeight: 'bold', fontSize: '0.7rem' }}>
+            <span className="terminal-cursor" style={{ width: '4px', height: '8px', margin: 0 }} />
+            <span>[ACTIVE ROLE]</span>
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--ink)', lineHeight: '1.2' }}>
+            {jobsData[0].title}
+          </div>
+          <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '0.95rem', color: 'var(--rust)' }}>
+            {jobsData[0].company}
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', opacity: 0.5 }}>
+            {jobsData[0].period}
+          </div>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--carbon)', marginTop: '0.2rem', lineHeight: '1.4' }}>
+            {jobsData[0].preview}
+          </div>
+        </div>
+      ),
+      cta: (
+        <div style={{ fontSize: '0.7rem', marginTop: '0.6rem', borderTop: '1px dashed rgba(245,243,239,0.15)', paddingTop: '0.4rem', color: '#00FF41', fontFamily: 'var(--font-mono)' }}>
+          $ tail -n 1 current_role.db
+          <br />
+          <span style={{ color: 'var(--ink)', opacity: 0.8 }}>[OK] Active. Scroll down for complete timeline trace.</span>
+        </div>
+      )
+    },
+    {
+      id: 'stack',
+      title: 'INFRA_STACK (TTY3)',
+      lgSpan: 5,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#0A0D14',
+      border: '1px solid rgba(245, 243, 239, 0.25)',
+      shadow: '4px 6px 18px rgba(0,0,0,0.8)',
+      rot: '1.2deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--carbon)' }}>
+            Primary Stack &amp; Tooling:
+          </div>
+          <DashTagGrid style={{ gap: '0.4rem' }}>
+            {stackData.slice(0, 7).map((tag) => (
+              <DashTag key={tag} style={{ fontSize: '0.75rem', padding: '0.2rem 0.45rem' }}>[{tag}]</DashTag>
+            ))}
+            <DashTag className="more-indicator" style={{ fontSize: '0.75rem', padding: '0.2rem 0.45rem' }}>
+              [+{stackData.length - 7} MORE]
+            </DashTag>
+          </DashTagGrid>
+        </div>
+      )
+    },
+    {
+      id: 'distro',
+      title: 'OS_DISTRO (TTY7)',
+      lgSpan: 5,
+      lgRowSpan: 1,
+      smSpan: 3,
+      bg: '#070A0F',
+      border: '1px solid rgba(0, 255, 65, 0.3)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.85)',
+      rot: '-0.8deg',
+      content: (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div>
+            <div style={{ color: 'var(--ink)', fontWeight: 600 }}>Arch Linux x86_64</div>
+            <div style={{ opacity: 0.6, fontSize: '0.68rem' }}>Kernel: 6.9.1-arch</div>
+          </div>
+          <div style={{ color: '#00FF41', border: '1px solid rgba(0,255,65,0.4)', padding: '0.15rem 0.4rem', borderRadius: '3px', fontSize: '0.65rem' }}>
+            ✓ LIVE
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'project',
+      title: 'ACTIVE_PROJECT (TTY8)',
+      lgSpan: 6,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#060F0A',
+      border: '2px solid #00FF41',
+      shadow: '6px 6px 0px rgba(0, 255, 65, 0.3), 0 10px 25px rgba(0,0,0,0.9)',
+      rot: '1.6deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#00FF41' }}>[PROD DEPLOYMENT]</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', opacity: 0.6 }}>ap-south-1</span>
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--ink)' }}>
+            AWS Multi-Region Telemetry Pipeline
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--rust)' }}>
+            Ref: terraform-workspace-v2
+          </div>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--carbon)', marginTop: '0.2rem' }}>
+            Automated cloud infrastructure telemetry with zero-downtime failover.
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'editor',
+      title: 'EDITOR_CFG (TTY9)',
+      lgSpan: 6,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#0C0A10',
+      border: '1px solid rgba(255, 90, 54, 0.4)',
+      shadow: '4px 6px 18px rgba(0,0,0,0.85)',
+      rot: '-1.2deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Editor: Neovim 0.10</span>
+            <span style={{ color: 'var(--rust)' }}>LSP: pyright (on)</span>
+          </div>
+          <div style={{ opacity: 0.7, fontSize: '0.7rem' }}>Shell: zsh + tmux workspace manager</div>
+          <div style={{ color: '#00FF41', fontSize: '0.68rem', marginTop: '0.2rem' }}>[Config synced with dotfiles]</div>
+        </div>
+      )
+    },
+    {
+      id: 'vitals',
+      title: 'HW_VITALS (TTY14)',
+      lgSpan: 4,
+      lgRowSpan: 2,
+      smSpan: 3,
+      bg: '#08080A',
+      border: '1px solid rgba(245, 243, 239, 0.15)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.8)',
+      rot: '0.8deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>CPU Temp:</span>
+            <span style={{ color: '#00FF41' }}>44°C (Optimal)</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Fan Speed:</span>
+            <span>1200 RPM</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>NVMe Health:</span>
+            <span style={{ color: '#00FF41' }}>99%</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'caffeine',
+      title: 'CAFFEINE_LVL (TTY12)',
+      lgSpan: 4,
+      lgRowSpan: 2,
+      smSpan: 3,
+      bg: '#0D0A08',
+      border: '1px solid rgba(255, 90, 54, 0.3)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.8)',
+      rot: '-1.0deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div style={{ color: 'var(--rust)', fontWeight: 600 }}>Caffeine: 4 cups</div>
+          <div>State: Fully Wired</div>
+          <div style={{ color: '#00FF41', fontSize: '0.68rem' }}>Vitals: 100% Operational</div>
+        </div>
+      )
+    },
+    {
+      id: 'docker',
+      title: 'DOCKER_MON (TTY13)',
+      lgSpan: 4,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#070C0E',
+      border: '1px solid rgba(245, 243, 239, 0.2)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.8)',
+      rot: '1.4deg',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Docker Daemon:</span>
+            <span style={{ color: '#00FF41' }}>Running</span>
+          </div>
+          <div>Containers: 14 active</div>
+          <div style={{ color: 'var(--rust)', fontSize: '0.68rem' }}>VPC Bridged (ap-south-1)</div>
+        </div>
+      )
+    },
+    {
+      id: 'network',
+      title: 'NET_SSID (TTY10)',
+      lgSpan: 6,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#08080C',
+      border: '1px solid rgba(245, 243, 239, 0.15)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.8)',
+      rot: '-0.6deg',
+      content: (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div>
+            <div>Interface: wlan0 (Secure-Dev)</div>
+            <div style={{ opacity: 0.6, fontSize: '0.68rem' }}>Gateway Ping: 12ms | TX: 450 Mb/s</div>
+          </div>
+          <div style={{ color: '#00FF41', fontSize: '0.7rem' }}>Link: Excellent</div>
+        </div>
+      )
+    },
+    {
+      id: 'location',
+      title: 'LOC_TZ (TTY11)',
+      lgSpan: 6,
+      lgRowSpan: 2,
+      smSpan: 6,
+      bg: '#0A0808',
+      border: '1px solid rgba(245, 243, 239, 0.15)',
+      shadow: '4px 6px 16px rgba(0,0,0,0.8)',
+      rot: '0.9deg',
+      content: (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+          <div>
+            <div style={{ color: 'var(--ink)', fontWeight: 600 }}>Kochi, Kerala, IN</div>
+            <div style={{ opacity: 0.6, fontSize: '0.68rem' }}>TZ: IST (UTC+5:30) | Coord: 9.9312° N</div>
+          </div>
+          <div style={{ color: 'var(--rust)', fontSize: '0.7rem' }}>Station Base</div>
+        </div>
+      )
+    }
+  ];
 
   return (
     <LayoutContainer ref={containerRef}>
       
       {/* ====================================================================
-         1. CONTROL CENTER DASHBOARD (Top View - Stark CRT TTY Boxes Layout)
+         1. CONTROL CENTER DASHBOARD (Asymmetric Organic Bento Layout)
          ==================================================================== */}
       <DashboardViewport>
-        <DashboardGrid>
-          
-          {/* Left Column: Careers Log Timeline (Compact, Preview content only) */}
-          <TimelineWindowWrapper
-            style={{
-              scale: isLargeScreen ? expScale : 1,
-              x: isLargeScreen ? expX : "0%",
-              opacity: isLargeScreen ? expOpacity : 1,
-              rotate: isLargeScreen ? expRotate : 0.5,
-            }}
-          >
-            <DashLabel style={{ opacity: isLargeScreen ? labelOpacity : 0.6 }}>
-              [01] Professional Log
-            </DashLabel>
-            <TerminalWindow>
-              <WindowHeader>
-                <WindowTitle>CAREERS_LOG (TTY4)</WindowTitle>
-                <WindowDots><span /><span /><span /></WindowDots>
-              </WindowHeader>
-              <WindowContentScroll>
-                <Timeline>
-                  {jobsData.map((job, idx) => (
-                    <TimelineItem key={idx}>
-                      <TimelineDot isActive={idx === 0} />
-                      <TimelineTitle>{job.title}</TimelineTitle>
-                      <TimelineCompany>{job.company}</TimelineCompany>
-                      <TimelinePeriod>{job.period}</TimelinePeriod>
-                      <TimelinePreviewText>
-                        {job.preview}
-                      </TimelinePreviewText>
-                    </TimelineItem>
-                  ))}
-                </Timeline>
-              </WindowContentScroll>
-              <TerminalCTAPrompt>
-                <div>$ tail -n 2 careers_log.db</div>
-                <div style={{ color: 'var(--ink)', opacity: 0.5 }}>[OK] Cloud profile active.</div>
-                <div style={{ color: '#00FF41' }}>
-                  [OK] Scroll down to view detailed timeline
-                  <span className="terminal-cursor" style={{ width: '6px', height: '10px', margin: '0 0 0 4px' }} />
-                </div>
-              </TerminalCTAPrompt>
-            </TerminalWindow>
-          </TimelineWindowWrapper>
-
-          {/* Right Column Windows: Stack, WIP Evidence, Pending Certs (Float/Fade out on scroll) */}
-          <RightColumnWrapper
-            style={{
-              opacity: isLargeScreen ? otherOpacity : 1,
-              x: isLargeScreen ? otherX : 0,
-            }}
-          >
-            {/* Box 1: Tech Stack Preview */}
-            <div style={{ flex: 1.1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-              <DashLabel style={{ opacity: isLargeScreen ? labelOpacity : 0.6 }}>
-                [02] System Stack
-              </DashLabel>
-              <TerminalWindow>
-                <WindowHeader>
-                  <WindowTitle>INFRA_STACK (TTY3)</WindowTitle>
-                  <WindowDots><span /><span /><span /></WindowDots>
-                </WindowHeader>
-                <WindowContentScroll>
-                  <DashTagGrid>
-                    {stackData.slice(0, 6).map((tag) => (
-                      <DashTag key={tag}>[{tag}]</DashTag>
-                    ))}
-                    <DashTag className="more-indicator">
-                      [+{stackData.length - 6} MORE]
-                    </DashTag>
-                  </DashTagGrid>
-                </WindowContentScroll>
-              </TerminalWindow>
-            </div>
-
-            {/* Box 2: Evidence WIP */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-              <DashLabel style={{ opacity: isLargeScreen ? labelOpacity : 0.6 }}>
-                [03] Evidence Workspace
-              </DashLabel>
-              <TerminalWindow>
-                <WindowHeader>
-                  <WindowTitle>EVIDENCE_WORKSPACE (TTY2)</WindowTitle>
-                  <WindowDots><span /><span /><span /></WindowDots>
-                </WindowHeader>
-                <WindowContentScroll style={{ display: 'flex', alignItems: 'center' }}>
-                  <DashInnerBlock style={{ width: '100%' }}>
-                    <DashBlockStatus>
-                      <span className="terminal-cursor" style={{ width: '6px', height: '6px', margin: 0 }} />
-                      <span>[STATUS: WIP]</span>
-                    </DashBlockStatus>
-                    <div>evidence_dir/: Indexes offline...</div>
-                    <div style={{ opacity: 0.5 }}>&gt; Work in progress</div>
-                  </DashInnerBlock>
-                </WindowContentScroll>
-              </TerminalWindow>
-            </div>
-
-            {/* Box 3: Certs Pending */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-              <DashLabel style={{ opacity: isLargeScreen ? labelOpacity : 0.6 }}>
-                [04] Certifications Log
-              </DashLabel>
-              <TerminalWindow>
-                <WindowHeader>
-                  <WindowTitle>CERTIFICATIONS (TTY5)</WindowTitle>
-                  <WindowDots><span /><span /><span /></WindowDots>
-                </WindowHeader>
-                <WindowContentScroll style={{ display: 'flex', alignItems: 'center' }}>
-                  <DashInnerBlock style={{ width: '100%' }}>
-                    <DashBlockStatus>
-                      <span className="terminal-cursor" style={{ width: '6px', height: '6px', margin: 0 }} />
-                      <span>[STATUS: PENDING]</span>
-                    </DashBlockStatus>
-                    <div>certifications_log.db: Fetching assets...</div>
-                    <div style={{ opacity: 0.5 }}>&gt; Coming Soon</div>
-                  </DashInnerBlock>
-                </WindowContentScroll>
-              </TerminalWindow>
-            </div>
-          </RightColumnWrapper>
-
-        </DashboardGrid>
+        <motion.div
+          style={{
+            width: '100%',
+            opacity: isLargeScreen ? dashOpacity : 1,
+            scale: isLargeScreen ? dashScale : 1,
+            y: isLargeScreen ? dashY : 0,
+          }}
+        >
+          <DashboardGrid>
+            {bentoWidgets.map((widget) => {
+              return (
+                <WidgetGridCell
+                  key={widget.id}
+                  $lgSpan={widget.lgSpan}
+                  $lgRowSpan={widget.lgRowSpan}
+                  $smSpan={widget.smSpan}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <WidgetWindowWrapper
+                    $bg={widget.bg}
+                    $border={widget.border}
+                    $shadow={widget.shadow}
+                    animate={{
+                      rotate: widget.rot
+                    }}
+                    transition={{
+                      rotate: { duration: 0 }
+                    }}
+                    whileHover={{
+                      y: -5,
+                      scale: 1.025,
+                      rotate: '0deg',
+                      zIndex: 25,
+                      boxShadow: '8px 14px 28px rgba(0, 0, 0, 0.95), inset 1px 1px 0px rgba(255, 255, 255, 0.1)',
+                      borderColor: 'var(--rust)',
+                      transition: { duration: 0.2, ease: 'easeOut' }
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, gap: '0.5rem' }}>
+                      <WindowHeader style={{ paddingBottom: '0.35rem', marginBottom: '0.35rem', borderBottom: '1px dashed rgba(245, 243, 239, 0.15)' }}>
+                        <WindowTitle style={{ fontSize: '0.625rem', opacity: 0.7, fontWeight: 600 }}>{widget.title}</WindowTitle>
+                        <WindowDots>
+                          <span style={{ width: '4px', height: '4px' }} />
+                          <span style={{ width: '4px', height: '4px' }} />
+                          <span style={{ width: '4px', height: '4px' }} />
+                        </WindowDots>
+                      </WindowHeader>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
+                        {widget.content}
+                      </div>
+                    </div>
+                    {widget.cta}
+                  </WidgetWindowWrapper>
+                </WidgetGridCell>
+              );
+            })}
+          </DashboardGrid>
+        </motion.div>
       </DashboardViewport>
 
       {/* ====================================================================
