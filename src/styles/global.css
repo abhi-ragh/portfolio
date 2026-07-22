@@ -1,14 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --paper: #0D0D0D;
-  --paper-elevated: #141414;
-  --ink: #E2DFD8;
-  --ink-muted: #8E8A80;
-  --ink-faint: rgba(226, 223, 216, 0.25);
-  --border: rgba(226, 223, 216, 0.12);
-  --accent: #C47A5A;
-  
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-mono: 'Space Mono', monospace;
+  --bg:         #0E0D0B;   /* near-black, warm undertone — base canvas */
+  --surface:    #161512;   /* slightly lifted surface for cards/sections */
+  --ink:        #E8E4DC;   /* primary text — warm off-white, not pure white */
+  --ink-muted:  #7A756C;   /* secondary text, captions, labels */
+  --ink-faint:  #3A3730;   /* borders, rules, subtle dividers */
+  --accent:     #C8A96E;   /* warm gold — used sparingly */
+  --dither-fg:  #E8E4DC;   /* dither pattern foreground color */
+  --dither-bg:  #0E0D0B;   /* dither pattern background color */
+
+  --text-xs:    11px;
+  --text-sm:    13px;
+  --text-base:  15px;
+  --text-lg:    18px;
+  --text-xl:    24px;
+  --text-2xl:   36px;
+  --text-3xl:   52px;
 }
 
 * {
@@ -18,18 +28,18 @@
 }
 
 html {
-  background-color: var(--paper);
+  background-color: var(--bg);
   color: var(--ink);
-  font-family: var(--font-serif);
-  font-size: 18px;
-  line-height: 1.7;
+  font-family: 'Lora', Georgia, serif;
+  font-size: var(--text-base);
+  line-height: 1.85;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: var(--paper);
+  background-color: var(--bg);
   color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
@@ -39,7 +49,7 @@ body {
 /* Selection */
 ::selection {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--bg);
 }
 
 /* Custom Scrollbar */
@@ -47,33 +57,38 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--paper);
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(226, 223, 216, 0.2);
+  background: var(--ink-faint);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink);
+  background: var(--ink-muted);
 }
 
-/* SVG Dither Overlay */
-.dither-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.15;
-  mix-blend-mode: overlay;
-  z-index: 1;
+/* Typography Classes */
+.font-serif {
+  font-family: 'Lora', Georgia, serif;
 }
 
-/* Section label helper */
-.meta-label {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--ink-muted);
+.font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Accent rules */
+.accent-hover-bracket {
+  transition: color 0.2s ease;
+}
+.accent-hover-bracket:hover .bracket {
+  color: var(--accent);
+}
+
+.accent-text {
+  color: var(--accent);
+}
+
+/* Masonry layout column breaks */
+.masonry-col {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }

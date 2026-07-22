@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import DitherBand from '../components/DitherBand.jsx';
+import About from '../components/About.astro';
+import Gallery from '../components/Gallery';
+import Work from '../components/Work.astro';
+import Writing from '../components/Writing.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base>
+  <Nav />
+  <main class="w-full">
+    <Hero />
+    <!-- After hero -->
+    <DitherBand client:load density="dense" height={40} />
+
+    <About />
+    <!-- After About -->
+    <DitherBand client:load density="mid" height={32} />
+
+    <Gallery client:load />
+    <!-- After Gallery -->
+    <DitherBand client:load density="mid" height={32} />
+
+    <Work />
+    <!-- After Work -->
+    <DitherBand client:load density="sparse" height={28} />
+
+    <Writing />
+    <!-- After Writing, before Footer -->
+    <DitherBand client:load density="sparse" height={24} />
+  </main>
+  <Footer />
+</Base>
