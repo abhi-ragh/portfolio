@@ -12,6 +12,7 @@ const INK = { r: 232, g: 228, b: 220 }; // #E8E4DC (Warm Off-White)
 export default function HeroCanvas() {
   const canvasRef = useRef(null);
   const [visible, setVisible] = useState(true);
+  const startTimeRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -22,6 +23,7 @@ export default function HeroCanvas() {
     let rafId;
     let time = 0;
     let isPaused = false;
+    startTimeRef.current = performance.now();
 
     // Mouse tracking (10-15% max influence)
     const mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
@@ -78,6 +80,14 @@ export default function HeroCanvas() {
       const h = canvas.height;
       if (w <= 0 || h <= 0) return;
 
+      const now = performance.now();
+      const elapsed = now - (startTimeRef.current || now);
+
+      // Instant Frame 1 start for Hero Canvas dither sweep (0ms start, 900ms duration)
+      const printProgress = prefersReducedMotion
+        ? 1.0
+        : Math.min(1.0, Math.max(0.0, elapsed / 900));
+
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
 
@@ -108,6 +118,9 @@ export default function HeroCanvas() {
       for (let y = 0; y < h; y++) {
         const normY = y / h; // 0 to 1 down screen
 
+        // Mechanical print press boundary: row y is only printed if normY <= printProgress
+        if (normY > printProgress) continue;
+
         // Spatial dissolve mask: smooth 0 to 1 curve down screen
         const spatialFade = Math.max(0, Math.min(1, (0.70 - normY) / 0.45));
 
@@ -115,7 +128,7 @@ export default function HeroCanvas() {
           const normX = x / w;
           const idx = (y * w + x) * 4;
 
-          // Pure organic wave equation (no artificial rectangular box boundaries)
+          // Pure organic wave equation
           const d1 = Math.sin(normX * 5 + time + mouseNormX) * Math.cos(normY * 5 + time * 0.8 + mouseNormY);
           const d2 = Math.cos((normX + normY) * 3 - time * 0.5);
           const wave = (d1 + d2 + 2) / 4;
@@ -124,7 +137,7 @@ export default function HeroCanvas() {
           const threshold = BAYER_4X4[y % 4][x % 4] / 16;
           const lit = intensity > threshold;
 
-          // Per-pixel alpha calculation (combines vertical spatial fade + calm default opacity + scroll dissolve)
+          // Per-pixel alpha calculation
           const pixelAlpha = lit ? Math.floor(255 * spatialFade * scrollOpacity) : 0;
 
           data[idx]     = INK.r;

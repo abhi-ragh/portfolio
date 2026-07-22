@@ -33,6 +33,37 @@ canvas, svg {
   color: #F4F1EA !important;
 }
 
+/* Print Press Mechanical Ink Deposition Reveal (Simultaneous Unified Start) */
+@keyframes print-scan-reveal {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.print-reveal-masthead {
+  animation: print-scan-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 50ms forwards;
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+.print-reveal-headline {
+  animation: print-scan-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 50ms forwards;
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  .print-reveal-masthead,
+  .print-reveal-headline {
+    animation: none !important;
+    clip-path: none !important;
+  }
+}
+
 /* Hover bracket accent styling */
 .accent-hover-bracket .bracket {
   color: var(--ink-faint);
