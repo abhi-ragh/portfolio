@@ -5,9 +5,9 @@
 :root {
   --bg: #0E0D0B;
   --surface: #161512;
-  --ink: #E8E4DC;
-  --ink-muted: #7A756C;
-  --ink-faint: #3A3730;
+  --ink: #F4F1EA;         /* High-contrast primary off-white text */
+  --ink-muted: #D2CBC0;   /* Bright secondary body prose */
+  --ink-faint: #A6A095;   /* High-contrast metadata & labels */
   --accent: #C8A96E;
   --dither-fg: #E8E4DC;
 }
@@ -25,14 +25,16 @@
 .tech-tag {
   transition: all 0.2s ease;
   background-color: transparent;
+  color: #E8E4DC;
+  border-color: #7A756C;
 }
 .tech-tag:hover {
   border-color: var(--accent);
   color: var(--ink);
-  background-color: rgba(200, 169, 110, 0.12);
+  background-color: rgba(200, 169, 110, 0.15);
 }
 
-/* Custom Scrollbar for subtle dark UI */
+/* Custom Scrollbar for dark UI */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -40,9 +42,9 @@
   background: #0E0D0B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1F1D19;
+  background: #3A3730;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A3730;
+  background: #555046;
 }

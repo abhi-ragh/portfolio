@@ -83,7 +83,7 @@ export default function AmbientGrainCanvas() {
       <canvas
         ref={canvasRef}
         className="w-full h-full block"
-        style={{ imageRendering: 'pixelated', opacity: 0.08 }}
+        style={{ imageRendering: 'pixelated', opacity: 0.05 }}
       />
     </div>
   );

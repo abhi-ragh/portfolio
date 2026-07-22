@@ -101,47 +101,47 @@ export const Gallery: React.FC = () => {
   }, []);
 
   return (
-    <section id="gallery" className="w-full px-6 md:px-10 py-16 md:py-24">
+    <section id="gallery" className="w-full px-6 md:px-10 py-16 md:py-24 border-b border-[var(--ink-faint)]/40">
       {/* Section Header */}
       <div className="flex flex-col gap-2 mb-12">
         <div>
-          <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-1 select-none">
-            <span className="bracket">[</span> 02 / GALLERY <span className="bracket">]</span>
+          <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+            <span class="bracket">[</span> 02 / GALLERY <span class="bracket">]</span>
           </span>
         </div>
-        <p className="font-serif italic text-[13px] text-[var(--ink-muted)] max-w-lg mt-2 leading-relaxed">
+        <p className="font-serif italic text-[14px] text-[var(--ink-muted)] max-w-lg mt-2 leading-relaxed">
           A mixed collection of 35mm film photography and pencil contour sketches. Given space to breathe.
         </p>
       </div>
 
-      {/* Masonry Layout: CSS Multi-Column */}
-      <div className="columns-1 md:columns-2 gap-10 space-y-12">
+      {/* Broadsheet Editorial Grid Layout matching Mockups */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {items.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="masonry-col break-inside-avoid flex flex-col gap-2.5 group cursor-pointer"
+            className="flex flex-col border border-[var(--ink-faint)]/50 bg-[#12110E]/80 p-4 gap-3 group cursor-pointer hover:border-[var(--accent)]/60 transition-colors"
             onClick={() => setSelectedItem(item)}
           >
-            {/* Image Card */}
-            <div className="w-full overflow-hidden bg-[#141310]">
+            {/* Image Frame */}
+            <div className="w-full aspect-[4/3] overflow-hidden bg-[#161512] flex items-center justify-center">
               <img
                 src={item.src}
                 alt={item.title}
                 loading="lazy"
-                className="w-full h-auto block"
+                className="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
               />
             </div>
 
-            {/* 0.5px rule separator */}
-            <div className="w-full h-[0.5px] bg-[var(--ink-faint)] my-0.5" />
+            {/* Hairline Divider */}
+            <div className="w-full h-[0.5px] bg-[var(--ink-faint)]/40 my-1" />
 
-            {/* Caption Row */}
+            {/* Card Metadata Footer matching Mockup */}
             <div className="flex justify-between items-baseline px-0.5">
-              <span className="font-serif italic text-[11px] text-[var(--ink-muted)] group-hover:text-[var(--ink)] transition-colors">
+              <span className="font-serif italic text-[13px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate max-w-[65%]">
                 {item.title}
               </span>
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-faint)]">
-                {item.type}
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-faint)] font-medium">
+                {item.type === 'SKETCHBOOK DRAFT' ? 'sketch' : 'film / 35mm'}
               </span>
             </div>
           </div>
