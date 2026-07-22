@@ -4,6 +4,7 @@ import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
 import About from '../components/About.astro';
 import SelectedFrames from '../components/SelectedFrames';
+import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
 import Writing from '../components/Writing.astro';
 import Footer from '../components/Footer.astro';
@@ -29,6 +30,7 @@ const homepageItems = await getHomepageImages();
         <Hero />
         <About />
         <SelectedFrames client:load items={homepageItems} />
+        <Experience />
         <Work />
         <Writing />
       </main>
