@@ -3,6 +3,7 @@ import { Client } from '@notionhq/client';
 const rawToken = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_TOKEN : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_TOKEN : undefined);
 const rawDatabaseId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_DATABASE_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_DATABASE_ID : undefined) || '';
 const rawBlogsId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_BLOGS_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_BLOGS_ID : undefined) || '';
+const rawProjectsId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_PROJECTS_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_PROJECTS_ID : undefined) || '';
 
 export const notion = rawToken
   ? new Client({ auth: rawToken.trim() })
@@ -17,3 +18,4 @@ function formatDatabaseId(id: string): string {
 
 export const NOTION_DATABASE_ID = formatDatabaseId(rawDatabaseId);
 export const NOTION_BLOGS_ID = formatDatabaseId(rawBlogsId);
+export const NOTION_PROJECTS_ID = formatDatabaseId(rawProjectsId);

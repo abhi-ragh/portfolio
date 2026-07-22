@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
+import { getArchiveProjects } from '../lib/projects';
+
+let projects = [];
+try {
+  projects = await getArchiveProjects();
+} catch (e) {
+  projects = [];
+}
+---
+
+<Base title="Projects — Selected Engineering Work | abhiragh a r">
+  <div class="relative w-full min-h-screen bg-[#0E0D0B] overflow-hidden">
+    <!-- Body Ambient Dither Wave Canvas -->
+    <AmbientGrainCanvas client:load />
+
+    <div class="relative z-30 w-full">
+      <Nav />
+      <main class="w-full px-6 md:px-10 pt-[120px] pb-24 flex justify-center">
+        <div class="w-full max-w-[900px] flex flex-col gap-12 text-left">
+          {/* Header */}
+          <div class="flex flex-col gap-4 border-b border-[var(--ink-faint)]/40 pb-8">
+            <div>
+              <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+                <span class="bracket">[</span> PROJECTS / COLLECTION <span class="bracket">]</span>
+              </span>
+            </div>
+            <h1 class="font-serif text-[32px] md:text-[44px] text-[var(--ink)] font-normal tracking-tight">
+              Engineering Projects
+            </h1>
+            <p class="font-serif italic text-[15px] text-[var(--ink-muted)] max-w-xl leading-relaxed">
+              Selected software engineering, infrastructure automation, and side projects.
+            </p>
+          </div>
+
+          {projects.length === 0 ? (
+            /* Editorial Empty Archive State */
+            <div class="font-serif italic text-[18px] text-[var(--ink-muted)] py-8">
+              Projects<br />
+              Coming soon.
+            </div>
+          ) : (
+            /* Published Full Project Cards Grid */
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {projects.map((project) => (
+                <ProjectCard project={project} showMedia={true} />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  </div>
+</Base>

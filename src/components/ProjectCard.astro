@@ -1,0 +1,73 @@
+---
+import type { Project } from '../lib/types';
+
+interface Props {
+  project: Project;
+  showMedia?: boolean;
+}
+
+const { project, showMedia = true } = Astro.props;
+---
+
+<div class="flex flex-col border border-[var(--ink-faint)]/40 bg-[#12110E]/80 p-5 gap-5 group hover:border-[var(--accent)]/60 transition-colors">
+  {/* Optional Cover Image (Only displayed on dedicated page when present) */}
+  {showMedia && project.coverImage && (
+    <div class="w-full aspect-[16/9] overflow-hidden bg-[#161512]">
+      <img
+        src={project.coverImage}
+        alt={project.title}
+        loading="lazy"
+        class="w-full h-full object-cover block group-hover:brightness-105 transition-all duration-300"
+      />
+    </div>
+  )}
+
+  <!-- Title & Description -->
+  <div class="flex flex-col gap-2.5">
+    <h3 class="font-serif italic text-[18px] md:text-[20px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+      {project.title}
+    </h3>
+    {project.description && (
+      <p class="font-serif text-[14px] text-[var(--ink-muted)] leading-relaxed">
+        {project.description}
+      </p>
+    )}
+  </div>
+
+  <!-- Optional GitHub Link -->
+  {project.github && (
+    <div class="pt-3 border-t border-[var(--ink-faint)]/30 flex justify-between items-center font-mono text-[11px]">
+      <a
+        href={project.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5"
+      >
+        <span>View on GitHub</span>
+        <span class="text-[12px] group-hover:translate-x-1 transition-transform">&rarr;</span>
+      </a>
+    </div>
+  )}
+
+  <!-- Optional Screenshots Section -->
+  {showMedia && project.screenshots && project.screenshots.length > 0 && (
+    <div class="flex flex-col gap-3 pt-4 border-t border-[var(--ink-faint)]/30">
+      <span class="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-faint)] font-medium">
+        Screenshots
+      </span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {project.screenshots.map((shot, idx) => (
+          <div class="w-full aspect-[16/9] overflow-hidden bg-[#161512] border border-[var(--ink-faint)]/20">
+            <img
+              src={shot}
+              alt={`${project.title} screenshot ${idx + 1}`}
+              loading="lazy"
+              class="w-full h-full object-cover block"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+```
