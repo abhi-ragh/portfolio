@@ -35,7 +35,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallback
           href="/archive"
           className="font-serif italic text-[14px] text-[var(--ink)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5 group"
         >
-          <span>View Archive</span>
+          <span>View Collection</span>
           <span className="font-mono text-[12px] group-hover:translate-x-1 transition-transform">&rarr;</span>
         </a>
       </div>
