@@ -2,36 +2,34 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import DitherBand from '../components/DitherBand.jsx';
 import About from '../components/About.astro';
 import Gallery from '../components/Gallery';
 import Work from '../components/Work.astro';
 import Writing from '../components/Writing.astro';
 import Footer from '../components/Footer.astro';
+import HeroCanvas from '../components/HeroCanvas';
+import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
 ---
 
 <Base>
-  <Nav />
-  <main class="w-full">
-    <Hero />
-    <!-- After hero -->
-    <DitherBand client:load density="dense" height={40} />
+  <div class="relative w-full min-h-screen bg-[#0E0D0B] overflow-hidden">
+    <!-- Z-5: Static Ambient Paper Grain (0 FPS after mount) -->
+    <AmbientGrainCanvas client:load />
 
-    <About />
-    <!-- After About -->
-    <DitherBand client:load density="mid" height={32} />
+    <!-- Z-10: Animated Hero Canvas (100vh / 100svh, 60 FPS Wave + Scroll Dissolve) -->
+    <HeroCanvas client:load />
 
-    <Gallery client:load />
-    <!-- After Gallery -->
-    <DitherBand client:load density="mid" height={32} />
-
-    <Work />
-    <!-- After Work -->
-    <DitherBand client:load density="sparse" height={28} />
-
-    <Writing />
-    <!-- After Writing, before Footer -->
-    <DitherBand client:load density="sparse" height={24} />
-  </main>
-  <Footer />
+    <!-- Z-30: Foreground Content Layer -->
+    <div class="relative z-30 w-full">
+      <Nav />
+      <main class="w-full">
+        <Hero />
+        <About />
+        <Gallery client:load />
+        <Work />
+        <Writing />
+      </main>
+      <Footer />
+    </div>
+  </div>
 </Base>
