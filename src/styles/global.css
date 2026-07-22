@@ -3,92 +3,46 @@
 @tailwind utilities;
 
 :root {
-  --bg:         #0E0D0B;   /* near-black, warm undertone — base canvas */
-  --surface:    #161512;   /* slightly lifted surface for cards/sections */
-  --ink:        #E8E4DC;   /* primary text — warm off-white, not pure white */
-  --ink-muted:  #7A756C;   /* secondary text, captions, labels */
-  --ink-faint:  #3A3730;   /* borders, rules, subtle dividers */
-  --accent:     #C8A96E;   /* warm gold — used sparingly */
-  --dither-fg:  #E8E4DC;   /* dither pattern foreground color */
-  --dither-bg:  #0E0D0B;   /* dither pattern background color */
-
-  --text-xs:    11px;
-  --text-sm:    13px;
-  --text-base:  15px;
-  --text-lg:    18px;
-  --text-xl:    24px;
-  --text-2xl:   36px;
-  --text-3xl:   52px;
+  --bg: #0E0D0B;
+  --surface: #161512;
+  --ink: #E8E4DC;
+  --ink-muted: #7A756C;
+  --ink-faint: #3A3730;
+  --accent: #C8A96E;
+  --dither-fg: #E8E4DC;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  background-color: var(--bg);
-  color: var(--ink);
-  font-family: 'Lora', Georgia, serif;
-  font-size: var(--text-base);
-  line-height: 1.85;
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  background-color: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Selection */
-::selection {
-  background: var(--ink);
-  color: var(--bg);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--ink-faint);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-muted);
-}
-
-/* Typography Classes */
-.font-serif {
-  font-family: 'Lora', Georgia, serif;
-}
-
-.font-mono {
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-/* Accent rules */
-.accent-hover-bracket {
+/* Hover bracket accent styling */
+.accent-hover-bracket .bracket {
+  color: var(--ink-faint);
   transition: color 0.2s ease;
 }
 .accent-hover-bracket:hover .bracket {
   color: var(--accent);
 }
 
-.accent-text {
-  color: var(--accent);
+/* Tech Tag Dither Hover Effect */
+.tech-tag {
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+.tech-tag:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+  background-color: rgba(200, 169, 110, 0.12);
 }
 
-/* Masonry layout column breaks */
-.masonry-col {
-  break-inside: avoid;
-  page-break-inside: avoid;
+/* Custom Scrollbar for subtle dark UI */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0E0D0B;
+}
+::-webkit-scrollbar-thumb {
+  background: #1F1D19;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3730;
 }
