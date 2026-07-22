@@ -12,6 +12,27 @@
   --dither-fg: #E8E4DC;
 }
 
+/* Force Dark Scheme & Lock Colors against Extension Overrides */
+html, body {
+  color-scheme: dark !important;
+  background-color: #0E0D0B !important;
+  color: #F4F1EA !important;
+}
+
+/* Prevent Canvas & Dither Pattern Inversion */
+canvas, svg {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Override Dark Reader Injected Selectors */
+[data-darkreader-scheme],
+[data-darkreader-inline-stroke],
+[data-darkreader-inline-fill] {
+  background-color: #0E0D0B !important;
+  color: #F4F1EA !important;
+}
+
 /* Hover bracket accent styling */
 .accent-hover-bracket .bracket {
   color: var(--ink-faint);

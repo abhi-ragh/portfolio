@@ -13,11 +13,16 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="bg-[#0E0D0B] text-[#E8E4DC]">
+<html lang="en" class="bg-[#0E0D0B] text-[#F4F1EA]">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    
+    <!-- Lock Dark Reader and Extension Color Overrides -->
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="dark" />
+
     <title>{title}</title>
 
     <!-- Google Fonts: Lora (Serif) & IBM Plex Mono (Monospace) -->
@@ -25,8 +30,8 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#0E0D0B] text-[#E8E4DC] min-h-screen relative overflow-x-hidden font-serif">
-    <!-- SVG Dither Pattern Definitions (Hidden container without display:none so url() fills render properly) -->
+  <body class="bg-[#0E0D0B] text-[#F4F1EA] min-h-screen relative overflow-x-hidden font-serif">
+    <!-- SVG Dither Pattern Definitions -->
     <svg class="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <defs>
         <!-- Sparse Dither (4x4 Bayer, ~25% fill) -->
