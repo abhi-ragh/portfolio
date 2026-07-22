@@ -18,12 +18,15 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallback
   }));
 
   return (
-    <section id="selected-frames" className="w-full px-6 md:px-10 py-12 md:py-16 border-b border-[var(--ink-faint)]/40">
+    <section id="selected-frames" className="w-full px-6 md:px-10 py-12 md:py-16">
       {/* Section Header with Archive CTA in same row */}
       <div className="flex justify-between items-baseline mb-8">
         <div className="flex items-baseline gap-4">
           <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
             <span className="bracket">[</span> 02 / SELECTED FRAMES <span class="bracket">]</span>
+          </span>
+          <span className="font-serif italic text-[13px] text-[var(--ink-muted)] hidden sm:inline">
+            A curated preview of {displayItems.length} frames
           </span>
         </div>
 

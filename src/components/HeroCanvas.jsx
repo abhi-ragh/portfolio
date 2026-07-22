@@ -54,8 +54,8 @@ export default function HeroCanvas() {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
 
-      // Unmount/pause hero canvas when scrolled past 0.85vh
-      if (scrollY > vh * 0.85) {
+      // Pause hero canvas when scrolled past 0.75vh
+      if (scrollY > vh * 0.75) {
         if (!isPaused) {
           isPaused = true;
           setVisible(false);
@@ -81,7 +81,7 @@ export default function HeroCanvas() {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
 
-      // Scroll progress from 0% scroll to 55% scroll (early dissolve)
+      // Scroll progress from 0% scroll to 55% scroll (early subtle dissolve)
       const transitionStart = 0;
       const transitionEnd = vh * 0.55;
       const rawProgress = Math.min(1.0, Math.max(0.0, (scrollY - transitionStart) / (transitionEnd - transitionStart)));
@@ -92,37 +92,43 @@ export default function HeroCanvas() {
       mouse.x += (mouse.targetX - mouse.x) * 0.05;
       mouse.y += (mouse.targetY - mouse.y) * 0.05;
 
-      const mouseInfluence = (1.0 - smoothProgress) * 0.12;
+      const mouseInfluence = (1.0 - smoothProgress) * 0.10;
       const mouseNormX = (mouse.x / window.innerWidth) * mouseInfluence;
       const mouseNormY = (mouse.y / window.innerHeight) * mouseInfluence;
 
-      time += prefersReducedMotion ? 0 : 0.015;
+      time += prefersReducedMotion ? 0 : 0.012;
 
       const imgData = ctx.createImageData(w, h);
       const data = imgData.data;
 
-      // Scroll opacity dissolve from 1.0 down to 0.0
-      const scrollOpacity = (1.0 - smoothProgress);
+      // Initial calm default state: loads at ~45% alpha intensity so typography is primary
+      const defaultCalmOpacity = 0.45;
+      const scrollOpacity = (1.0 - smoothProgress) * defaultCalmOpacity;
 
       for (let y = 0; y < h; y++) {
         const normY = y / h; // 0 to 1 down screen
 
-        // Spatial dissolve mask: top 0-30% full density, 30%-75% fades down smoothly to 0
-        const spatialFade = Math.max(0, Math.min(1, (0.75 - normY) / 0.45));
+        // Spatial dissolve mask: top 0-25% calm density, 25%-70% fades down smoothly
+        const spatialFade = Math.max(0, Math.min(1, (0.70 - normY) / 0.45));
 
         for (let x = 0; x < w; x++) {
+          const normX = x / w;
           const idx = (y * w + x) * 4;
 
-          // Organic wave equation
-          const d1 = Math.sin(x * 0.05 + time + mouseNormX) * Math.cos(y * 0.05 + time * 0.8 + mouseNormY);
-          const d2 = Math.cos((x + y) * 0.03 - time * 0.5);
+          // Organic Bayer wave equation
+          const d1 = Math.sin(normX * 5 + time + mouseNormX) * Math.cos(normY * 5 + time * 0.8 + mouseNormY);
+          const d2 = Math.cos((normX + normY) * 3 - time * 0.5);
           const wave = (d1 + d2 + 2) / 4;
 
-          const intensity = wave * 0.70;
+          // Quiet Zone behind headline (normY 0.15..0.50, normX 0.10..0.70)
+          const inQuietZone = normY > 0.15 && normY < 0.50 && normX > 0.10 && normX < 0.70;
+          const quietFactor = inQuietZone ? 0.75 : 1.0;
+
+          const intensity = wave * 0.50 * quietFactor;
           const threshold = BAYER_4X4[y % 4][x % 4] / 16;
           const lit = intensity > threshold;
 
-          // Per-pixel alpha calculation (combines vertical spatial fade + scroll dissolve)
+          // Per-pixel alpha calculation (combines vertical spatial fade + calm default opacity + scroll dissolve)
           const pixelAlpha = lit ? Math.floor(255 * spatialFade * scrollOpacity) : 0;
 
           data[idx]     = INK.r;
