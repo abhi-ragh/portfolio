@@ -81,7 +81,7 @@ export default function HeroCanvas() {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
 
-      // Scroll progress from 0% scroll to 55% scroll (early subtle dissolve)
+      // Scroll progress from 0% scroll to 55% scroll
       const transitionStart = 0;
       const transitionEnd = vh * 0.55;
       const rawProgress = Math.min(1.0, Math.max(0.0, (scrollY - transitionStart) / (transitionEnd - transitionStart)));
@@ -101,30 +101,26 @@ export default function HeroCanvas() {
       const imgData = ctx.createImageData(w, h);
       const data = imgData.data;
 
-      // Initial calm default state: loads at ~45% alpha intensity so typography is primary
+      // Initial calm default state: loads at ~45% alpha intensity
       const defaultCalmOpacity = 0.45;
       const scrollOpacity = (1.0 - smoothProgress) * defaultCalmOpacity;
 
       for (let y = 0; y < h; y++) {
         const normY = y / h; // 0 to 1 down screen
 
-        // Spatial dissolve mask: top 0-25% calm density, 25%-70% fades down smoothly
+        // Spatial dissolve mask: smooth 0 to 1 curve down screen
         const spatialFade = Math.max(0, Math.min(1, (0.70 - normY) / 0.45));
 
         for (let x = 0; x < w; x++) {
           const normX = x / w;
           const idx = (y * w + x) * 4;
 
-          // Organic Bayer wave equation
+          // Pure organic wave equation (no artificial rectangular box boundaries)
           const d1 = Math.sin(normX * 5 + time + mouseNormX) * Math.cos(normY * 5 + time * 0.8 + mouseNormY);
           const d2 = Math.cos((normX + normY) * 3 - time * 0.5);
           const wave = (d1 + d2 + 2) / 4;
 
-          // Quiet Zone behind headline (normY 0.15..0.50, normX 0.10..0.70)
-          const inQuietZone = normY > 0.15 && normY < 0.50 && normX > 0.10 && normX < 0.70;
-          const quietFactor = inQuietZone ? 0.75 : 1.0;
-
-          const intensity = wave * 0.50 * quietFactor;
+          const intensity = wave * 0.45;
           const threshold = BAYER_4X4[y % 4][x % 4] / 16;
           const lit = intensity > threshold;
 
