@@ -4,7 +4,7 @@ export interface GalleryItem {
   id?: string;
   src: string;
   title: string;
-  type: 'FILM PHOTOGRAPHY' | 'SKETCHBOOK DRAFT';
+  type?: 'FILM PHOTOGRAPHY' | 'SKETCHBOOK DRAFT';
 }
 
 interface LightboxProps {
@@ -55,13 +55,10 @@ export const Lightbox: React.FC<LightboxProps> = ({ item, onClose }) => {
         />
       </div>
 
-      {/* Bottom Metadata: Title & Type in Bottom-Left Corner per Spec */}
+      {/* Bottom Metadata: Title in Bottom-Left Corner */}
       <div className="w-full flex flex-col items-start gap-1 pt-4" onClick={(e) => e.stopPropagation()}>
         <div className="font-serif italic text-[15px] text-[var(--ink)]">
           {item.title}
-        </div>
-        <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--ink-faint)]">
-          {item.type}
         </div>
       </div>
     </div>

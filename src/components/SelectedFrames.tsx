@@ -23,10 +23,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallback
       <div className="flex justify-between items-baseline mb-8">
         <div className="flex items-baseline gap-4">
           <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
-            <span className="bracket">[</span> 02 / SELECTED FRAMES <span className="bracket">]</span>
-          </span>
-          <span className="font-serif italic text-[13px] text-[var(--ink-muted)] hidden sm:inline">
-            A curated preview of {displayItems.length} frames
+            <span className="bracket">[</span> 02 / SELECTED FRAMES <span class="bracket">]</span>
           </span>
         </div>
 
@@ -48,7 +45,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallback
             className="flex flex-col gap-2.5 group cursor-pointer"
             onClick={() => setSelectedItem(item)}
           >
-            {/* Borderless Image Thumbnail */}
+            {/* Image Container */}
             <div className="w-full h-[140px] md:h-[160px] overflow-hidden bg-[#141310]">
               <img
                 src={item.src}
@@ -57,13 +54,10 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallback
               />
             </div>
 
-            {/* Compact Caption Footer */}
+            {/* Compact Caption Footer (Title only) */}
             <div className="flex justify-between items-baseline px-0.5 pt-0.5">
               <span className="font-serif italic text-[13px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate">
                 {item.title}
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[var(--ink-faint)] shrink-0 font-medium">
-                {item.type === 'SKETCHBOOK DRAFT' ? 'sketch' : 'film'}
               </span>
             </div>
           </div>

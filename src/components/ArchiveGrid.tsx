@@ -19,36 +19,31 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages
 
   return (
     <div className="w-full flex flex-col gap-12">
-      {/* Borderless Broadsheet Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+      {/* Broadsheet Masonry Layout: Natural True Dimensions (Uncropped) */}
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 md:gap-10 space-y-10">
         {displayItems.map((item) => (
           <div
             key={item.id}
-            className="flex flex-col gap-3 group cursor-pointer"
+            className="break-inside-avoid flex flex-col gap-3 group cursor-pointer"
             onClick={() => setSelectedItem(item)}
           >
-            {/* Borderless Image Container */}
-            <div className="w-full aspect-[4/3] overflow-hidden bg-[#141310] flex items-center justify-center">
+            {/* Image Container preserving true natural aspect ratio */}
+            <div className="w-full overflow-hidden bg-[#141310] flex items-center justify-center">
               <img
                 src={item.src}
                 alt={item.title}
                 loading="lazy"
-                className="w-full h-full object-cover block"
+                className="w-full h-auto block object-contain"
               />
             </div>
 
-            {/* Minimal Broadsheet Metadata Footer */}
-            <div className="flex justify-between items-baseline px-0.5 pt-1">
-              <div className="flex flex-col gap-0.5 max-w-[70%]">
-                <span className="font-serif italic text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate">
-                  {item.title}
-                </span>
-                <span className="font-mono text-[10px] text-[var(--ink-faint)]">
-                  Kochi, Kerala &bull; 2026
-                </span>
-              </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[var(--ink-faint)] font-medium">
-                {item.type === 'SKETCHBOOK DRAFT' ? 'sketch' : 'film / 35mm'}
+            {/* Hairline Divider */}
+            <div className="w-full h-[0.5px] bg-[var(--ink-faint)]/30" />
+
+            {/* Minimal Caption Footer (Title only) */}
+            <div className="flex justify-between items-baseline px-0.5 pt-0.5">
+              <span className="font-serif italic text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate">
+                {item.title}
               </span>
             </div>
           </div>
