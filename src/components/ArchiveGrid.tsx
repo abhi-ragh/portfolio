@@ -1,112 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import React, { useState } from 'react';
 import Lightbox, { GalleryItem } from './Lightbox';
+import type { ArchiveImage } from '../lib/types';
+import { fallbackImages } from '../lib/archive';
 
-const fullArchiveItems: GalleryItem[] = [
-  {
-    id: '1',
-    src: '/kochi_port_monsoon.jpg',
-    title: 'Kochi Port & Monsoon Waves',
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: '2',
-    src: '/mountain_sketch.jpg',
-    title: 'Western Ghats Contour Study',
-    type: 'SKETCHBOOK DRAFT'
-  },
-  {
-    id: '3',
-    src: '/street_rain.jpg',
-    title: 'MG Road at Twilight',
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: '4',
-    src: '/brutalist_sketch.jpg',
-    title: 'Structural Elevation Study',
-    type: 'SKETCHBOOK DRAFT'
-  },
-  {
-    id: '5',
-    src: '/palm_photo.jpg',
-    title: 'Monsoon Dew & Palms',
-    type: 'FILM PHOTOGRAPHY'
-  }
-];
+interface ArchiveGridProps {
+  items?: ArchiveImage[];
+}
 
-export const ArchiveGrid: React.FC = () => {
-  const [items, setItems] = useState<GalleryItem[]>(fullArchiveItems);
+export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages }) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
-  useEffect(() => {
-    async function loadArchiveData() {
-      if (!supabase) return;
-
-      try {
-        const { data: dbItems, error: dbError } = await supabase
-          .from('gallery_items')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (!dbError && dbItems && dbItems.length > 0) {
-          const formatted: GalleryItem[] = dbItems.map((row: any) => {
-            const { data } = supabase!.storage
-              .from('gallery')
-              .getPublicUrl(row.filename);
-
-            return {
-              id: row.id,
-              src: data.publicUrl,
-              title: row.title,
-              type: row.type === 'sketch' ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
-            };
-          });
-
-          setItems(formatted);
-        } else {
-          const { data: files, error: storageError } = await supabase.storage
-            .from('gallery')
-            .list();
-
-          if (!storageError && files && files.length > 0) {
-            const validFiles = files.filter(f => f.name !== '.emptyFolderPlaceholder');
-            if (validFiles.length > 0) {
-              const formatted: GalleryItem[] = validFiles.map((file) => {
-                const { data } = supabase!.storage
-                  .from('gallery')
-                  .getPublicUrl(file.name);
-
-                const cleanTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-                const isSketch = file.name.toLowerCase().includes('sketch');
-
-                return {
-                  id: file.id || file.name,
-                  src: data.publicUrl,
-                  title: cleanTitle,
-                  type: isSketch ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
-                };
-              });
-
-              setItems(formatted);
-            }
-          }
-        }
-      } catch (err) {
-        console.warn('Supabase fetch notice: using local fallback media', err);
-      }
-    }
-
-    loadArchiveData();
-  }, []);
+  const displayItems: GalleryItem[] = items.map(item => ({
+    id: item.id,
+    src: item.imageUrl,
+    title: item.caption,
+    type: item.type
+  }));
 
   return (
     <div className="w-full flex flex-col gap-12">
       {/* Borderless Broadsheet Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-        {items.map((item, idx) => (
+        {displayItems.map((item) => (
           <div
-            key={item.id || idx}
+            key={item.id}
             className="flex flex-col gap-3 group cursor-pointer"
             onClick={() => setSelectedItem(item)}
           >

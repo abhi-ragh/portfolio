@@ -1,35 +1,21 @@
 import React, { useState } from 'react';
 import Lightbox, { GalleryItem } from './Lightbox';
+import type { ArchiveImage } from '../lib/types';
+import { fallbackImages } from '../lib/archive';
 
-const curatedPreviewItems: GalleryItem[] = [
-  {
-    id: '1',
-    src: '/kochi_port_monsoon.jpg',
-    title: 'Kochi Port',
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: '2',
-    src: '/mountain_sketch.jpg',
-    title: 'Western Ghats',
-    type: 'SKETCHBOOK DRAFT'
-  },
-  {
-    id: '3',
-    src: '/street_rain.jpg',
-    title: 'MG Road',
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: '4',
-    src: '/brutalist_sketch.jpg',
-    title: 'Elevation Study',
-    type: 'SKETCHBOOK DRAFT'
-  }
-];
+interface SelectedFramesProps {
+  items?: ArchiveImage[];
+}
 
-export const SelectedFrames: React.FC = () => {
+export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallbackImages.filter(i => i.homepage) }) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+
+  const displayItems: GalleryItem[] = items.map(item => ({
+    id: item.id,
+    src: item.imageUrl,
+    title: item.caption,
+    type: item.type
+  }));
 
   return (
     <section id="selected-frames" className="w-full px-6 md:px-10 py-12 md:py-16 border-b border-[var(--ink-faint)]/40">
@@ -37,10 +23,10 @@ export const SelectedFrames: React.FC = () => {
       <div className="flex justify-between items-baseline mb-8">
         <div className="flex items-baseline gap-4">
           <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
-            <span className="bracket">[</span> 02 / SELECTED FRAMES <span class="bracket">]</span>
+            <span className="bracket">[</span> 02 / SELECTED FRAMES <span className="bracket">]</span>
           </span>
           <span className="font-serif italic text-[13px] text-[var(--ink-muted)] hidden sm:inline">
-            A curated preview of 4 frames
+            A curated preview of {displayItems.length} frames
           </span>
         </div>
 
@@ -56,7 +42,7 @@ export const SelectedFrames: React.FC = () => {
 
       {/* Borderless Compact Preview Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-        {curatedPreviewItems.map((item) => (
+        {displayItems.map((item) => (
           <div
             key={item.id}
             className="flex flex-col gap-2.5 group cursor-pointer"

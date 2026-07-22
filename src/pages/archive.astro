@@ -4,6 +4,9 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import ArchiveGrid from '../components/ArchiveGrid';
 import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
+import { getArchiveImages } from '../lib/archive';
+
+const archiveItems = await getArchiveImages();
 ---
 
 <Base title="Archive — Complete Collection | abhiragh a r">
@@ -30,7 +33,7 @@ import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
         </div>
 
         {/* Editorial Archive Grid */}
-        <ArchiveGrid client:load />
+        <ArchiveGrid client:load items={archiveItems} />
       </main>
       <Footer />
     </div>
