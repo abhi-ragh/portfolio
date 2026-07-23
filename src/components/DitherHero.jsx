@@ -20,6 +20,10 @@
  */
 
 import { useEffect, useRef } from 'react';
+import HeroTicker from './HeroTicker.jsx';
+import HeroGlyph from './HeroGlyph.jsx';
+
+
 
 const BAYER_4X4 = [
   [ 0,  8,  2, 10],
@@ -145,6 +149,11 @@ export default function DitherHero({ animated = true }) {
         }}
       />
 
+      {/* HeroGlyph & HeroTicker mounted at bottom of hero zone */}
+      <HeroGlyph />
+      <HeroTicker />
+
+
       {/*
         Hero text — positioned in the lower portion where the dither
         has dissolved. Text sits on clean dark, not fighting the dots.
@@ -162,7 +171,7 @@ export default function DitherHero({ animated = true }) {
         <h1
           style={{
             fontFamily:     "'Lora', serif",
-            fontSize:       'clamp(28px, 4vw, 46px)',
+            fontSize:       'clamp(36px, 5vw, 58px)',
             fontWeight:     400,
             lineHeight:     1.2,
             color:          '#E8E4DC',

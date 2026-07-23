@@ -1,47 +1,38 @@
 ---
 ---
-<section id="about" class="w-full px-6 md:px-10 pt-4 pb-16 md:pb-24">
-  {/* Tier 1: Teaser Header & Primary Sentence (Sits in initial 20vh fold) */}
-  <div class="flex flex-col gap-3 mb-4">
-    <div>
-      <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+<section id="about" class="sec-relative w-full px-6 md:px-10 pt-[4rem] pb-[3rem] border-b border-[var(--rule)]">
+  <!-- Oversized Section Background Number 01 (Faint 0.035 Opacity) -->
+  <span class="section-bg-number" aria-hidden="true">01</span>
+
+  <!-- Single Column Container (max-width: 560px, left-aligned) -->
+  <div class="relative z-10 w-full max-w-[560px] flex flex-col">
+    <!-- Small Monospace Label -->
+    <div class="mb-6">
+      <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
         <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
       </span>
     </div>
-    <p class="font-serif italic text-[16px] md:text-[18px] text-[var(--ink)] leading-relaxed max-w-3xl">
-      I spend my days keeping cloud infrastructure from falling apart &mdash; AWS, mostly, for clients who can't afford downtime.
-    </p>
-  </div>
 
-  {/* Tier 2: Expanded Content (Unfolds as user scrolls down) */}
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start mt-8 pt-8 border-t border-[var(--ink-faint)]/20">
-    <!-- Remaining Bio Prose Column (Left 65% ~ 8 cols) -->
-    <div class="md:col-span-8 flex flex-col gap-5 font-serif text-[15px] text-[var(--ink-muted)] leading-[1.85]">
-      <p>
-        Outside that, I shoot film and fill sketchbooks. Both are about noticing things slowly, which is the opposite of what I do at work. The tension is the point.
-      </p>
-      <p>
-        This is my corner of the internet. No personal brand, no funnel. Just the work and the things I find interesting.
-      </p>
-    </div>
+    <!-- Display Line -->
+    <h2 class="type-display mb-[2rem]">
+      An uneventful life.
+    </h2>
 
-    <!-- Tabular Metadata Column (Right 35% ~ 4 cols) -->
-    <div class="md:col-span-4 pl-0 md:pl-8 border-l-0 md:border-l border-[var(--ink-faint)]/40 flex flex-col gap-6">
-      <div class="font-mono text-[11px] flex flex-col gap-4">
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--ink-faint)] font-medium">location</span>
-          <span class="text-[var(--ink)]">kochi, kerala</span>
-        </div>
+    <!-- Poem Block (IBM Plex Mono, 13px, --ink-muted, line-height 1.9, padding-left 1.5rem, 1.4rem stanza gap) -->
+    <div class="pl-[1.5rem] flex flex-col gap-[1.4rem] font-mono text-[13px] text-[var(--ink-muted)] leading-[1.9] font-normal not-italic">
+      <div>
+        Unreadable logs<br />
+        Braindead AI
+      </div>
 
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--ink-faint)] font-medium">day job</span>
-          <span class="text-[var(--ink)]">cloud / devops @ saints & masters</span>
-        </div>
+      <div>
+        A Phone Camera<br />
+        A Cup of Coffee<br />
+        And a dash of colour
+      </div>
 
-        <div class="flex flex-col gap-1">
-          <span class="text-[var(--ink-faint)] font-medium">currently</span>
-          <span class="text-[var(--ink)]">shooting 35mm, reading, drawing</span>
-        </div>
+      <div>
+        Welcome to my corner of the internet
       </div>
     </div>
   </div>

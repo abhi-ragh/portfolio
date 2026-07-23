@@ -1,115 +1,65 @@
 ---
-const experiences = [
-  {
-    company: "Saints & Masters",
-    location: "Kochi, Kerala, India",
-    totalDuration: "May 2026 – Present",
-    roles: [
-      {
-        title: "Junior Engineer - Cloud",
-        type: "Full-time • Hybrid",
-        period: "May 2026 – Present",
-        description: "Managing AWS environments, infrastructure-as-code automation, and Linux server reliability for client systems. Focus centers on quiet precision, pipeline predictability, and automation.",
-        skills: ["AWS", "Terraform", "Python", "Linux", "Docker", "GitLab CI/CD"]
-      },
-      {
-        title: "DevOps Intern",
-        type: "Internship • On-site",
-        period: "Apr 2026",
-        description: "Assisted with cloud infrastructure setups, containerization, and monitoring server health across Linux environments."
-      }
-    ]
-  },
-  {
-    company: "Nubinix Technologies Pvt Ltd",
-    location: "Kochi, Kerala, India",
-    totalDuration: "Jan 2026 – Mar 2026",
-    roles: [
-      {
-        title: "DevOps Intern",
-        type: "Internship • On-site",
-        period: "Jan 2026 – Mar 2026",
-        description: "Worked on automated CI/CD pipeline deployments, container orchestration, and server administration tasks."
-      }
-    ]
-  },
-  {
-    company: "Bridge Global",
-    location: "Kochi, Kerala, India",
-    totalDuration: "Jun 2025 – Dec 2025",
-    roles: [
-      {
-        title: "Associate System Engineer",
-        type: "Internship • On-site",
-        period: "Jun 2025 – Dec 2025",
-        description: "Worked on practical tasks involving Linux/Windows setup, troubleshooting, hosting simple web servers, and configuring MySQL. Gained experience with Docker, Git workflows, and basic CI/CD pipelines.",
-        skills: ["Linux", "Windows", "MySQL", "Docker", "Git", "CI/CD"]
-      }
-    ]
-  }
-];
 ---
+<section id="experience" class="sec-relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)]">
+  <!-- Oversized Background Number 03 -->
+  <span class="section-bg-number" aria-hidden="true">03</span>
 
-<section id="experience" class="w-full px-6 md:px-10 py-12 md:py-16">
-  {/* Section Header */}
-  <div class="flex flex-col gap-2 mb-12">
+  <div class="relative z-10 w-full flex flex-col gap-6">
+    <!-- Section Label -->
     <div>
-      <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+      <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
         <span class="bracket">[</span> 03 / EXPERIENCE <span class="bracket">]</span>
       </span>
     </div>
-  </div>
 
-  {/* Experience Timeline Rows */}
-  <div class="flex flex-col gap-12">
-    {experiences.map((exp) => (
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 pb-10 border-b border-[var(--ink-faint)]/20 last:border-b-0 last:pb-0">
-        {/* Left Column: Company & Metadata */}
-        <div class="md:col-span-4 flex flex-col gap-1">
-          <h3 class="font-serif italic text-[20px] text-[var(--ink)] font-normal leading-tight">
-            {exp.company}
-          </h3>
-          <span class="font-mono text-[11px] text-[var(--ink-faint)]">
-            {exp.location}
-          </span>
-          <span class="font-mono text-[10px] text-[var(--ink-faint)]/70 uppercase tracking-[0.08em] mt-1">
-            {exp.totalDuration}
+    <!-- Single Employer Structure (Saints & Masters ONLY) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start pt-2">
+      <!-- Left Column: Company & Location -->
+      <div class="md:col-span-4 flex flex-col gap-1">
+        <h3 class="font-serif italic text-[20px] text-[var(--ink)] font-normal leading-tight">
+          Saints & Masters
+        </h3>
+        <span class="font-mono text-[11px] text-[var(--ink-faint)]">
+          Kochi, Kerala
+        </span>
+      </div>
+
+      <!-- Right Column: Current Role, Period, Description, Tech Tags & External Link -->
+      <div class="md:col-span-8 flex flex-col gap-4">
+        <div class="flex flex-wrap justify-between items-baseline gap-2">
+          <h4 class="font-serif italic text-[18px] text-[var(--ink)]">
+            Junior Engineer &mdash; Cloud
+          </h4>
+          <span class="font-mono text-[10px] text-[var(--ink-faint)] uppercase tracking-[0.08em]">
+            May 2026 &mdash; Present
           </span>
         </div>
 
-        {/* Right Column: Roles & Descriptions */}
-        <div class="md:col-span-8 flex flex-col gap-8">
-          {exp.roles.map((role) => (
-            <div class="flex flex-col gap-3 relative pl-4 border-l border-[var(--ink-faint)]/40">
-              {/* Bullet Node */}
-              <div class="absolute -left-[4.5px] top-[6px] w-[8px] h-[8px] rounded-full bg-[var(--ink-faint)]/60" />
+        <p class="font-serif text-[15px] text-[var(--ink-muted)] leading-[1.85]">
+          Managing AWS environments, infrastructure-as-code automation, and Linux reliability for MSP clients.
+        </p>
 
-              <div class="flex flex-wrap justify-between items-baseline gap-2">
-                <h4 class="font-serif italic text-[17px] text-[var(--ink)]">
-                  {role.title}
-                </h4>
-                <span class="font-mono text-[10px] text-[var(--ink-faint)] uppercase tracking-[0.08em]">
-                  {role.period} &bull; {role.type}
-                </span>
-              </div>
-
-              <p class="font-serif text-[14px] text-[var(--ink-muted)] leading-relaxed">
-                {role.description}
-              </p>
-
-              {role.skills && role.skills.length > 0 && (
-                <div class="flex flex-wrap gap-2 pt-2">
-                  {role.skills.map((skill) => (
-                    <span class="tech-tag font-mono text-[10px] text-[var(--ink-faint)] border border-[var(--ink-faint)]/40 px-2 py-0.5 select-none bg-[#12110E]/60 transition-colors">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+        <!-- Tech Tags -->
+        <div class="flex flex-wrap gap-2 pt-2">
+          {["AWS", "Terraform", "Python", "Linux", "Docker"].map((skill) => (
+            <span class="tech-tag font-mono text-[10px] text-[var(--ink-faint)] border border-[var(--ink-faint)]/40 px-2.5 py-1 select-none bg-[#12110E]/60 transition-colors">
+              {skill}
+            </span>
           ))}
         </div>
+
+        <!-- External LinkedIn Link -->
+        <div class="pt-4">
+          <a
+            href="https://linkedin.com/in/abhiragh"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-mono text-[10px] text-[var(--accent)] hover:underline tracking-[0.08em]"
+          >
+            Full experience &rarr;
+          </a>
+        </div>
       </div>
-    ))}
+    </div>
   </div>
 </section>

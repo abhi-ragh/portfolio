@@ -1,8 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
-import LandingSpread from '../components/LandingSpread.astro';
-import AboutContinuation from '../components/AboutContinuation.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
 import SelectedFrames from '../components/SelectedFrames';
 import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
@@ -27,8 +27,8 @@ const homepageItems = await getHomepageImages();
     <div class="relative z-30 w-full">
       <Nav />
       <main class="w-full">
-        <LandingSpread />
-        <AboutContinuation />
+        <Hero />
+        <About />
         <SelectedFrames client:load items={homepageItems} />
         <Experience />
         <Work />

@@ -10,61 +10,95 @@ interface SelectedFramesProps {
 export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items = fallbackImages.filter(i => i.homepage) }) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
-  const displayItems: GalleryItem[] = items.map(item => ({
+  // Take exactly 4 items for the homepage asymmetric grid
+  const gridItems: GalleryItem[] = items.slice(0, 4).map(item => ({
     id: item.id,
     src: item.imageUrl,
     title: item.caption,
     type: item.type
   }));
 
+  const item1 = gridItems[0] || { id: '1', src: '/kochi_port_monsoon.jpg', title: 'Monsoon, Western Ghats', type: 'FILM PHOTOGRAPHY' };
+  const item2 = gridItems[1] || { id: '2', src: '/mountain_sketch.jpg', title: 'Brutalist Study', type: 'SKETCHBOOK DRAFT' };
+  const item3 = gridItems[2] || { id: '3', src: '/street_rain.jpg', title: 'Kochi Port, Dusk', type: 'FILM PHOTOGRAPHY' };
+  const item4 = gridItems[3] || { id: '4', src: '/brutalist_sketch.jpg', title: 'Contour Study No. 7', type: 'SKETCHBOOK DRAFT' };
+
   return (
-    <section id="selected-frames" className="w-full px-6 md:px-10 py-12 md:py-16">
-      {/* Section Header with Archive CTA in same row */}
-      <div className="flex justify-between items-baseline mb-8">
-        <div className="flex items-baseline gap-4">
-          <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
-            <span className="bracket">[</span> 02 / SELECTED FRAMES <span class="bracket">]</span>
-          </span>
-          <span className="font-serif italic text-[13px] text-[var(--ink-muted)] hidden sm:inline">
-            A curated preview of {displayItems.length} frames
+    <section id="gallery" className="sec-relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)]">
+      {/* Oversized Background Number 02 */}
+      <span className="section-bg-number" aria-hidden="true">02</span>
+
+      <div className="relative z-10 w-full">
+        {/* Section Label */}
+        <div className="mb-6">
+          <span className="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
+            <span className="bracket">[</span> 02 / GALLERY <span class="bracket">]</span>
           </span>
         </div>
 
-        {/* Compact Editorial Link */}
-        <a
-          href="/archive"
-          className="font-serif italic text-[14px] text-[var(--ink)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5 group"
-        >
-          <span>View Collection</span>
-          <span className="font-mono text-[12px] group-hover:translate-x-1 transition-transform">&rarr;</span>
-        </a>
-      </div>
-
-      {/* Borderless Compact Preview Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-        {displayItems.map((item) => (
+        {/* Asymmetric Editorial Grid (55fr 43fr layout with 1px rule gap) */}
+        <div className="grid grid-cols-1 md:grid-cols-[55fr_43fr] gap-[1px] bg-[var(--rule)] -mx-6 md:-mx-10">
+          {/* Item 1: Large top-left with hanging title */}
           <div
-            key={item.id}
-            className="flex flex-col gap-2.5 group cursor-pointer"
-            onClick={() => setSelectedItem(item)}
+            className="gitem relative cursor-pointer pb-[1.8em]"
+            onClick={() => setSelectedItem(item1)}
           >
-            {/* Image Container */}
-            <div className="w-full h-[140px] md:h-[160px] overflow-hidden bg-[#141310]">
-              <img
-                src={item.src}
-                alt={item.title}
-                className="w-full h-full object-cover block saturate-[85%] contrast-[95%] group-hover:saturate-100 group-hover:contrast-100 transition-all duration-300"
-              />
+            <div className="w-full h-[260px] md:h-[320px] overflow-hidden bg-[#161512]">
+              <img src={item1.src} alt={item1.title} className="w-full h-full object-cover block hover:scale-[1.02] transition-transform duration-300" />
             </div>
+            <span className="hanging-title font-serif italic text-[12px] text-[var(--ink)] absolute -bottom-[1.3em] left-0 leading-none z-10 px-6 md:px-10">
+              {item1.title}
+            </span>
+          </div>
 
-            {/* Compact Caption Footer (Title only) */}
-            <div className="flex justify-between items-baseline px-0.5 pt-0.5">
-              <span className="font-serif italic text-[13px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate">
-                {item.title}
-              </span>
+          {/* Item 2: Small top-right with offset caption */}
+          <div
+            className="gitem relative cursor-pointer"
+            onClick={() => setSelectedItem(item2)}
+          >
+            <div className="w-full h-[180px] md:h-[220px] overflow-hidden bg-[#161512]">
+              <img src={item2.src} alt={item2.title} className="w-full h-full object-cover block hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <div className="offset-caption pt-2 pl-6 pr-4 flex justify-between items-baseline">
+              <span className="font-serif italic text-[11px] text-[var(--ink-muted)] truncate max-w-[65%]">{item2.title}</span>
+              <span className="font-mono text-[9px] text-[var(--ink-faint)] uppercase tracking-[0.1em]">{item2.type === 'SKETCHBOOK DRAFT' ? 'SKETCH' : 'FILM'}</span>
             </div>
           </div>
-        ))}
+
+          {/* Item 3: Small bottom-left with offset caption */}
+          <div
+            className="gitem relative cursor-pointer"
+            onClick={() => setSelectedItem(item3)}
+          >
+            <div className="w-full h-[180px] md:h-[220px] overflow-hidden bg-[#161512]">
+              <img src={item3.src} alt={item3.title} className="w-full h-full object-cover block hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <div className="offset-caption pt-2 pl-6 pr-4 flex justify-between items-baseline">
+              <span className="font-serif italic text-[11px] text-[var(--ink-muted)] truncate max-w-[65%]">{item3.title}</span>
+              <span className="font-mono text-[9px] text-[var(--ink-faint)] uppercase tracking-[0.1em]">{item3.type === 'SKETCHBOOK DRAFT' ? 'SKETCH' : 'FILM'}</span>
+            </div>
+          </div>
+
+          {/* Item 4: Large bottom-right with hanging title */}
+          <div
+            className="gitem relative cursor-pointer pb-[1.8em]"
+            onClick={() => setSelectedItem(item4)}
+          >
+            <div className="w-full h-[260px] md:h-[320px] overflow-hidden bg-[#161512]">
+              <img src={item4.src} alt={item4.title} className="w-full h-full object-cover block hover:scale-[1.02] transition-transform duration-300" />
+            </div>
+            <span className="hanging-title font-serif italic text-[12px] text-[var(--ink)] absolute -bottom-[1.3em] left-0 leading-none z-10 px-6 md:px-10">
+              {item4.title}
+            </span>
+          </div>
+        </div>
+
+        {/* Footer Link: View Collection → */}
+        <div className="text-right pt-10 font-mono text-[11px] text-[var(--ink-muted)]">
+          <a href="/archive" className="hover:text-[var(--ink)] transition-colors">
+            View Collection &rarr;
+          </a>
+        </div>
       </div>
 
       {/* Lightbox Modal */}
