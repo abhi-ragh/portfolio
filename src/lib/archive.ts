@@ -84,9 +84,16 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
         imageUrl = fileItem.file?.url || fileItem.external?.url || '';
       }
 
-      // Checkboxes
-      const homepage = props.Homepage?.checkbox ?? false;
-      const published = props.Published?.checkbox ?? true;
+      // Checkboxes (support Homepage, homepage, Featured, featured; default true if property unconfigured)
+      const homepage = props.Homepage?.checkbox ??
+                      props.homepage?.checkbox ??
+                      props.Featured?.checkbox ??
+                      props.featured?.checkbox ??
+                      true;
+
+      const published = props.Published?.checkbox ??
+                        props.published?.checkbox ??
+                        true;
 
       // Determine type hint based on caption keywords
       const isSketch = caption.toLowerCase().includes('sketch') ||
@@ -116,7 +123,9 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
 
 export async function getHomepageImages(): Promise<ArchiveImage[]> {
   const allImages = await getArchiveImages();
-  // Filter Published == true AND Homepage == true, max 5 items
+  // Filter Published == true AND Homepage == true
   const homepageItems = allImages.filter(item => item.homepage);
-  return homepageItems.length > 0 ? homepageItems.slice(0, 5) : allImages.slice(0, 4);
+  // Return first six images (per spec v1.0)
+  return homepageItems.length >= 6 ? homepageItems.slice(0, 6) : allImages.slice(0, 6);
 }
+
