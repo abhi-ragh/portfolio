@@ -4,9 +4,6 @@
  * Fetches HN top 10 story titles and runs them as a seamless
  * infinite marquee at the bottom of the hero, interleaved with
  * the live IST time stamp.
- *
- * Positioned above the HeroGlyph in the vertical stack:
- * Hero Tagline -> Ticker -> Glyph
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -117,7 +114,7 @@ export default function HeroTicker() {
     <div
       style={{
         position: 'absolute',
-        bottom: '3.5rem',
+        bottom: '2.5rem',
         left: 0,
         right: 0,
         height: '52px',

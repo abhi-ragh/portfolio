@@ -21,7 +21,7 @@
 
 import { useEffect, useRef } from 'react';
 import HeroTicker from './HeroTicker.jsx';
-import HeroGlyph from './HeroGlyph.jsx';
+
 
 
 
@@ -149,9 +149,9 @@ export default function DitherHero({ animated = true }) {
         }}
       />
 
-      {/* HeroGlyph & HeroTicker mounted at bottom of hero zone */}
-      <HeroGlyph />
+      {/* HeroTicker mounted at bottom of hero zone */}
       <HeroTicker />
+
 
 
       {/*
