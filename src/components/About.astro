@@ -1,56 +1,52 @@
 ---
-import { getAboutImage } from '../lib/archive';
-import AboutPhoto from './AboutPhoto';
-
-let aboutImageUrl: string | null = null;
-try {
-  aboutImageUrl = await getAboutImage();
-} catch (e) {
-  aboutImageUrl = null;
-}
 ---
 
 <section id="about" class="relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)] overflow-hidden">
   <!-- Oversized Section Background Number 01 -->
   <span class="section-bg-number" aria-hidden="true">01</span>
 
-  <div class="relative z-10 w-full about-inner">
-    <!-- Left Column: [ 01 / ABOUT ] label + display line + poem (Untouched text & sizing) -->
-    <div class="flex flex-col">
-      <!-- Small Monospace Label -->
-      <div>
-        <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
-          <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
-        </span>
-      </div>
-
-      <!-- Display Line -->
-      <h2 class="font-serif italic text-[clamp(60px,9vw,100px)] font-normal leading-[1.0] tracking-tight text-[var(--ink)] mt-[2.5rem] mb-[2.2rem]">
-        An uneventful life.
-      </h2>
-
-      <!-- Poem Block -->
-      <div class="pl-[1.5rem] max-w-[420px] flex flex-col font-mono text-[15px] text-[#A09890] leading-[2.0] font-normal not-italic">
-        <div class="mb-[1.4rem]">
-          Unreadable logs<br />
-          Braindead AI
-        </div>
-
-        <div class="mb-[1.4rem]">
-          A Phone Camera<br />
-          A Cup of Coffee<br />
-          And a dash of colour
-        </div>
-
-        <div>
-          Welcome to my corner of the internet
-        </div>
-      </div>
+  <!-- Full Width Content Container -->
+  <div class="relative z-10 w-full flex flex-col">
+    <!-- Small Monospace Label -->
+    <div>
+      <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
+        <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
+      </span>
     </div>
 
-    <!-- Right Column: React Island Photo with Left-Fade Mask & Fade Transition -->
-    <div class="w-full h-full">
-      <AboutPhoto client:load initialUrl={aboutImageUrl} />
+    <!-- Display Line (Left-aligned, clamp(60px, 9vw, 100px)) -->
+    <h2 class="font-serif italic text-[clamp(60px,9vw,100px)] font-normal leading-[1.0] tracking-tight text-[var(--ink)] mt-[2.5rem] mb-[2.2rem]">
+      An uneventful life.
+    </h2>
+
+    <!-- Poem Block (IBM Plex Mono, 15px, #C4BDB5, padding-left: 2.5rem, line-height: 1.9) -->
+    <div class="pl-[2.5rem] flex flex-col font-mono text-[15px] text-[#C4BDB5] leading-[1.9] font-normal not-italic">
+      <div class="mb-[1.2rem]">
+        Everyday Errors.<br />
+        Endless Logs.<br />
+        Meaningless Metrics.
+      </div>
+
+      <div class="mb-[1.2rem]">
+        Logic-less LLMs.<br />
+        Preposterous Prompts.
+      </div>
+
+      <div class="mb-[1.2rem]">
+        Artificial Idiocracy.<br />
+        Natural Curiosity.
+      </div>
+
+      <div class="mb-[1.2rem]">
+        A Phone.<br />
+        A Camera.<br />
+        A Cup of Coffee.<br />
+        A Dash of Colour.
+      </div>
+
+      <div>
+        Welcome to my corner of the internet.
+      </div>
     </div>
   </div>
 </section>
