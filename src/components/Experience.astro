@@ -1,10 +1,10 @@
 ---
 ---
-<section id="experience" class="sec-relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)]">
+<section id="experience" class="relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)] overflow-hidden">
   <!-- Oversized Background Number 02 -->
   <span class="section-bg-number" aria-hidden="true">02</span>
 
-  <div class="relative z-10 w-full flex flex-col gap-6">
+  <div class="relative z-10 w-full flex flex-col">
     <!-- Section Label -->
     <div>
       <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
@@ -12,51 +12,51 @@
       </span>
     </div>
 
-    <!-- Single Employer Structure (Saints & Masters ONLY) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start pt-2">
-      <!-- Left Column: Company & Location -->
-      <div class="md:col-span-4 flex flex-col gap-1">
-        <h3 class="font-serif italic text-[20px] text-[var(--ink)] font-normal leading-tight">
+    <!-- Experience Grid (240px 1fr with 0.5px border-right rule on left column) -->
+    <div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-0 mt-[1.5rem]">
+      <!-- Left Column: Employer Name, Location, Date -->
+      <div class="md:pr-[2rem] md:border-r border-[var(--rule)] pb-4 md:pb-0">
+        <div class="font-serif text-[22px] font-normal text-[var(--ink)] mt-[1.2rem] mb-[0.3rem]">
           Saints & Masters
-        </h3>
-        <span class="font-mono text-[11px] text-[var(--ink-faint)]">
-          Kochi, Kerala
-        </span>
+        </div>
+        <div class="font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.08em] uppercase">
+          KOCHI, KERALA
+        </div>
+        <div class="font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.08em] uppercase mt-[0.25rem]">
+          MAY 2026 &mdash; PRESENT
+        </div>
       </div>
 
-      <!-- Right Column: Current Role, Period, Description, Tech Tags & External Link -->
-      <div class="md:col-span-8 flex flex-col gap-4">
-        <div class="flex flex-wrap justify-between items-baseline gap-2">
-          <h4 class="font-serif italic text-[18px] text-[var(--ink)]">
-            Junior Engineer &mdash; Cloud
-          </h4>
-          <span class="font-mono text-[10px] text-[var(--ink-faint)] uppercase tracking-[0.08em]">
-            May 2026 &mdash; Present
-          </span>
+      <!-- Right Column: Role Title, Body, Tech Tags, Link -->
+      <div class="md:pl-[2rem] flex flex-col">
+        <!-- Role Title (Lora italic 18px) -->
+        <div class="font-serif italic text-[18px] text-[var(--ink)] mt-2 md:mt-[1.2rem] mb-[0.8rem]">
+          Junior Engineer &mdash; Cloud
         </div>
 
-        <p class="font-serif text-[15px] text-[var(--ink-muted)] leading-[1.85]">
-          Managing AWS environments, infrastructure-as-code automation, and Linux reliability for MSP clients.
-        </p>
+        <!-- Body Description -->
+        <div class="font-serif text-[14px] leading-[1.8] text-[var(--ink-muted)] mb-[1.2rem]">
+          Managing AWS environments, infrastructure-as-code automation, and Linux reliability for MSP clients. Focus on quiet precision, pipeline predictability, and automation.
+        </div>
 
         <!-- Tech Tags -->
-        <div class="flex flex-wrap gap-2 pt-2">
-          {["AWS", "Terraform", "Python", "Linux", "Docker"].map((skill) => (
-            <span class="tech-tag font-mono text-[10px] text-[var(--ink-faint)] border border-[var(--ink-faint)]/40 px-2.5 py-1 select-none bg-[#12110E]/60 transition-colors">
+        <div class="flex flex-wrap gap-[6px] mb-[1.2rem]">
+          {["AWS", "Terraform", "Python", "Linux", "Docker", "GitLab CI/CD"].map((skill) => (
+            <span class="tech-tag font-mono text-[9px] text-[var(--ink-faint)] border border-[var(--ink-faint)] px-[8px] py-[3px] tracking-[0.06em] uppercase select-none">
               {skill}
             </span>
           ))}
         </div>
 
-        <!-- External LinkedIn Link -->
-        <div class="pt-4">
+        <!-- Link -->
+        <div>
           <a
             href="https://linkedin.com/in/abhiragh"
             target="_blank"
             rel="noopener noreferrer"
-            class="font-mono text-[10px] text-[var(--accent)] hover:underline tracking-[0.08em]"
+            class="font-mono text-[10px] text-[var(--accent)] tracking-[0.06em] hover:underline"
           >
-            Full experience &rarr;
+            Full experience &rarr; linkedin.com/in/abhiragh
           </a>
         </div>
       </div>

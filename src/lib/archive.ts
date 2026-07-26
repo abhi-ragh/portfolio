@@ -129,3 +129,67 @@ export async function getHomepageImages(): Promise<ArchiveImage[]> {
   return homepageItems.length >= 6 ? homepageItems.slice(0, 6) : allImages.slice(0, 6);
 }
 
+export async function getAboutImage(): Promise<string | null> {
+  // 1. Notion Database query for page tagged with About checkbox
+  if (notion && NOTION_DATABASE_ID) {
+    try {
+      let pages: any[] = [];
+      if (typeof (notion as any).dataSources?.query === 'function') {
+        const res = await (notion as any).dataSources.query({ data_source_id: NOTION_DATABASE_ID });
+        pages = res.results || [];
+      } else if (typeof (notion as any).databases?.query === 'function') {
+        const res = await (notion as any).databases.query({ database_id: NOTION_DATABASE_ID });
+        pages = res.results || [];
+      } else {
+        const res = await (notion as any).search({});
+        pages = (res.results || []).filter((item: any) => item.object === 'page');
+      }
+
+      for (const page of pages) {
+        const props = page.properties || {};
+        const about = props.About?.checkbox ?? props.about?.checkbox ?? props['About Photo']?.checkbox ?? props.About_Photo?.checkbox ?? false;
+        const published = props.Published?.checkbox ?? props.published?.checkbox ?? true;
+
+        if (about && published) {
+          const filesObj = props.Images?.files || props.Image?.files || props.Files?.files || [];
+          if (filesObj.length > 0) {
+            const fileItem = filesObj[0];
+            const imageUrl = fileItem.file?.url || fileItem.external?.url || '';
+            if (imageUrl) return imageUrl;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Notion About image query notice:', error);
+    }
+  }
+
+  // 2. Supabase query fallback for gallery_items with about_photo == true
+  const supabaseUrl = typeof process !== 'undefined' && process.env ? process.env.SUPABASE_URL : undefined;
+  const supabaseKey = typeof process !== 'undefined' && process.env ? process.env.SUPABASE_ANON_KEY : undefined;
+
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const { data } = await supabase
+        .from('gallery_items')
+        .select('filename')
+        .eq('about_photo', true)
+        .single();
+
+      if (data?.filename) {
+        const { data: publicData } = supabase
+          .storage
+          .from('gallery')
+          .getPublicUrl(data.filename);
+        if (publicData?.publicUrl) return publicData.publicUrl;
+      }
+    } catch (error) {
+      console.warn('Supabase About image query notice:', error);
+    }
+  }
+
+  return null;
+}
+

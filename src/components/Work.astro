@@ -1,6 +1,5 @@
 ---
 import { getHomepageProjects } from '../lib/projects';
-import ProjectCard from './ProjectCard.astro';
 
 let projects = [];
 try {
@@ -8,43 +7,72 @@ try {
 } catch (e) {
   projects = [];
 }
+
+const sampleProject = {
+  id: 'sample-1',
+  title: 'IAM Audit Tool',
+  description: 'Multi-script Python governance audit tool for MSP readiness.',
+  github: 'https://github.com/abhiragh',
+  tags: 'PYTHON · AWS'
+};
+
+const displayProjects = projects.length > 0 ? projects : [sampleProject];
 ---
 
-<section id="projects" class="sec-relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)]">
+<section id="projects" class="relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)] overflow-hidden">
   <!-- Oversized Background Number 03 -->
   <span class="section-bg-number" aria-hidden="true">03</span>
 
-  <div class="relative z-10 w-full flex flex-col gap-6 text-left">
-    <!-- Header -->
-    <div class="flex justify-between items-baseline">
+  <div class="relative z-10 w-full flex flex-col text-left">
+    <!-- Header Row -->
+    <div class="flex justify-between items-baseline mb-[0.5rem]">
       <div>
         <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
           <span class="bracket">[</span> 03 / PROJECTS <span class="bracket">]</span>
         </span>
       </div>
 
-      {projects.length > 0 && (
-        <a
-          href="/projects"
-          class="font-mono text-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors tracking-[0.08em]"
-        >
-          View All Projects &rarr;
-        </a>
-      )}
+      <a
+        href="/projects"
+        class="font-mono text-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors tracking-[0.06em]"
+      >
+        View All Projects &rarr;
+      </a>
     </div>
 
-    {projects.length === 0 ? (
-      /* Reframed Teaser State (Option B per Patch Spec Section 5) */
-      <p class="type-opener text-[var(--ink-muted)] italic max-w-md pt-2">
-        Things built in the gaps between<br />everything else. More soon.
-      </p>
-    ) : (
-      /* Published Homepage Projects Grid */
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-        {projects.map((project) => (
-          <ProjectCard project={project} showMedia={false} />
-        ))}
-      </div>
-    )}
+    <!-- Empty State Text (Fits on one line, clamp(14px, 1.6vw, 18px)) -->
+    <div class="font-serif italic text-[clamp(14px,1.6vw,18px)] text-[var(--ink-muted)] opacity-70 pt-[1.5rem] pb-[0.5rem] leading-[1.5] max-w-[58%]">
+      Things built in the gaps between everything else. More soon.
+    </div>
+
+    <!-- Plain Ruled Row Project Entries (No Box, No Card) -->
+    <div class="w-full flex flex-col mt-[1.5rem]">
+      {displayProjects.map((proj: any) => (
+        <a
+          href={proj.github || "/projects"}
+          target={proj.github ? "_blank" : "_self"}
+          rel="noopener noreferrer"
+          class="grid grid-cols-[1fr_auto] gap-8 items-center py-[1.2rem] border-t border-[var(--rule)] group transition-colors"
+        >
+          <div>
+            <div class="font-serif text-[16px] text-[var(--ink)] group-hover:underline transition-colors mb-[0.35rem]">
+              {proj.title}
+            </div>
+            {proj.description && (
+              <div class="font-serif italic text-[13px] text-[var(--ink-muted)]">
+                {proj.description}
+              </div>
+            )}
+          </div>
+
+          <div class="font-mono text-[9px] text-[var(--ink-faint)] tracking-[0.08em] text-right whitespace-nowrap flex items-center gap-3">
+            <div>{proj.tags || "PYTHON · AWS"}</div>
+            <span class="text-[var(--accent)] text-[12px] group-hover:translate-x-1 transition-transform">
+              &rarr;
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
   </div>
 </section>

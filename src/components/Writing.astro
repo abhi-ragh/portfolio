@@ -64,7 +64,7 @@ const displayBlogs = blogs.length > 0 ? blogs.slice(0, 2) : [sampleBlog];
             class="py-4 px-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group"
           >
             <div class="flex flex-col gap-1 max-w-xl">
-              <h3 class="font-serif text-[15px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+              <h3 class="font-serif text-[15px] text-[var(--ink)] group-hover:underline transition-colors leading-snug">
                 {blog.title}
               </h3>
               {blog.description && (
@@ -74,10 +74,10 @@ const displayBlogs = blogs.length > 0 ? blogs.slice(0, 2) : [sampleBlog];
               )}
             </div>
 
-            <div class="text-left sm:text-right font-mono text-[9px] text-[var(--ink-faint)] tracking-[0.08em] uppercase shrink-0">
+            <div class="text-left sm:text-right font-mono text-[9px] text-[var(--ink-faint)] tracking-[0.08em] uppercase shrink-0 flex items-center gap-3">
               <div>Medium &bull; Article</div>
-              <span class="text-[var(--accent)] text-[9px] mt-1 inline-block group-hover:translate-x-1 transition-transform">
-                Read on Medium &rarr;
+              <span class="text-[var(--accent)] text-[12px] group-hover:translate-x-1 transition-transform">
+                &rarr;
               </span>
             </div>
           </a>
