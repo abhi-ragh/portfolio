@@ -10,9 +10,9 @@ import SelectedFrames from '../components/SelectedFrames';
 import Footer from '../components/Footer.astro';
 import HeroCanvas from '../components/HeroCanvas';
 import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
-import { getHomepageImages } from '../lib/archive';
+import { getArchiveImages } from '../lib/archive';
 
-const homepageItems = await getHomepageImages();
+const archiveItems = await getArchiveImages();
 ---
 
 <Base>
@@ -28,11 +28,11 @@ const homepageItems = await getHomepageImages();
       <Nav />
       <main class="w-full">
         <Hero />
+        <SelectedFrames client:load items={archiveItems} />
         <About />
         <Experience />
         <Work />
         <Writing />
-        <SelectedFrames client:load items={homepageItems} />
       </main>
       <Footer />
     </div>

@@ -118,6 +118,34 @@
   padding-left: 1.5rem;
 }
 
+/* About Section: Poem Grid */
+.poem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .poem-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Poem Stanza Block */
+.poem-stanza {
+  padding: 1.5rem;
+  border: 1px solid var(--rule);
+  background: linear-gradient(135deg, rgba(22, 21, 18, 0.4) 0%, rgba(22, 21, 18, 0.2) 100%);
+  backdrop-filter: blur(2px);
+  transition: all 0.3s ease;
+}
+
+.poem-stanza:hover {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(200, 169, 110, 0.08) 0%, rgba(22, 21, 18, 0.3) 100%);
+}
 
 /* Force Dark Scheme & Lock Colors against Extension Overrides */
 html, body {
@@ -208,4 +236,29 @@ canvas, svg {
   background: #555046;
 }
 
+/* Continuous Archive Ribbon Infinite Marquee (Left to Right, Faster Pace) */
+@keyframes archive-ribbon-slide {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
 
+.animate-archive-ribbon {
+  display: flex;
+  width: max-content;
+  animation: archive-ribbon-slide 30s linear infinite;
+  will-change: transform;
+}
+
+.animate-archive-ribbon:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-archive-ribbon {
+    animation: none !important;
+  }
+}

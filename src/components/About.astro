@@ -1,52 +1,139 @@
 ---
 ---
 
-<section id="about" class="relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)] overflow-hidden">
+<section id="about" class="relative w-full px-6 md:px-12 lg:px-16 py-16 md:py-24 border-b border-[var(--rule)] overflow-hidden">
   <!-- Oversized Section Background Number 01 -->
   <span class="section-bg-number" aria-hidden="true">01</span>
 
   <!-- Full Width Content Container -->
-  <div class="relative z-10 w-full flex flex-col">
-    <!-- Small Monospace Label -->
-    <div>
-      <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
+  <div class="relative z-10 w-full max-w-7xl mx-auto">
+    <!-- Section Badge Header -->
+    <div class="mb-8">
+      <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.12em] border border-[var(--rule)] px-3 py-1 select-none uppercase backdrop-blur-sm">
         <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
       </span>
     </div>
 
-    <!-- Display Line (Left-aligned, clamp(60px, 9vw, 100px)) -->
-    <h2 class="font-serif italic text-[clamp(60px,9vw,100px)] font-normal leading-[1.0] tracking-tight text-[var(--ink)] mt-[2.5rem] mb-[2.2rem]">
-      An uneventful life.
-    </h2>
+    <!-- Editorial Magazine Split Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      
+      <!-- Left Column: Display Headline & Editorial Lead (col-span-5) -->
+      <div class="lg:col-span-5 flex flex-col justify-between h-full">
+        <div>
+          <h2 class="font-serif italic text-[clamp(44px,6.5vw,84px)] font-normal leading-[1.05] tracking-tight text-[var(--ink)] mb-6">
+            An uneventful life.
+          </h2>
 
-    <!-- Poem Block (IBM Plex Mono, 15px, #C4BDB5, padding-left: 2.5rem, line-height: 1.9) -->
-    <div class="pl-[2.5rem] flex flex-col font-mono text-[15px] text-[#C4BDB5] leading-[1.9] font-normal not-italic">
-      <div class="mb-[1.2rem]">
-        Everyday Errors.<br />
-        Endless Logs.<br />
-        Meaningless Metrics.
+          <p class="font-serif text-lg md:text-xl text-[var(--ink-muted)] leading-relaxed italic mb-8 opacity-90">
+            Curating code, analog frames, and quiet observations at the intersection of engineering and visual craft.
+          </p>
+        </div>
+
+        <!-- Quick Monospace Metadata Spec Sheet -->
+        <div class="pt-6 border-t border-[var(--rule)] grid grid-cols-2 gap-4 font-mono text-[11px] uppercase tracking-wider text-[var(--ink-faint)]">
+          <div>
+            <span class="block text-[var(--accent)] text-[9px] mb-1">// LOCATION</span>
+            <span>Kochi, Kerala, IN</span>
+          </div>
+          <div>
+            <span class="block text-[var(--accent)] text-[9px] mb-1">// DISCIPLINE</span>
+            <span>Software & Visuals</span>
+          </div>
+          <div>
+            <span class="block text-[var(--accent)] text-[9px] mb-1">// CRAFT</span>
+            <span>Systems & Web</span>
+          </div>
+          <div>
+            <span class="block text-[var(--accent)] text-[9px] mb-1">// MEDIUM</span>
+            <span>35mm & Monospaced</span>
+          </div>
+        </div>
       </div>
 
-      <div class="mb-[1.2rem]">
-        Logic-less LLMs.<br />
-        Preposterous Prompts.
+      <!-- Right Column: Hairline Separated Verse Columns (col-span-7) -->
+      <div class="lg:col-span-7 lg:border-l lg:border-[var(--rule)] lg:pl-12 flex flex-col gap-8">
+        
+        <!-- Verse Block 1 -->
+        <div class="group relative pt-2 pb-6 border-b border-[var(--rule)] transition-all duration-300">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] group-hover:text-[var(--accent)] transition-colors duration-200 tracking-widest uppercase">
+              01.1 &mdash; System Logs
+            </span>
+          </div>
+          <p class="font-serif text-xl md:text-2xl text-[var(--ink)] leading-snug font-normal tracking-wide group-hover:text-[var(--ink)] transition-colors">
+            Everyday Errors.<br />
+            Endless Logs.<br />
+            <span class="italic text-[var(--ink-muted)] group-hover:text-[var(--accent)] transition-colors duration-200">Meaningless Metrics.</span>
+          </p>
+        </div>
+
+        <!-- Verse Block 2 -->
+        <div class="group relative pt-2 pb-6 border-b border-[var(--rule)] transition-all duration-300">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] group-hover:text-[var(--accent)] transition-colors duration-200 tracking-widest uppercase">
+              01.2 &mdash; Intelligence
+            </span>
+          </div>
+          <p class="font-serif text-xl md:text-2xl text-[var(--ink)] leading-snug font-normal tracking-wide">
+            Logic-less LLMs.<br />
+            <span class="italic text-[var(--ink-muted)] group-hover:text-[var(--accent)] transition-colors duration-200">Preposterous Prompts.</span>
+          </p>
+        </div>
+
+        <!-- Verse Block 3 -->
+        <div class="group relative pt-2 pb-6 border-b border-[var(--rule)] transition-all duration-300">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] group-hover:text-[var(--accent)] transition-colors duration-200 tracking-widest uppercase">
+              01.3 &mdash; Duality
+            </span>
+          </div>
+          <p class="font-serif text-xl md:text-2xl text-[var(--ink)] leading-snug font-normal tracking-wide">
+            Artificial Idiocracy.<br />
+            <span class="italic text-[var(--accent)]">Natural Curiosity.</span>
+          </p>
+        </div>
+
+        <!-- Verse Block 4: Everyday Rituals -->
+        <div class="group relative pt-2 pb-6 border-b border-[var(--rule)] transition-all duration-300">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] group-hover:text-[var(--accent)] transition-colors duration-200 tracking-widest uppercase">
+              01.4 &mdash; Artifacts
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-4 font-serif text-lg md:text-xl text-[var(--ink-muted)]">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block"></span>
+              <span>A Phone</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block"></span>
+              <span>A Camera</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block"></span>
+              <span>A Cup of Coffee</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] inline-block"></span>
+              <span class="italic text-[var(--ink)]">A Dash of Colour</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Closing Signature Bar -->
+        <div class="pt-4 flex items-center justify-between">
+          <p class="font-serif italic text-xl md:text-2xl text-[var(--accent)] tracking-wide">
+            Welcome to my corner of the internet.
+          </p>
+          <div class="font-mono text-[10px] text-[var(--ink-faint)] tracking-widest uppercase flex items-center gap-2 select-none">
+            <span class="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></span>
+            <span>ONLINE</span>
+          </div>
+        </div>
+
       </div>
 
-      <div class="mb-[1.2rem]">
-        Artificial Idiocracy.<br />
-        Natural Curiosity.
-      </div>
-
-      <div class="mb-[1.2rem]">
-        A Phone.<br />
-        A Camera.<br />
-        A Cup of Coffee.<br />
-        A Dash of Colour.
-      </div>
-
-      <div>
-        Welcome to my corner of the internet.
-      </div>
     </div>
   </div>
 </section>
+
