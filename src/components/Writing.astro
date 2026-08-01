@@ -13,13 +13,15 @@ try {
   <!-- Top Bar -->
   <div class="writing-top-bar">
     <span class="section-label">[ 05 / WRITING ]</span>
+  </div>
+
+  <!-- Heading Bar: Writing. heading + View all writing link anchored right -->
+  <div class="writing-title-bar">
+    <h2 class="writing-main-heading">Writing.</h2>
     <a href="/blogs" class="writing-view-all">View all writing &rarr;</a>
   </div>
 
-  <!-- Main Heading -->
-  <h2 class="writing-main-heading">Writing.</h2>
-
-  <!-- Horizontal Newspaper Spread Grid dynamically rendering all Notion homepage blogs -->
+  <!-- Horizontal Newspaper Spread Grid -->
   <div class="writing-newspaper-grid">
     {blogs.map((blog: any, idx: number) => (
       <article key={blog.id || idx} class="writing-newspaper-col">
@@ -39,7 +41,7 @@ try {
 
         <div class="writing-col-footer">
           <span class="writing-col-meta">
-            {blog.tag || "Medium"} &bull; {blog.readTime || "5 min read"}
+            {(blog.tag || "MEDIUM").toUpperCase()} &bull; {(blog.readTime || "5 MIN").toUpperCase()}
           </span>
           <a
             href={blog.url || blog.slug ? (blog.url || `/blogs/${blog.slug}`) : "/blogs"}
