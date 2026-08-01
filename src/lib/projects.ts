@@ -1,6 +1,17 @@
 import { notion, NOTION_PROJECTS_ID } from './notion.ts';
 import type { Project } from './types.ts';
 
+function getProp(props: Record<string, any>, keyNames: string[]) {
+  const keys = Object.keys(props);
+  for (const name of keyNames) {
+    const foundKey = keys.find(k => k.toLowerCase() === name.toLowerCase());
+    if (foundKey && props[foundKey]) {
+      return props[foundKey];
+    }
+  }
+  return undefined;
+}
+
 export async function getArchiveProjects(): Promise<Project[]> {
   if (!notion || !NOTION_PROJECTS_ID) {
     return [];
@@ -8,6 +19,7 @@ export async function getArchiveProjects(): Promise<Project[]> {
 
   try {
     let pages: any[] = [];
+
     if (typeof (notion as any).dataSources?.query === 'function') {
       const res = await (notion as any).dataSources.query({ data_source_id: NOTION_PROJECTS_ID });
       pages = res.results || [];
@@ -19,33 +31,53 @@ export async function getArchiveProjects(): Promise<Project[]> {
       pages = (res.results || []).filter((item: any) => item.object === 'page');
     }
 
-    const projects: Project[] = [];
+    const projects: any[] = [];
 
     for (const page of pages) {
       const props = page.properties || {};
 
       // Title
-      const titleProp = props.Title?.title || props.Name?.title || props.title?.title || props.Project?.title || [];
+      const titleProp = getProp(props, ['Title', 'Name', 'Project'])?.title || [];
       const title = titleProp.map((t: any) => t.plain_text).join('') || 'Untitled Project';
 
       // Description
-      const descProp = props.Description?.rich_text || props.description?.rich_text || props.Summary?.rich_text || [];
+      const descProp = getProp(props, ['Description', 'Summary'])?.rich_text || [];
       const description = descProp.map((t: any) => t.plain_text).join('') || '';
 
       // Github URL
-      const github = props.Github?.url || props.GitHub?.url || props.github?.url || props.Repository?.url || undefined;
+      const github = getProp(props, ['Github', 'GitHub', 'Repository'])?.url || undefined;
 
-      // Cover Image
-      const coverFiles = props['Cover Image']?.files || props.Cover?.files || props.CoverImage?.files || props.Image?.files || [];
-      const coverImage = coverFiles.length > 0 ? (coverFiles[0].file?.url || coverFiles[0].external?.url || undefined) : undefined;
+      // Cover Image (Case-insensitive check for 'Cover image', 'Cover Image', etc.)
+      const coverProp = getProp(props, ['Cover image', 'Cover Image', 'Cover', 'Image', 'Thumbnail', 'Thumb']);
+      const coverFiles = coverProp?.files || [];
+      let coverImage: string | undefined = coverFiles.length > 0 ? (coverFiles[0].file?.url || coverFiles[0].external?.url) : undefined;
+      if (!coverImage) {
+        coverImage = page.cover?.external?.url || page.cover?.file?.url;
+      }
 
       // Screenshots
-      const shotFiles = props.Screenshots?.files || props.screenshots?.files || [];
+      const shotProp = getProp(props, ['Screenshots', 'Screenshot']);
+      const shotFiles = shotProp?.files || [];
       const screenshots: string[] = shotFiles.map((f: any) => f.file?.url || f.external?.url).filter(Boolean);
 
-      // Checkboxes
-      const published = props.Published?.checkbox ?? true;
-      const homepage = props.Homepage?.checkbox ?? false;
+      // Tags / Stack
+      const tagsProp = getProp(props, ['Tags', 'Tech', 'Stack', 'Technologies']);
+      let tags = '';
+      if (tagsProp?.multi_select && Array.isArray(tagsProp.multi_select)) {
+        tags = tagsProp.multi_select.map((t: any) => t.name).join(' · ').toUpperCase();
+      } else if (tagsProp?.rich_text && Array.isArray(tagsProp.rich_text)) {
+        tags = tagsProp.rich_text.map((t: any) => t.plain_text).join(' · ').toUpperCase();
+      }
+
+      // Checkboxes & Order
+      const publishedProp = getProp(props, ['Published']);
+      const published = publishedProp?.checkbox ?? true;
+
+      const homepageProp = getProp(props, ['Homepage']);
+      const homepage = homepageProp?.checkbox ?? false;
+
+      const orderProp = getProp(props, ['homepage_order', 'Homepage_Order', 'Order']);
+      const homepageOrder = orderProp?.number ?? 999;
 
       if (!published) continue;
 
@@ -56,11 +88,14 @@ export async function getArchiveProjects(): Promise<Project[]> {
         github,
         coverImage,
         screenshots,
+        tags,
         homepage,
-        published
+        published,
+        homepageOrder
       });
     }
 
+    projects.sort((a, b) => (a.homepageOrder || 999) - (b.homepageOrder || 999));
     return projects;
   } catch (error) {
     console.warn('Notion Projects query notice:', error);
@@ -71,5 +106,5 @@ export async function getArchiveProjects(): Promise<Project[]> {
 export async function getHomepageProjects(): Promise<Project[]> {
   const allProjects = await getArchiveProjects();
   const homepageItems = allProjects.filter(p => p.homepage);
-  return homepageItems.length > 0 ? homepageItems.slice(0, 4) : allProjects.slice(0, 4);
+  return homepageItems.length > 0 ? homepageItems : allProjects;
 }

@@ -1,78 +1,77 @@
 ---
 import { getHomepageProjects } from '../lib/projects';
 
-let projects = [];
+let projects: any[] = [];
 try {
   projects = await getHomepageProjects();
 } catch (e) {
   projects = [];
 }
-
-const sampleProject = {
-  id: 'sample-1',
-  title: 'IAM Audit Tool',
-  description: 'Multi-script Python governance audit tool for MSP readiness.',
-  github: 'https://github.com/abhiragh',
-  tags: 'PYTHON · AWS'
-};
-
-const displayProjects = projects.length > 0 ? projects : [sampleProject];
 ---
 
-<section id="projects" class="relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)] overflow-hidden">
-  <!-- Oversized Background Number 03 -->
-  <span class="section-bg-number" aria-hidden="true">03</span>
+<section id="projects" class="section-projects">
+  <!-- Top Bar -->
+  <div class="projects-top-bar">
+    <span class="section-label">[ 04 / PROJECTS ]</span>
+    <a href="/projects" class="projects-view-all">View all projects &rarr;</a>
+  </div>
 
-  <div class="relative z-10 w-full flex flex-col text-left">
-    <!-- Header Row -->
-    <div class="flex justify-between items-baseline mb-[0.5rem]">
-      <div>
-        <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
-          <span class="bracket">[</span> 03 / PROJECTS <span class="bracket">]</span>
-        </span>
-      </div>
+  <!-- Heading -->
+  <h2 class="projects-main-heading">Projects.</h2>
 
-      <a
-        href="/projects"
-        class="font-mono text-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors tracking-[0.06em]"
-      >
-        View All Projects &rarr;
-      </a>
-    </div>
-
-    <!-- Empty State Text (Fits on one line, clamp(14px, 1.6vw, 18px)) -->
-    <div class="font-serif italic text-[clamp(14px,1.6vw,18px)] text-[var(--ink-muted)] opacity-70 pt-[1.5rem] pb-[0.5rem] leading-[1.5] max-w-[58%]">
-      Things built in the gaps between everything else. More soon.
-    </div>
-
-    <!-- Plain Ruled Row Project Entries (No Box, No Card) -->
-    <div class="w-full flex flex-col mt-[1.5rem]">
-      {displayProjects.map((proj: any) => (
+  <!-- Horizontal Exhibition Grid -->
+  <div class="projects-exhibition-grid">
+    {projects.map((proj: any, idx: number) => (
+      <article key={proj.id || idx} class="project-exhibition-item">
         <a
           href={proj.github || "/projects"}
           target={proj.github ? "_blank" : "_self"}
           rel="noopener noreferrer"
-          class="grid grid-cols-[1fr_auto] gap-8 items-center py-[1.2rem] border-t border-[var(--rule)] group transition-colors"
+          class="project-thumb-anchor"
         >
-          <div>
-            <div class="font-serif text-[16px] text-[var(--ink)] group-hover:underline transition-colors mb-[0.35rem]">
-              {proj.title}
-            </div>
-            {proj.description && (
-              <div class="font-serif italic text-[13px] text-[var(--ink-muted)]">
-                {proj.description}
+          <div class="project-thumb-box">
+            {proj.coverImage ? (
+              <img
+                src={proj.coverImage}
+                alt={proj.title}
+                class="project-thumb-img"
+                loading="lazy"
+              />
+            ) : (
+              <div class="project-thumb-empty">
+                <span>{proj.title}</span>
               </div>
             )}
           </div>
-
-          <div class="font-mono text-[9px] text-[var(--ink-faint)] tracking-[0.08em] text-right whitespace-nowrap flex items-center gap-3">
-            <div>{proj.tags || "PYTHON · AWS"}</div>
-            <span class="text-[var(--accent)] text-[12px] group-hover:translate-x-1 transition-transform">
-              &rarr;
-            </span>
-          </div>
         </a>
-      ))}
-    </div>
+
+        <h3 class="project-item-title">
+          <a
+            href={proj.github || "/projects"}
+            target={proj.github ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+          >
+            {proj.title}
+          </a>
+        </h3>
+
+        {proj.description && (
+          <p class="project-item-desc">{proj.description}</p>
+        )}
+
+        <div class="project-item-tags">
+          {proj.tags || "PROJECT"}
+        </div>
+
+        <a
+          href={proj.github || "/projects"}
+          target={proj.github ? "_blank" : "_self"}
+          rel="noopener noreferrer"
+          class="project-item-link"
+        >
+          View &rarr;
+        </a>
+      </article>
+    ))}
   </div>
 </section>

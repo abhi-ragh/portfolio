@@ -1,89 +1,56 @@
 ---
 import { getHomepageBlogs } from '../lib/blogs';
 
-let blogs = [];
+let blogs: any[] = [];
 try {
   blogs = await getHomepageBlogs();
 } catch (e) {
   blogs = [];
 }
-
-// Fallback entry if no blogs fetched yet from Notion
-const sampleBlog = {
-  id: '1',
-  url: 'https://medium.com/@abhiragh0/a-scattered-mess-of-wanting-to-write-a-blog-37d5c4dce9e0',
-  title: 'A Scattered Mess of Wanting to Write a Blog',
-  description: 'Like most people (I assume), I too was hit with the urge to write some blogs, paint some pictures...',
-  pullquote: '"I too was hit with the urge to paint some pictures."'
-};
-
-const displayBlogs = blogs.length > 0 ? blogs.slice(0, 2) : [sampleBlog];
 ---
 
-<section id="writing" class="sec-relative w-full px-6 md:px-10 pt-[2.5rem] pb-[3rem] border-b border-[var(--rule)]">
-  <!-- Oversized Background Number 04 -->
-  <span class="section-bg-number" aria-hidden="true">04</span>
+<section id="writing" class="section-writing">
+  <!-- Top Bar -->
+  <div class="writing-top-bar">
+    <span class="section-label">[ 05 / WRITING ]</span>
+    <a href="/blogs" class="writing-view-all">View all writing &rarr;</a>
+  </div>
 
-  <div class="relative z-10 w-full flex flex-col gap-6 text-left">
-    <!-- Header with View All Writing Link -->
-    <div class="flex justify-between items-center">
-      <div>
-        <span class="accent-hover-bracket inline-block font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-0.5 select-none bg-[#12110E]/80 uppercase">
-          <span class="bracket">[</span> 04 / WRITING <span class="bracket">]</span>
-        </span>
-      </div>
+  <!-- Main Heading -->
+  <h2 class="writing-main-heading">Writing.</h2>
 
-      <a
-        href="/blogs"
-        class="font-mono text-[10px] text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors tracking-[0.08em]"
-      >
-        View All Writing &rarr;
-      </a>
-    </div>
-
-    <!-- Pull-Quote on First Entry (Patch Spec Section 10) -->
-    {displayBlogs[0]?.pullquote ? (
-      <div class="writing-pullquote">
-        {displayBlogs[0].pullquote}
-      </div>
-    ) : (
-      <div class="writing-pullquote">
-        "I too was hit with the urge to paint some pictures."
-      </div>
-    )}
-
-    <!-- Ruled Entry Rows (No Card Box Containers) -->
-    <div class="w-full flex flex-col">
-      <div class="w-full h-[0.5px] bg-[var(--rule)]" />
-      {displayBlogs.map((blog) => (
-        <div>
+  <!-- Horizontal Newspaper Spread Grid dynamically rendering all Notion homepage blogs -->
+  <div class="writing-newspaper-grid">
+    {blogs.map((blog: any, idx: number) => (
+      <article key={blog.id || idx} class="writing-newspaper-col">
+        <h3 class="writing-col-title">
           <a
-            href={blog.url}
-            target="_blank"
+            href={blog.url || blog.slug ? (blog.url || `/blogs/${blog.slug}`) : "/blogs"}
+            target={blog.url && blog.url.startsWith('http') ? "_blank" : "_self"}
             rel="noopener noreferrer"
-            class="py-4 px-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group"
           >
-            <div class="flex flex-col gap-1 max-w-xl">
-              <h3 class="font-serif text-[15px] text-[var(--ink)] group-hover:underline transition-colors leading-snug">
-                {blog.title}
-              </h3>
-              {blog.description && (
-                <p class="font-serif italic text-[13px] text-[var(--ink-muted)] line-clamp-2 leading-relaxed">
-                  {blog.description}
-                </p>
-              )}
-            </div>
-
-            <div class="text-left sm:text-right font-mono text-[9px] text-[var(--ink-faint)] tracking-[0.08em] uppercase shrink-0 flex items-center gap-3">
-              <div>Medium &bull; Article</div>
-              <span class="text-[var(--accent)] text-[12px] group-hover:translate-x-1 transition-transform">
-                &rarr;
-              </span>
-            </div>
+            {blog.title}
           </a>
-          <div class="w-full h-[0.5px] bg-[var(--rule)]" />
+        </h3>
+
+        {blog.description && (
+          <p class="writing-col-excerpt">{blog.description}</p>
+        )}
+
+        <div class="writing-col-footer">
+          <span class="writing-col-meta">
+            {blog.tag || "Medium"} &bull; {blog.readTime || "5 min read"}
+          </span>
+          <a
+            href={blog.url || blog.slug ? (blog.url || `/blogs/${blog.slug}`) : "/blogs"}
+            target={blog.url && blog.url.startsWith('http') ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+            class="writing-col-link"
+          >
+            Read &rarr;
+          </a>
         </div>
-      ))}
-    </div>
+      </article>
+    ))}
   </div>
 </section>

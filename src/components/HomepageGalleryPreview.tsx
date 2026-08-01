@@ -18,7 +18,7 @@ export const HomepageGalleryPreview: React.FC<HomepageGalleryPreviewProps> = ({ 
   const ribbonList = [...setA, ...setA]; // Set A + Set B (exact 50/50 split for smooth -50% to 0% marquee)
 
   return (
-    <div className="w-full py-3.5 md:py-4 border-b border-[var(--rule)] overflow-hidden select-none">
+    <div className="w-full pt-4 pb-10 md:pt-5 md:pb-16 overflow-hidden select-none">
       <div className="w-full overflow-hidden">
         {/* Continuous Moving Archive Ribbon (Left to Right, Faster Pace, Uniform Spacing) */}
         <div className="animate-archive-ribbon flex items-center gap-4 sm:gap-5 md:gap-6">

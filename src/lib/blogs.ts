@@ -53,6 +53,7 @@ export async function getArchiveBlogs(): Promise<Blog[]> {
 
   try {
     let pages: any[] = [];
+
     if (typeof (notion as any).dataSources?.query === 'function') {
       const res = await (notion as any).dataSources.query({ data_source_id: NOTION_BLOGS_ID });
       pages = res.results || [];
@@ -64,7 +65,7 @@ export async function getArchiveBlogs(): Promise<Blog[]> {
       pages = (res.results || []).filter((item: any) => item.object === 'page');
     }
 
-    const blogs: Blog[] = [];
+    const blogs: any[] = [];
 
     for (const page of pages) {
       const props = page.properties || {};
@@ -79,6 +80,7 @@ export async function getArchiveBlogs(): Promise<Blog[]> {
 
       const published = props.Published?.checkbox ?? true;
       const homepage = props.Homepage?.checkbox ?? false;
+      const homepageOrder = props.homepage_order?.number ?? props.Homepage_Order?.number ?? props.Order?.number ?? 999;
 
       if (!url || !url.startsWith('http') || !published) continue;
 
@@ -91,10 +93,12 @@ export async function getArchiveBlogs(): Promise<Blog[]> {
         description: meta.description,
         image: meta.image,
         homepage,
-        published
+        published,
+        homepageOrder
       });
     }
 
+    blogs.sort((a, b) => (a.homepageOrder || 999) - (b.homepageOrder || 999));
     return blogs;
   } catch (error) {
     console.warn('Notion Blogs query notice:', error);
@@ -105,5 +109,5 @@ export async function getArchiveBlogs(): Promise<Blog[]> {
 export async function getHomepageBlogs(): Promise<Blog[]> {
   const allBlogs = await getArchiveBlogs();
   const homepageItems = allBlogs.filter(b => b.homepage);
-  return homepageItems.length > 0 ? homepageItems.slice(0, 3) : allBlogs.slice(0, 3);
+  return homepageItems.length > 0 ? homepageItems : allBlogs;
 }

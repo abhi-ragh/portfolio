@@ -29,12 +29,15 @@ const archiveItems = await getArchiveImages();
       <main class="w-full">
         <Hero />
         <SelectedFrames client:load items={archiveItems} />
-        <About />
-        <Experience />
-        <Work />
-        <Writing />
+        
+        <div class="relative w-full overflow-hidden">
+          <Experience />
+          <Work />
+          <Writing />
+          <Footer />
+        </div>
       </main>
-      <Footer />
     </div>
   </div>
 </Base>
+
