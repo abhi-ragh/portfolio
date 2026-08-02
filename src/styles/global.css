@@ -115,7 +115,15 @@
 .section-writing {
   position: relative;
   overflow: hidden;
-  padding: 3rem 2.5rem;
+  padding: 5rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-experience,
+  .section-projects,
+  .section-writing {
+    padding: 7.5rem 2.5rem;
+  }
 }
 
 .section-display-title {
@@ -155,7 +163,7 @@
 
 .section-label {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ink-muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -193,7 +201,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1.8rem;
 }
 
 .career-title-bar {
@@ -345,7 +353,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1.8rem;
 }
 
 .projects-title-bar {
@@ -527,7 +535,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1.8rem;
 }
 
 .writing-title-bar {
