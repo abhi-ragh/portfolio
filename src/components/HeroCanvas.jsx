@@ -35,12 +35,21 @@ export default function HeroCanvas() {
       mouse.targetY = e.clientY;
     };
 
+    const onTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        mouse.targetX = e.touches[0].clientX;
+        mouse.targetY = e.touches[0].clientY;
+      }
+    };
+
     const onMouseLeave = () => {
       mouse.targetX = -1000;
       mouse.targetY = -1000;
     };
 
     window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchstart', onTouchMove, { passive: true });
     document.addEventListener('mouseleave', onMouseLeave);
 
     const resize = () => {
@@ -91,29 +100,29 @@ export default function HeroCanvas() {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
 
-      // Scroll progress from 0% scroll to 55% scroll
+      // Scroll progress from 0% scroll to 75% scroll
       const transitionStart = 0;
-      const transitionEnd = vh * 0.55;
+      const transitionEnd = vh * 0.75;
       const rawProgress = Math.min(1.0, Math.max(0.0, (scrollY - transitionStart) / (transitionEnd - transitionStart)));
 
       // Smoothstep easing curve: t * t * (3 - 2 * t)
       const smoothProgress = rawProgress * rawProgress * (3 - 2 * rawProgress);
 
-      mouse.x += (mouse.targetX - mouse.x) * 0.05;
-      mouse.y += (mouse.targetY - mouse.y) * 0.05;
+      mouse.x += (mouse.targetX - mouse.x) * 0.15;
+      mouse.y += (mouse.targetY - mouse.y) * 0.15;
 
-      const mouseInfluence = (1.0 - smoothProgress) * 0.10;
-      const mouseNormX = (mouse.x / window.innerWidth) * mouseInfluence;
-      const mouseNormY = (mouse.y / window.innerHeight) * mouseInfluence;
+      const mNormX = mouse.x / window.innerWidth;
+      const mNormY = mouse.y / window.innerHeight;
+      const hasMouse = mouse.x > -500;
+      const mouseRadius = 0.28;
 
-      time += prefersReducedMotion ? 0 : 0.012;
+      time += prefersReducedMotion ? 0 : 0.014;
 
       const imgData = ctx.createImageData(w, h);
       const data = imgData.data;
 
-      // Initial calm default state: loads at ~45% alpha intensity
-      const defaultCalmOpacity = 0.45;
-      const scrollOpacity = (1.0 - smoothProgress) * defaultCalmOpacity;
+      const scrollOpacity = 1.0 - smoothProgress;
+      const maxVisibility = 0.40; // 40% visibility max
 
       for (let y = 0; y < h; y++) {
         const normY = y / h; // 0 to 1 down screen
@@ -121,24 +130,48 @@ export default function HeroCanvas() {
         // Mechanical print press boundary: row y is only printed if normY <= printProgress
         if (normY > printProgress) continue;
 
-        // Spatial dissolve mask: smooth 0 to 1 curve down screen
-        const spatialFade = Math.max(0, Math.min(1, (0.70 - normY) / 0.45));
+        // Spatial dissolve mask: 40% visibility cap until 45% (normY <= 0.45), fading gradually to 0 at 90% (normY = 0.90)
+        const spatialFade = Math.max(0, Math.min(1, (0.90 - normY) / 0.45));
 
         for (let x = 0; x < w; x++) {
           const normX = x / w;
           const idx = (y * w + x) * 4;
 
-          // Pure organic wave equation
-          const d1 = Math.sin(normX * 5 + time + mouseNormX) * Math.cos(normY * 5 + time * 0.8 + mouseNormY);
-          const d2 = Math.cos((normX + normY) * 3 - time * 0.5);
-          const wave = (d1 + d2 + 2) / 4;
+          let sampleX = normX;
+          let sampleY = normY;
+          let push = 0;
 
-          const intensity = wave * 0.45;
+          // Interactive radial distortion field around mouse pointer
+          if (hasMouse) {
+            const dx = normX - mNormX;
+            const dy = normY - mNormY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < mouseRadius) {
+              const proximity = 1.0 - dist / mouseRadius;
+              const smoothProx = proximity * proximity * (3 - 2 * proximity);
+
+              // Fluid ripple displacement propagating outward from mouse cursor
+              const displacement = Math.sin(dist * 30 - time * 8) * smoothProx * 0.22;
+              sampleX += (dx / (dist + 0.0001)) * displacement;
+              sampleY += (dy / (dist + 0.0001)) * displacement;
+
+              // Density boost under mouse pointer
+              push = smoothProx * 0.18;
+            }
+          }
+
+          // Pure organic wave equation with mouse distortion
+          const d1 = Math.sin(sampleX * 5 + time) * Math.cos(sampleY * 5 + time * 0.8);
+          const d2 = Math.cos((sampleX + sampleY) * 3 - time * 0.5);
+          const wave = Math.min(1.0, Math.max(0.0, (d1 + d2 + 2) / 4 + push));
+
+          const intensity = wave;
           const threshold = BAYER_4X4[y % 4][x % 4] / 16;
           const lit = intensity > threshold;
 
-          // Per-pixel alpha calculation
-          const pixelAlpha = lit ? Math.floor(255 * spatialFade * scrollOpacity) : 0;
+          // Per-pixel alpha calculation with 40% visibility cap
+          const pixelAlpha = lit ? Math.floor(255 * maxVisibility * spatialFade * scrollOpacity) : 0;
 
           data[idx]     = INK.r;
           data[idx + 1] = INK.g;
@@ -158,6 +191,8 @@ export default function HeroCanvas() {
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchstart', onTouchMove);
       document.removeEventListener('mouseleave', onMouseLeave);
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', onScroll);

@@ -141,9 +141,10 @@ export default function DitherHero({ animated = true }) {
           background: `linear-gradient(
             to bottom,
             transparent            0%,
-            transparent            50%,
-            rgba(245,240,232,0.6)  65%,
-            rgba(245,240,232,0.92) 80%,
+            transparent            45%,
+            rgba(245,240,232,0.2)  50%,
+            rgba(245,240,232,0.6)  70%,
+            rgba(245,240,232,0.95) 88%,
             #F5F0E8                90%
           )`,
         }}

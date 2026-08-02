@@ -31,13 +31,13 @@ export const LandingSpread: React.FC = () => {
       <div className="w-full max-w-[850px] flex flex-col">
         {/* Hero Headline Block (Lowered by 10% more for deeper grounded positioning) */}
         <div className="mb-7 md:mb-9 flex flex-col gap-2.5">
-          <h1 class="print-reveal-headline font-serif text-[36px] sm:text-[46px] md:text-[56px] font-normal leading-[1.05] text-[var(--ink)] tracking-tight">
+          <h1 class="print-reveal-headline font-serif text-[36px] sm:text-[46px] md:text-[56px] font-normal leading-[1.05] text-black tracking-tight">
             infrastructure, film,<br />
             and the space between.
           </h1>
 
           {/* Coordinates */}
-          <div className="font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.12em] uppercase mt-1">
+          <div className="font-mono text-[11px] text-black font-medium tracking-[0.12em] uppercase mt-1">
             Lost Somewhere &mdash; 9.9312° N, 76.2673° E
           </div>
         </div>
@@ -46,7 +46,7 @@ export const LandingSpread: React.FC = () => {
         <div id="about" className="flex flex-col scroll-mt-24">
           {/* Transition About Label */}
           <div className="mb-4 md:mb-5">
-            <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#EDE8DF]/80">
+            <span class="accent-hover-bracket inline-block font-mono text-[11px] text-black tracking-[0.1em] border border-[var(--rule)] px-2.5 py-1 select-none bg-[var(--surface)]">
               <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
             </span>
           </div>
