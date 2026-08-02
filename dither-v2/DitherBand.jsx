@@ -32,8 +32,8 @@ const BAYER_4X4 = [
   [15,  7, 13,  5],
 ];
 
-const INK = { r: 232, g: 228, b: 220 };
-const BG  = { r: 14,  g: 13,  b: 11  };
+const INK = { r: 28,  g: 26,  b: 23  };
+const BG  = { r: 245, g: 240, b: 232 };
 
 // Density maps to wave amplitude — higher amplitude = more lit pixels
 const AMPLITUDE = { sparse: 0.55, mid: 0.72, dense: 0.88 };

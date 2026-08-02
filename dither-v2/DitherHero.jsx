@@ -28,10 +28,8 @@ const BAYER_4X4 = [
   [15,  7, 13,  5],
 ];
 
-// Colors matched to the design token system
-// --ink: #E8E4DC  --bg: #0E0D0B
-const INK  = { r: 232, g: 228, b: 220 }; // #E8E4DC
-const BG   = { r: 14,  g: 13,  b: 11  }; // #0E0D0B
+const INK  = { r: 28,  g: 26,  b: 23  }; // #1C1A17
+const BG   = { r: 245, g: 240, b: 232 }; // #F5F0E8
 
 const HERO_HEIGHT = 480; // px at full scale
 

@@ -32,7 +32,7 @@ export default function HeroGlyph() {
           fontFamily:    "'IBM Plex Mono', monospace",
           fontSize:      '15px',
           fontWeight:    500,
-          color:         '#E8E4DC',
+          color:         '#1C1A17',
           animation:     'glyph-tag-pulse 5s ease-in-out infinite',
         }}
       >
@@ -45,7 +45,7 @@ export default function HeroGlyph() {
           fontSize:      '11px',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color:         'rgba(232, 228, 220, 0.65)',
+          color:         'rgba(28, 26, 23, 0.65)',
           animation:     'glyph-tag-pulse 5s ease-in-out infinite',
           animationDelay: '0.4s',
         }}

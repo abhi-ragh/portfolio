@@ -13,11 +13,11 @@ const { blog, showImage = true } = Astro.props;
   href={blog.url}
   target="_blank"
   rel="noopener noreferrer"
-  class="group flex flex-col border border-[var(--ink-faint)]/40 bg-[#12110E]/80 p-5 gap-4 hover:border-[var(--accent)]/60 transition-colors"
+  class="group flex flex-col border border-[var(--rule)] bg-[var(--surface)] p-5 gap-4 hover:border-[var(--accent)]/60 transition-colors"
 >
   {/* Cover Image (Only rendered if showImage is true) */}
   {showImage && (
-    <div class="w-full aspect-[16/9] overflow-hidden bg-[#161512]">
+    <div class="w-full aspect-[16/9] overflow-hidden bg-[var(--surface)]">
       <img
         src={blog.image}
         alt={blog.title}
@@ -33,14 +33,14 @@ const { blog, showImage = true } = Astro.props;
       {blog.title}
     </h3>
     {blog.description && (
-      <p class="font-serif text-[14px] text-[var(--ink-muted)] line-clamp-3 leading-relaxed">
+      <p class="font-serif text-[14px] text-[#4A4540] line-clamp-3 leading-relaxed">
         {blog.description}
       </p>
     )}
   </div>
 
   <!-- Footer Link -->
-  <div class="pt-3 border-t border-[var(--ink-faint)]/30 flex justify-between items-center font-mono text-[11px] text-[var(--ink-faint)]">
+  <div class="pt-3 border-t border-[var(--rule)] flex justify-between items-center font-mono text-[11px] text-[#6B6560]">
     <span class="text-[var(--accent)] font-medium">Medium &bull; Article</span>
     <span class="group-hover:translate-x-1 transition-transform">Read on Medium &rarr;</span>
   </div>

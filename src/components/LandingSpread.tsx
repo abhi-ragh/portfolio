@@ -46,7 +46,7 @@ export const LandingSpread: React.FC = () => {
         <div id="about" className="flex flex-col scroll-mt-24">
           {/* Transition About Label */}
           <div className="mb-4 md:mb-5">
-            <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+            <span class="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#EDE8DF]/80">
               <span class="bracket">[</span> 01 / ABOUT <span class="bracket">]</span>
             </span>
           </div>

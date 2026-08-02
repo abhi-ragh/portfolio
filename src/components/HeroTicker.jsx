@@ -122,7 +122,7 @@ export default function HeroTicker() {
         display: 'flex',
         alignItems: 'center',
         // Subtle top border to ground the ticker
-        borderTop: '0.5px solid rgba(255,255,255,0.15)',
+        borderTop: '0.5px solid rgba(28,26,23,0.08)',
         // Fade edges so text dissolves at left and right
         WebkitMaskImage:
           'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
@@ -145,7 +145,7 @@ export default function HeroTicker() {
           fontFamily: "'IBM Plex Mono', monospace",
           fontSize: '16px',
           letterSpacing: '0.09em',
-          color: 'rgba(232, 228, 220, 0.80)', // --ink at 80% opacity for bold readability
+          color: 'rgba(28, 26, 23, 0.55)',
           willChange: 'transform',
         }}
         onMouseEnter={e => {

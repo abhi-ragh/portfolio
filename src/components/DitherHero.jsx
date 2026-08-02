@@ -33,9 +33,9 @@ const BAYER_4X4 = [
 ];
 
 // Colors matched to the design token system
-// --ink: #E8E4DC  --bg: #0E0D0B
-const INK  = { r: 232, g: 228, b: 220 }; // #E8E4DC
-const BG   = { r: 14,  g: 13,  b: 11  }; // #0E0D0B
+// --ink: #1C1A17  --bg: #F5F0E8
+const INK  = { r: 28,  g: 26,  b: 23  }; // #1C1A17 — dark dots
+const BG   = { r: 245, g: 240, b: 232 }; // #F5F0E8 — light background
 
 const HERO_HEIGHT = 480; // px at full scale
 
@@ -107,7 +107,7 @@ export default function DitherHero({ animated = true }) {
         width:      '100%',
         height:     `${HERO_HEIGHT}px`,
         overflow:   'hidden',
-        background: '#0E0D0B',
+        background: '#F5F0E8',
       }}
     >
       {/* The dither canvas */}
@@ -127,8 +127,8 @@ export default function DitherHero({ animated = true }) {
         Fade mask — covers the canvas with a gradient that goes:
         - transparent at top (shows full dither)
         - transparent until ~50% down (wave visible)
-        - fades to #0E0D0B from 55% → 88% (dissolves into page)
-        - solid #0E0D0B at bottom (text sits on clean dark)
+        - fades to #F5F0E8 from 55% → 88% (dissolves into page)
+        - solid #F5F0E8 at bottom (text sits on clean light)
 
         This makes the dither feel like it's part of the page surface,
         not a box sitting on top of it.
@@ -140,11 +140,11 @@ export default function DitherHero({ animated = true }) {
           inset:      0,
           background: `linear-gradient(
             to bottom,
-            transparent         0%,
-            transparent         50%,
-            rgba(14,13,11,0.6)  65%,
-            rgba(14,13,11,0.92) 80%,
-            #0E0D0B             90%
+            transparent            0%,
+            transparent            50%,
+            rgba(245,240,232,0.6)  65%,
+            rgba(245,240,232,0.92) 80%,
+            #F5F0E8                90%
           )`,
         }}
       />
@@ -174,7 +174,7 @@ export default function DitherHero({ animated = true }) {
             fontSize:       'clamp(36px, 5vw, 58px)',
             fontWeight:     400,
             lineHeight:     1.2,
-            color:          '#E8E4DC',
+            color:          '#1C1A17',
             letterSpacing:  '-0.01em',
             margin:         0,
           }}
@@ -187,7 +187,7 @@ export default function DitherHero({ animated = true }) {
           style={{
             fontFamily:    "'IBM Plex Mono', monospace",
             fontSize:      '11px',
-            color:         '#7A756C',
+            color:         '#6B6560',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
             marginTop:     '0.75rem',

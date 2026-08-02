@@ -33,7 +33,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ item, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-[#0E0D0B]/95 backdrop-blur-md flex flex-col justify-between p-6 md:p-10 cursor-zoom-out select-none"
+      className="fixed inset-0 z-50 bg-[#F5F0E8]/95 backdrop-blur-md flex flex-col justify-between p-6 md:p-10 cursor-zoom-out select-none"
       onClick={onClose}
     >
       {/* Top Bar with Close Button */}

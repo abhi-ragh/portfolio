@@ -9,10 +9,10 @@ interface Props {
 const { project, showMedia = true } = Astro.props;
 ---
 
-<div class="flex flex-col border border-[var(--ink-faint)]/40 bg-[#12110E]/80 p-5 gap-5 group hover:border-[var(--accent)]/60 transition-colors">
+<div class="flex flex-col border border-[var(--rule)] bg-[var(--surface)] p-5 gap-5 group hover:border-[var(--accent)]/60 transition-colors">
   {/* Optional Cover Image (Only displayed on dedicated page when present) */}
   {showMedia && project.coverImage && (
-    <div class="w-full aspect-[16/9] overflow-hidden bg-[#161512]">
+    <div class="w-full aspect-[16/9] overflow-hidden bg-[var(--surface)]">
       <img
         src={project.coverImage}
         alt={project.title}
@@ -28,7 +28,7 @@ const { project, showMedia = true } = Astro.props;
       {project.title}
     </h3>
     {project.description && (
-      <p class="font-serif text-[14px] text-[var(--ink-muted)] leading-relaxed">
+      <p class="font-serif text-[14px] text-[#4A4540] leading-relaxed">
         {project.description}
       </p>
     )}
@@ -36,12 +36,12 @@ const { project, showMedia = true } = Astro.props;
 
   <!-- Optional GitHub Link -->
   {project.github && (
-    <div class="pt-3 border-t border-[var(--ink-faint)]/30 flex justify-between items-center font-mono text-[11px]">
+    <div class="pt-3 border-t border-[var(--rule)] flex justify-between items-center font-mono text-[11px]">
       <a
         href={project.github}
         target="_blank"
         rel="noopener noreferrer"
-        class="text-[var(--ink-muted)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5"
+        class="text-[#6B6560] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5"
       >
         <span>View on GitHub</span>
         <span class="text-[12px] group-hover:translate-x-1 transition-transform">&rarr;</span>

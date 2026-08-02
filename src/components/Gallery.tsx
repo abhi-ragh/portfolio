@@ -105,7 +105,7 @@ export const Gallery: React.FC = () => {
       {/* Section Header */}
       <div className="flex flex-col gap-2 mb-12">
         <div>
-          <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#12110E]/80">
+          <span className="accent-hover-bracket inline-block font-mono text-[11px] text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-2.5 py-1 select-none bg-[#EDE8DF]/80">
             <span class="bracket">[</span> 02 / GALLERY <span class="bracket">]</span>
           </span>
         </div>
@@ -119,11 +119,11 @@ export const Gallery: React.FC = () => {
         {items.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="flex flex-col border border-[var(--ink-faint)]/50 bg-[#12110E]/80 p-4 gap-3 group cursor-pointer hover:border-[var(--accent)]/60 transition-colors"
+            className="flex flex-col border border-[var(--ink-faint)]/50 bg-[#EDE8DF]/80 p-4 gap-3 group cursor-pointer hover:border-[var(--accent)]/60 transition-colors"
             onClick={() => setSelectedItem(item)}
           >
             {/* Image Frame */}
-            <div className="w-full aspect-[4/3] overflow-hidden bg-[#161512] flex items-center justify-center">
+            <div className="w-full aspect-[4/3] overflow-hidden bg-[#E4DFD5] flex items-center justify-center">
               <img
                 src={item.src}
                 alt={item.title}

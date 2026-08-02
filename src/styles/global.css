@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0E0D0B;
-  --surface: #161512;
-  --ink: #E8E4DC;
-  --ink-muted: #A09890;
-  --ink-faint: #7A756C;
-  --rule: #252320;
-  --accent: #C8A96E;
-  --dither-fg: #E8E4DC;
+  --bg:         #F5F0E8;   /* warm off-white — base canvas */
+  --surface:    #E8E2D8;   /* card/section surface, darker for visible lift */
+  --ink:        #1C1A17;   /* primary text — near-black warm */
+  --ink-muted:  #4A4540;   /* secondary text, captions — darker readable muted */
+  --ink-faint:  #6B6560;   /* borders, rules, faint labels — readable */
+  --rule:       #C8C2B8;   /* dividers, card borders — slightly darker, visible */
+  --accent:     #8B5E3C;   /* warm brown */
+  --dither-fg:  #1C1A17;   /* dither dot color */
+  --dither-bg:  #F5F0E8;   /* dither background */
 }
 
 /* Display — used for the big editorial moment in About */
@@ -116,6 +117,7 @@
   position: relative;
   overflow: hidden;
   padding: 5rem 1.5rem;
+  background: var(--bg);
 }
 
 @media (min-width: 768px) {
@@ -123,6 +125,7 @@
   .section-projects,
   .section-writing {
     padding: 7.5rem 2.5rem;
+    background: var(--bg);
   }
 }
 
@@ -250,7 +253,7 @@
   flex-direction: column;
   gap: 0.4rem;
   padding-right: 2.5rem;
-  border-right: 0.5px solid #2D2B27;
+  border-right: 0.5px solid var(--rule);
 }
 
 .career-col:last-child {
@@ -261,7 +264,7 @@
 .col-status-label {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  color: #7A756C;
+  color: #4A4540;
   letter-spacing: 0.12em;
   display: block;
   margin-bottom: 0.4rem;
@@ -276,7 +279,7 @@
   font-style: italic;
   font-size: clamp(20px, 2vw, 26px);
   font-weight: 400;
-  color: #E8E4DC;
+  color: var(--ink);
   line-height: 1.2;
   margin: 0 0 0.2rem;
 }
@@ -284,7 +287,7 @@
 .col-company {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  color: #8A847C;
+  color: #6B6560;
   opacity: 0.85;
   letter-spacing: 0.06em;
 }
@@ -292,7 +295,7 @@
 .col-date {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  color: #8A847C;
+  color: #6B6560;
   letter-spacing: 0.08em;
   margin-bottom: 0.8rem;
 }
@@ -301,7 +304,7 @@
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
   font-size: 14px;
-  color: #C4BDB5;
+  color: #4A4540;
   line-height: 1.5;
   margin: 0 0 1rem;
   display: -webkit-box;
@@ -314,7 +317,7 @@
 .col-tags {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  color: var(--ink-faint);
+  color: #6B6560;
   letter-spacing: 0.08em;
   margin-top: auto;
   padding-top: 1rem;
@@ -328,7 +331,7 @@
   .career-col {
     padding-right: 0;
     border-right: none;
-    border-bottom: 0.5px solid #2D2B27;
+    border-bottom: 0.5px solid var(--rule);
     padding-bottom: 1.5rem;
   }
   .career-col:last-child {
@@ -428,9 +431,9 @@
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border: 1px solid #23211E;
+  border: 1px solid var(--rule);
   border-radius: 0;
-  background: #131210;
+  background: var(--surface);
 }
 
 .project-thumb-img {
@@ -448,8 +451,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #181614;
-  color: var(--ink-faint);
+  background: var(--surface);
+  color: #6B6560;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -486,7 +489,7 @@
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
   font-size: 14px;
-  color: #C4BDB5;
+  color: #4A4540;
   line-height: 1.5;
   margin: 0 0 12px;
   display: -webkit-box;
@@ -498,7 +501,7 @@
 .project-item-tags {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  color: var(--ink-faint);
+  color: #6B6560;
   letter-spacing: 0.08em;
   margin-bottom: 16px;
 }
@@ -528,6 +531,7 @@
   padding: 1.5rem 2.5rem 40px;
   border-bottom: none;
   box-sizing: border-box;
+  background: var(--bg);
 }
 
 .writing-top-bar {
@@ -593,7 +597,7 @@
   flex-direction: column;
   align-items: flex-start;
   padding-right: 48px;
-  border-right: 0.5px solid #2D2B27;
+  border-right: 0.5px solid var(--rule);
   box-sizing: border-box;
   background: transparent;
 }
@@ -624,14 +628,14 @@
 }
 
 .writing-newspaper-col:hover .writing-col-title a {
-  color: #FFFFFF;
+  color: var(--accent);
 }
 
 .writing-col-excerpt {
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
   font-size: 14px;
-  color: #C4BDB5;
+  color: #4A4540;
   line-height: 1.5;
   margin: 0 0 24px;
   display: -webkit-box;
@@ -652,7 +656,7 @@
 .writing-col-meta {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  color: var(--ink-faint);
+  color: #6B6560;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -677,7 +681,7 @@
   .writing-newspaper-col {
     padding-right: 0;
     border-right: none;
-    border-bottom: 0.5px solid #2D2B27;
+    border-bottom: 0.5px solid var(--rule);
     padding-bottom: 2rem;
   }
   .writing-newspaper-col:last-child {
@@ -693,10 +697,10 @@
   width: 100%;
   padding: 0.75rem 2.5rem;
   box-sizing: border-box;
-  background: rgba(19, 18, 16, 0.08);
+  background: var(--bg);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border-top: none;
+  border-top: 0.5px solid var(--rule);
 }
 
 .footer-single-row {
@@ -761,11 +765,11 @@
   background: linear-gradient(135deg, rgba(200, 169, 110, 0.08) 0%, rgba(22, 21, 18, 0.3) 100%);
 }
 
-/* Force Dark Scheme & Lock Colors against Extension Overrides */
+/* Force Light Scheme & Lock Colors */
 html, body {
-  color-scheme: dark !important;
-  background-color: #0E0D0B !important;
-  color: #F4F1EA !important;
+  color-scheme: light !important;
+  background-color: var(--bg) !important;
+  color: var(--ink) !important;
 }
 
 /* Prevent Canvas & Dither Pattern Inversion */
@@ -778,8 +782,8 @@ canvas, svg {
 [data-darkreader-scheme],
 [data-darkreader-inline-stroke],
 [data-darkreader-inline-fill] {
-  background-color: #0E0D0B !important;
-  color: #F4F1EA !important;
+  background-color: #F5F0E8 !important;
+  color: #1C1A17 !important;
 }
 
 /* Print Press Mechanical Ink Deposition Reveal (Simultaneous Unified Start) */
@@ -826,28 +830,28 @@ canvas, svg {
 .tech-tag {
   transition: all 0.2s ease;
   background-color: transparent;
-  color: #E8E4DC;
-  border-color: #7A756C;
+  color: var(--ink);
+  border-color: var(--ink-faint);
 }
 .tech-tag:hover {
   border-color: var(--accent);
   color: var(--ink);
-  background-color: rgba(200, 169, 110, 0.15);
+  background-color: rgba(139, 94, 60, 0.15);
 }
 
-/* Custom Scrollbar for dark UI */
+/* Custom Scrollbar for light UI */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0E0D0B;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #3A3730;
-  border-radius: 3px;
+  background: var(--ink-faint);
+  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555046;
+  background: var(--ink-muted);
 }
 
 /* Continuous Archive Ribbon Infinite Marquee (Left to Right, Faster Pace) */

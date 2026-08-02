@@ -7,7 +7,7 @@ const BAYER_4X4 = [
   [15,  7, 13,  5],
 ];
 
-const INK = { r: 232, g: 228, b: 220 }; // #E8E4DC (Warm Off-White)
+const INK = { r: 28, g: 26, b: 23 }; // #1C1A17 — dark dots
 
 export default function AmbientGrainCanvas() {
   const canvasRef = useRef(null);
