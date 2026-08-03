@@ -531,8 +531,7 @@
 .section-writing {
   width: 100%;
   max-width: none;
-  padding: 1.5rem 2.5rem 40px;
-  border-bottom: none;
+  padding: 2.5rem;
   box-sizing: border-box;
 }
 
@@ -568,8 +567,8 @@
 
 .writing-newspaper-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 48px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.5rem;
   align-items: stretch;
   width: 100%;
 }
@@ -589,19 +588,24 @@
 @media (max-width: 767px) {
   .writing-newspaper-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 2rem;
   }
 }
 
-/* Newspaper Column Styling */
+/* Plain Text Writing Entry Styling */
 .writing-newspaper-col {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-right: 48px;
+  padding-right: 2.5rem;
   border-right: 0.5px solid var(--rule);
+  border-left: none;
+  border-top: none;
+  border-bottom: none;
   box-sizing: border-box;
   background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .writing-newspaper-col:last-child {
@@ -609,22 +613,32 @@
   border-right: none;
 }
 
+@media (max-width: 767px) {
+  .writing-newspaper-col {
+    padding-right: 0;
+    padding-bottom: 2rem;
+    border-right: none;
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .writing-newspaper-col:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
 .writing-col-title {
   font-family: 'Lora', Georgia, serif;
   font-size: 18px;
   font-weight: 400;
-  font-style: italic;
   color: var(--ink);
+  display: block;
   line-height: 1.3;
-  margin: 0 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  margin: 0 0 12px;
 }
 
 .writing-col-title a {
   color: var(--ink);
+  display: block;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -636,30 +650,34 @@
 .writing-col-excerpt {
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
-  font-size: 14px;
-  color: #4A4540;
+  font-size: 13px;
+  color: var(--ink-muted);
   line-height: 1.5;
-  margin: 0 0 24px;
+  margin: 0 0 18px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .writing-col-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-align: right;
 }
 
 .writing-col-meta {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  color: #6B6560;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  color: var(--ink-muted);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
