@@ -33,9 +33,8 @@ const BAYER_4X4 = [
 ];
 
 // Colors matched to the design token system
-// --ink: #1C1A17  --bg: #F5F0E8
-const INK  = { r: 28,  g: 26,  b: 23  }; // #1C1A17 — dark dots
-const BG   = { r: 245, g: 240, b: 232 }; // #F5F0E8 — light background
+const INK = { r: 180, g: 100, b: 40 };  // #B46428 warm amber
+const BG  = { r: 245, g: 240, b: 232 }; // #F5F0E8 light background
 
 const HERO_HEIGHT = 480; // px at full scale
 
@@ -51,8 +50,8 @@ export default function DitherHero({ animated = true }) {
     let time = 0;
 
     const resize = () => {
-      canvas.width  = Math.floor(window.innerWidth / 4);
-      canvas.height = Math.floor(HERO_HEIGHT / 4);
+      canvas.width  = Math.floor((canvas.offsetWidth || window.innerWidth) / 5);
+      canvas.height = Math.floor((canvas.offsetHeight || HERO_HEIGHT) / 5);
     };
 
     const render = () => {
@@ -69,10 +68,11 @@ export default function DitherHero({ animated = true }) {
           const d1 = Math.sin(x * 0.05 + time) * Math.cos(y * 0.05 + time * 0.8);
           const d2 = Math.cos((x + y) * 0.03 - time * 0.5);
           const intensity = (d1 + d2 + 2) / 4; // normalised 0→1
+          const biasedIntensity = intensity * 0.65;
 
           // Bayer threshold
           const threshold = BAYER_4X4[y % 4][x % 4] / 16;
-          const lit = intensity > threshold;
+          const lit = biasedIntensity > threshold;
 
           // Map to ink / bg colors
           data[idx]     = lit ? INK.r : BG.r;
