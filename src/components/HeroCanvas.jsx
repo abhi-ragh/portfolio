@@ -197,7 +197,7 @@ export default function HeroCanvas() {
   const atLimit = strokeCount >= STROKE_LIMIT;
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
       {/* Drawing canvas */}
       <canvas
         ref={canvasRef}
@@ -235,7 +235,7 @@ export default function HeroCanvas() {
         border: '0.5px solid #D8D2C6',
         borderRadius: '24px',
         padding: '1rem 0.75rem',
-        zIndex: 10,
+        zIndex: 20,
         boxShadow: '0 2px 16px rgba(28,26,23,0.08)',
         pointerEvents: 'auto',
       }}>

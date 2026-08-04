@@ -121,6 +121,7 @@ export default function HeroTicker() {
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
+        background: '#F5F0E8',
         // Grounding top border
         borderTop: '0.5px solid rgba(28,26,23,0.22)',
         // Fade edges so text dissolves at left and right
@@ -128,7 +129,7 @@ export default function HeroTicker() {
           'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
         maskImage:
           'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-        zIndex: 4,
+        zIndex: 10,
         pointerEvents: 'none',
       }}
       aria-hidden="true"
