@@ -10,8 +10,6 @@
   --ink-faint:  #6B6560;   /* borders, rules, faint labels — readable */
   --rule:       #C8C2B8;   /* dividers, card borders — slightly darker, visible */
   --accent:     #8B5E3C;   /* warm brown */
-  --dither-fg:  #1C1A17;   /* dither dot color */
-  --dither-bg:  #F5F0E8;   /* dither background */
 }
 
 /* Display — used for the big editorial moment in About */

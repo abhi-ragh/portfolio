@@ -7,8 +7,6 @@ import Work from '../components/Work.astro';
 import Writing from '../components/Writing.astro';
 import SelectedFrames from '../components/SelectedFrames';
 import Footer from '../components/Footer.astro';
-import HeroCanvas from '../components/HeroCanvas';
-import AmbientGrainCanvas from '../components/AmbientGrainCanvas';
 import { getArchiveImages } from '../lib/archive';
 
 const archiveItems = await getArchiveImages();
@@ -16,12 +14,6 @@ const archiveItems = await getArchiveImages();
 
 <Base>
   <div class="relative w-full min-h-screen bg-[#F5F0E8] overflow-hidden">
-    <!-- Z-5: Body Ambient Paper Wave Canvas (0.08 Opacity) -->
-    <AmbientGrainCanvas client:load />
-
-    <!-- Z-10: Animated Hero Canvas (100vh / 100svh, 60 FPS Wave + Scroll Dissolve) -->
-    <HeroCanvas client:load />
-
     <!-- Z-30: Foreground Content Layer -->
     <div class="relative z-30 w-full">
       <Nav />

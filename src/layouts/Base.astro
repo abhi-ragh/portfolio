@@ -31,60 +31,6 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
   </head>
   <body class="bg-[#F5F0E8] text-[#1C1A17] min-h-screen relative overflow-x-hidden font-serif">
-    <!-- SVG Dither Pattern Definitions -->
-    <svg class="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <defs>
-        <!-- Sparse Dither (4x4 Bayer, ~25% fill) -->
-        <pattern id="dither-sparse" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="2" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="0" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="2" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-        </pattern>
-
-        <!-- Mid Dither (4x4 Bayer, ~50% fill) -->
-        <pattern id="dither-mid" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="2" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="1" y="1" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="3" y="1" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="0" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="2" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="1" y="3" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-          <rect x="3" y="3" width="1" height="1" fill="var(--dither-fg)" opacity="0.65"/>
-        </pattern>
-
-        <!-- Dense Dither (4x4 Bayer, ~75% fill) -->
-        <pattern id="dither-dense" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-          <rect x="0" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="1" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="2" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="3" y="0" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          
-          <rect x="1" y="1" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="3" y="1" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          
-          <rect x="0" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="1" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="2" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="3" y="2" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          
-          <rect x="1" y="3" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-          <rect x="3" y="3" width="1" height="1" fill="var(--dither-fg)" opacity="0.75"/>
-        </pattern>
-
-        <!-- Gradient Mask for Hero Section Fade -->
-        <linearGradient id="hero-fade-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-          <stop offset="50%" stop-color="#ffffff" stop-opacity="0.6" />
-          <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
-        </linearGradient>
-        <mask id="hero-dither-mask">
-          <rect x="0" y="0" width="100%" height="100%" fill="url(#hero-fade-gradient)" />
-        </mask>
-      </defs>
-    </svg>
-
     <slot />
   </body>
 </html>
