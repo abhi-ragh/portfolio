@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase.js';
 
-const STROKE_LIMIT = 100;
+const STROKE_LIMIT = 500;
 
 function hsvToHex(h, s, v) {
   s /= 100; v /= 100;
@@ -106,7 +106,8 @@ export default function HeroCanvas() {
       return;
     }
 
-    setStrokeCount(data.length);
+    const nonEraserCount = data.filter(s => s.color !== '#F5F0E8').length;
+    setStrokeCount(nonEraserCount);
 
     const canvas = canvasRef.current;
     const c = ctx.current;
@@ -120,8 +121,8 @@ export default function HeroCanvas() {
   }, [replayStroke]);
 
   // Save completed stroke to Supabase
-  const saveStroke = async (points, strokeColor, strokeSize) => {
-    if (strokeCount >= STROKE_LIMIT) return;
+  const saveStroke = async (points, strokeColor, strokeSize, isEraserStroke = false) => {
+    if (!isEraserStroke && strokeCount >= STROKE_LIMIT) return;
     const { error } = await supabase
       .from('canvas_strokes')
       .insert({
@@ -129,7 +130,7 @@ export default function HeroCanvas() {
         color: strokeColor,
         size: strokeSize,
       });
-    if (!error) {
+    if (!error && !isEraserStroke) {
       setStrokeCount(prev => prev + 1);
     }
   };
@@ -146,7 +147,9 @@ export default function HeroCanvas() {
         const stroke = payload.new;
         if (stroke && stroke.points && ctx.current) {
           replayStroke(ctx.current, stroke.points, stroke.color, stroke.size);
-          setStrokeCount(prev => prev + 1);
+          if (stroke.color !== '#F5F0E8') {
+            setStrokeCount(prev => prev + 1);
+          }
         }
       })
       .subscribe();
@@ -306,7 +309,7 @@ export default function HeroCanvas() {
     if (points && points.length >= 2) {
       const strokeColor = isEraser ? '#F5F0E8' : brushColor;
       const strokeSize = isEraser ? brushSize * 2 : brushSize;
-      await saveStroke(points, strokeColor, strokeSize);
+      await saveStroke(points, strokeColor, strokeSize, isEraser);
     }
     currentStroke.current = [];
   };
@@ -663,7 +666,7 @@ export default function HeroCanvas() {
           textAlign: 'center',
           lineHeight: 1.3,
         }}>
-          {strokeCount}<br/>/100
+          {strokeCount}<br/>/{STROKE_LIMIT}
         </div>
 
       </div>
