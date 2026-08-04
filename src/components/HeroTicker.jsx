@@ -114,7 +114,7 @@ export default function HeroTicker() {
     <div
       style={{
         position: 'absolute',
-        bottom: '2.5rem',
+        bottom: '3rem',
         left: 0,
         right: 0,
         height: '52px',
@@ -128,7 +128,8 @@ export default function HeroTicker() {
           'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
         maskImage:
           'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-        zIndex: 3,
+        zIndex: 4,
+        pointerEvents: 'none',
       }}
       aria-hidden="true"
     >
