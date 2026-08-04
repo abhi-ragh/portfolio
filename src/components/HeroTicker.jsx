@@ -12,15 +12,54 @@ const SEPARATOR = '·';
 const HN_CACHE_KEY = 'hn_ticker_cache';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
-function getFormattedISTTime() {
+function getFormattedUserTime() {
   const now = new Date();
-  const timeString = now.toLocaleTimeString('en-US', {
-    timeZone: 'Asia/Kolkata',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).toUpperCase();
-  return `IST — ${timeString}`;
+  let timeZone = undefined;
+  let tzAbbr = 'UTC';
+
+  try {
+    timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch (e) {
+    timeZone = undefined;
+  }
+
+  try {
+    const timeOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    };
+    if (timeZone) {
+      timeOptions.timeZone = timeZone;
+    } else {
+      timeOptions.timeZone = 'UTC';
+    }
+
+    const timeString = now.toLocaleTimeString('en-US', timeOptions).toUpperCase();
+
+    if (timeZone) {
+      try {
+        const shortTzStr = now.toLocaleTimeString('en-US', {
+          timeZone,
+          timeZoneName: 'short',
+        });
+        const parts = shortTzStr.split(' ');
+        tzAbbr = parts[parts.length - 1] || 'LOCAL';
+      } catch (e) {
+        tzAbbr = 'LOCAL';
+      }
+    }
+
+    return `${tzAbbr} — ${timeString}`;
+  } catch (e) {
+    const utcTime = now.toLocaleTimeString('en-US', {
+      timeZone: 'UTC',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).toUpperCase();
+    return `UTC — ${utcTime}`;
+  }
 }
 
 async function fetchHNTitles() {
@@ -80,15 +119,16 @@ function buildTickerItems(hnTitles, currentTimeStr) {
 }
 
 export default function HeroTicker() {
-  const [currentTime, setCurrentTime] = useState(getFormattedISTTime());
+  const [currentTime, setCurrentTime] = useState('');
   const [hnTitles, setHnTitles] = useState([]);
   const trackRef = useRef(null);
 
   // Keep live time updated every minute
   useEffect(() => {
+    setCurrentTime(getFormattedUserTime());
     const interval = setInterval(() => {
-      setCurrentTime(getFormattedISTTime());
-    }, 60000);
+      setCurrentTime(getFormattedUserTime());
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
