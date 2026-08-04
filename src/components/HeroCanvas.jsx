@@ -1,23 +1,15 @@
 /**
  * HeroCanvas.jsx
  *
- * A drawing canvas layered in the hero section.
- * Users can draw with brush/eraser. Strokes persist 24hrs via Supabase.
- * Floating toolbar on the right with brush sizes, colors, eraser, and real-time sync.
+ * Floating hero drawing canvas with unified Pen/Eraser tool, single size slider,
+ * Supabase 24h persistence, and real-time multi-user synchronization.
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase.js';
 
 const STROKE_LIMIT = 100;
-const COLORS = [
-  '#1C1A17',  // ink — dark
-  '#8B5E3C',  // accent — warm brown
-  '#B46428',  // amber
-  '#6B6560',  // muted grey
-  '#E8E4DC',  // paper — light accent
-];
-const SIZES = [2, 4, 8, 14];
+const INK_COLOR = '#1C1A17';
 
 export default function HeroCanvas() {
   const canvasRef = useRef(null);
@@ -25,24 +17,26 @@ export default function HeroCanvas() {
   const currentStroke = useRef([]);
   const ctx = useRef(null);
 
-  const [color, setColor] = useState('#1C1A17');
-  const [size, setSize] = useState(4);
+  const [brushSize, setBrushSize] = useState(4);
   const [isEraser, setIsEraser] = useState(false);
   const [strokeCount, setStrokeCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const replayStroke = useCallback((c, points, strokeColor, strokeSize) => {
     if (!c || !points || points.length < 2) return;
+    c.save();
     c.beginPath();
-    c.strokeStyle = strokeColor;
-    c.lineWidth = strokeSize;
+    c.globalAlpha = 1.0;
     c.lineCap = 'round';
     c.lineJoin = 'round';
+    c.lineWidth = strokeSize;
+    c.strokeStyle = strokeColor;
     c.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
       c.lineTo(points[i].x, points[i].y);
     }
     c.stroke();
+    c.restore();
   }, []);
 
   // Load existing strokes from Supabase
@@ -161,10 +155,6 @@ export default function HeroCanvas() {
     const c = ctx.current;
     c.beginPath();
     c.moveTo(pos.x, pos.y);
-    c.strokeStyle = isEraser ? '#F5F0E8' : color;
-    c.lineWidth = isEraser ? size * 3 : size;
-    c.lineCap = 'round';
-    c.lineJoin = 'round';
   };
 
   const draw = (e) => {
@@ -174,6 +164,11 @@ export default function HeroCanvas() {
     currentStroke.current.push(pos);
 
     const c = ctx.current;
+    c.globalAlpha = 1.0;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.strokeStyle = isEraser ? '#F5F0E8' : INK_COLOR;
+    c.lineWidth = isEraser ? brushSize * 2 : brushSize;
     c.lineTo(pos.x, pos.y);
     c.stroke();
     c.beginPath();
@@ -187,8 +182,7 @@ export default function HeroCanvas() {
     const points = currentStroke.current;
     if (points && points.length >= 2) {
       if (!isEraser) {
-        // Only persist non-eraser strokes
-        await saveStroke(points, color, size);
+        await saveStroke(points, INK_COLOR, brushSize);
       }
     }
     currentStroke.current = [];
@@ -228,80 +222,42 @@ export default function HeroCanvas() {
         transform: 'translateY(-50%)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '0.75rem',
-        background: 'rgba(245,240,232,0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        gap: '0.85rem',
+        background: 'rgba(245,240,232,0.88)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
         border: '0.5px solid #D8D2C6',
         borderRadius: '24px',
-        padding: '1rem 0.75rem',
+        padding: '1.1rem 0.75rem',
         zIndex: 20,
         boxShadow: '0 2px 16px rgba(28,26,23,0.08)',
+        alignItems: 'center',
         pointerEvents: 'auto',
       }}>
 
-        {/* Color swatches */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-          {COLORS.map(c => (
-            <button
-              key={c}
-              onClick={() => { setColor(c); setIsEraser(false); }}
-              aria-label={`Select color ${c}`}
-              style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: '50%',
-                background: c,
-                border: color === c && !isEraser
-                  ? '2px solid #8B5E3C'
-                  : '1.5px solid #D8D2C6',
-                cursor: 'pointer',
-                padding: 0,
-                flexShrink: 0,
-              }}
-            />
-          ))}
-        </div>
+        {/* Tool Mode: Pen / Draw */}
+        <button
+          onClick={() => setIsEraser(false)}
+          title="Pen Brush"
+          aria-label="Pen tool"
+          style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            background: !isEraser ? '#EDE8DF' : 'transparent',
+            border: !isEraser ? '1.5px solid #8B5E3C' : '1.5px solid transparent',
+            cursor: 'pointer',
+            fontSize: '13px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
+          }}
+        >
+          ✒
+        </button>
 
-        {/* Divider */}
-        <div style={{ height: '0.5px', background: '#D8D2C6', margin: '0 -0.25rem' }} />
-
-        {/* Brush sizes */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
-          {SIZES.map(s => (
-            <button
-              key={s}
-              onClick={() => { setSize(s); setIsEraser(false); }}
-              aria-label={`Select brush size ${s}px`}
-              style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '50%',
-                background: 'transparent',
-                border: size === s && !isEraser
-                  ? '1.5px solid #8B5E3C'
-                  : '1.5px solid transparent',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0,
-              }}
-            >
-              <div style={{
-                width: `${Math.min(s * 2, 20)}px`,
-                height: `${Math.min(s * 2, 20)}px`,
-                borderRadius: '50%',
-                background: '#1C1A17',
-              }} />
-            </button>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div style={{ height: '0.5px', background: '#D8D2C6', margin: '0 -0.25rem' }} />
-
-        {/* Eraser */}
+        {/* Tool Mode: Eraser */}
         <button
           onClick={() => setIsEraser(true)}
           title="Eraser"
@@ -311,17 +267,55 @@ export default function HeroCanvas() {
             height: '28px',
             borderRadius: '50%',
             background: isEraser ? '#EDE8DF' : 'transparent',
-            border: isEraser ? '1.5px solid #8B5E3C' : '1.5px solid #D8D2C6',
+            border: isEraser ? '1.5px solid #8B5E3C' : '1.5px solid transparent',
             cursor: 'pointer',
+            fontSize: '13px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '14px',
             padding: 0,
           }}
         >
           ◻
         </button>
+
+        {/* Divider */}
+        <div style={{ height: '0.5px', background: '#D8D2C6', width: '100%' }} />
+
+        {/* Single Size Slider (controls both Pen brush & Eraser) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <input
+            type="range"
+            min="1"
+            max="24"
+            value={brushSize}
+            onChange={e => setBrushSize(Number(e.target.value))}
+            aria-label="Brush and Eraser size"
+            style={{
+              writingMode: 'vertical-lr',
+              direction: 'rtl',
+              appearance: 'slider-vertical',
+              WebkitAppearance: 'slider-vertical',
+              width: '20px',
+              height: '100px',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          />
+          {/* Size preview dot */}
+          <div style={{
+            width: `${Math.min(brushSize * 1.5, 24)}px`,
+            height: `${Math.min(brushSize * 1.5, 24)}px`,
+            borderRadius: '50%',
+            background: isEraser ? '#EDE8DF' : INK_COLOR,
+            border: isEraser ? '1.5px solid #8B5E3C' : '1px solid #1C1A17',
+            flexShrink: 0,
+            transition: 'all 0.1s',
+          }} />
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: '0.5px', background: '#D8D2C6', width: '100%' }} />
 
         {/* Stroke counter */}
         <div style={{
@@ -329,7 +323,7 @@ export default function HeroCanvas() {
           fontSize: '8px',
           color: atLimit ? '#8B5E3C' : '#B8B2A8',
           textAlign: 'center',
-          lineHeight: 1.2,
+          lineHeight: 1.3,
         }}>
           {strokeCount}<br/>/100
         </div>
@@ -351,7 +345,7 @@ export default function HeroCanvas() {
           borderRadius: '20px',
           border: '0.5px solid #D8D2C6',
           whiteSpace: 'nowrap',
-          zIndex: 10,
+          zIndex: 20,
         }}>
           canvas full — clears in 24h
         </div>
