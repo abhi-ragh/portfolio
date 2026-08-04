@@ -304,9 +304,9 @@ export default function HeroCanvas() {
 
     const points = currentStroke.current;
     if (points && points.length >= 2) {
-      if (!isEraser) {
-        await saveStroke(points, brushColor, brushSize);
-      }
+      const strokeColor = isEraser ? '#F5F0E8' : brushColor;
+      const strokeSize = isEraser ? brushSize * 2 : brushSize;
+      await saveStroke(points, strokeColor, strokeSize);
     }
     currentStroke.current = [];
   };
