@@ -17,11 +17,17 @@ export const HomepageGalleryPreview: React.FC<HomepageGalleryPreviewProps> = ({ 
   const setA = Array.from({ length: repeatCount }, () => displayItems).flat();
   const ribbonList = [...setA, ...setA]; // Set A + Set B (exact 50/50 split for smooth -50% to 0% marquee)
 
+  // Dynamic duration so scroll speed (pixels per second) is constant regardless of image count
+  const animationDuration = Math.max(10, setA.length * 1.8);
+
   return (
     <div className="w-full py-4 md:py-6 overflow-hidden select-none">
       <div className="w-full overflow-hidden">
-        {/* Continuous Moving Archive Ribbon (Left to Right, Faster Pace, Uniform Spacing) */}
-        <div className="animate-archive-ribbon flex items-center gap-4 sm:gap-5 md:gap-6">
+        {/* Continuous Moving Archive Ribbon (Left to Right, Constant Pace, Uniform Spacing) */}
+        <div
+          className="animate-archive-ribbon flex items-center gap-4 sm:gap-5 md:gap-6"
+          style={{ animationDuration: `${animationDuration}s` }}
+        >
           {ribbonList.map((item, index) => (
             <a
               key={`${item.id || 'item'}-${index}`}
