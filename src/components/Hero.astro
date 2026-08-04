@@ -1,18 +1,25 @@
 ---
 import HeroTicker from './HeroTicker.jsx';
+import HeroCanvas from './HeroCanvas.jsx';
 ---
-<section class="relative w-full min-h-screen h-[100vh] flex flex-col justify-end pb-[17vh] md:pb-[19vh] z-30 px-6 md:px-10 overflow-hidden">
-  <div class="relative z-30 max-w-[1000px] flex flex-col gap-4">
-    <h1 class="font-serif text-[46px] sm:text-[60px] md:text-[72px] font-normal leading-[1.06] text-black tracking-tight">
+<section class="relative w-full min-h-screen h-[100vh] flex flex-col justify-end pb-[17vh] md:pb-[19vh] px-6 md:px-10 overflow-hidden">
+  {/* Floating Drawing Canvas (z-2) & Toolbar */}
+  <HeroCanvas client:load />
+
+  {/* Hero Text Overlay (z-3, pointer-events-none so drawing isn't blocked) */}
+  <div class="relative z-[3] max-w-[1000px] flex flex-col gap-4 pointer-events-none">
+    <h1 class="font-serif text-[46px] sm:text-[60px] md:text-[72px] font-normal leading-[1.06] text-black tracking-tight select-none">
       infrastructure, film,<br />
       and the space between.
     </h1>
 
-    <div class="font-mono text-[11px] sm:text-[12px] text-black font-medium tracking-[0.12em] uppercase mt-1">
+    <div class="font-mono text-[11px] sm:text-[12px] text-black font-medium tracking-[0.12em] uppercase mt-1 select-none">
       Lost Somewhere &mdash; 9.9312° N, 76.2673° E
     </div>
   </div>
 
-  {/* Seamless Hacker News & Live IST Ticker */}
-  <HeroTicker client:load />
+  {/* Seamless Hacker News & Live IST Ticker (z-4) */}
+  <div class="relative z-[4] pointer-events-none">
+    <HeroTicker client:load />
+  </div>
 </section>
