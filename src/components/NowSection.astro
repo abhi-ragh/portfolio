@@ -1,84 +1,79 @@
 ---
 interface Props {
+  bio?: string;
   items: { task: string; description: string }[];
+  stack?: { category: string; tools: string }[];
 }
-const { items } = Astro.props;
+
+const {
+  bio = "Cloud Engineer, Linux enthusiast, your avg nerd, and friendly neighbourhood IT guy, Surviving the tech, Arguing with ChatGPT and trying to find PEACE.",
+  items,
+  stack = [
+    { category: 'CLOUD & INFRA', tools: 'AWS · Azure · Terraform · Docker' },
+    { category: 'DEVOPS & CI/CD', tools: 'GitHub Actions · GitLab CI · ArgoCD · Git' },
+    { category: 'SYSTEMS & ADMIN', tools: 'Linux · Windows Server · Bash · SQL' },
+    { category: 'MONITORING & DEV', tools: 'Grafana · Prometheus · Python · CI/CD' }
+  ]
+} = Astro.props;
 ---
 
-<section class="section-now" id="now">
-  <span class="section-label">[ NOW ]</span>
-
-  <div class="now-grid">
-    {items.map(item => (
-      <div class="now-row">
-        <span class="now-task">{item.task}</span>
-        <span class="now-description">{item.description}</span>
+<section class="w-full px-6 md:px-10 py-12 md:py-16 bg-[#F5F0E8] border-b border-[var(--rule)] overflow-hidden" id="about">
+  <div class="w-full flex flex-col gap-6">
+    {/* Row 1: Section Headers on exact same horizontal line (ABOUT | STACK | NOW) */}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 lg:gap-12 items-center">
+      <div>
+        <span class="accent-hover-bracket inline-block font-mono text-[10px] leading-none text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-1 select-none">
+          <span class="bracket">[</span> ABOUT <span class="bracket">]</span>
+        </span>
       </div>
-    ))}
+      <div>
+        <span class="accent-hover-bracket inline-block font-mono text-[10px] leading-none text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-1 select-none">
+          <span class="bracket">[</span> STACK <span class="bracket">]</span>
+        </span>
+      </div>
+      <div>
+        <span class="accent-hover-bracket inline-block font-mono text-[10px] leading-none text-[var(--ink-faint)] tracking-[0.1em] border border-[var(--ink-faint)] px-2 py-1 select-none">
+          <span class="bracket">[</span> NOW <span class="bracket">]</span>
+        </span>
+      </div>
+    </div>
+
+    {/* Row 2: Content (About, STACK, NOW) starting at identical top alignment */}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 lg:gap-12 items-start">
+      {/* Column 1: ABOUT Bio */}
+      <div>
+        <p class="font-serif text-[15px] sm:text-[16px] md:text-[17px] text-[var(--ink)] leading-[1.65] font-normal">
+          {bio}
+        </p>
+      </div>
+
+      {/* Column 2: STACK Table */}
+      <div class="flex flex-col w-full">
+        {stack.map(row => (
+          <div class="grid grid-cols-[115px_1fr] sm:grid-cols-[130px_1fr] gap-3 items-baseline py-2.5 border-t border-[var(--rule)] last:border-b">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.08em] uppercase font-medium">
+              {row.category}
+            </span>
+            <span class="font-serif text-[14px] sm:text-[15px] text-[var(--ink)] leading-snug">
+              {row.tools}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Column 3: NOW Table */}
+      <div class="flex flex-col w-full">
+        {items.map(item => (
+          <div class="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-3 items-baseline py-2.5 border-t border-[var(--rule)] last:border-b">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.08em] uppercase font-medium">
+              {item.task}
+            </span>
+            <span class="font-serif text-[14px] sm:text-[15px] text-[var(--ink)] leading-snug">
+              {item.description}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
 </section>
-
-<style>
-  .section-now {
-    padding: 2.5rem 2.5rem 3rem;
-    background: var(--bg);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .section-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--ink-faint);
-    letter-spacing: 0.1em;
-    border: 0.5px solid var(--ink-faint);
-    display: inline-block;
-    padding: 3px 8px;
-    margin-bottom: 2rem;
-  }
-
-  .now-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    max-width: 640px;
-  }
-
-  .now-row {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: 2rem;
-    align-items: baseline;
-    padding: 0.85rem 0;
-    border-top: 0.5px solid var(--rule);
-  }
-
-  .now-row:last-child {
-    border-bottom: 0.5px solid var(--rule);
-  }
-
-  .now-task {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--ink-faint);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .now-description {
-    font-family: 'Lora', serif;
-    font-size: 16px;
-    color: var(--ink);
-    line-height: 1.4;
-  }
-
-  @media (max-width: 640px) {
-    .section-now {
-      padding: 2rem 1.5rem;
-    }
-    .now-row {
-      grid-template-columns: 1fr;
-      gap: 0.25rem;
-    }
-  }
-</style>
