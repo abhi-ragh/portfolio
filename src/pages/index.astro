@@ -61,9 +61,9 @@ if (nowItems.length === 0) {
         <Hero />
         
         <div class="relative w-full overflow-hidden">
+          <NowSection items={nowItems} />
           <Experience />
           <Work />
-          <NowSection items={nowItems} />
           <SelectedFrames client:load items={archiveItems} />
           <Footer />
         </div>
