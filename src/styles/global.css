@@ -884,7 +884,7 @@ canvas, svg {
 .animate-archive-ribbon {
   display: flex;
   width: max-content;
-  animation: archive-ribbon-slide 30s linear infinite;
+  animation: archive-ribbon-slide 36s linear infinite;
   will-change: transform;
 }
 
