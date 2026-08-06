@@ -4,12 +4,52 @@ import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
 import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
-import Writing from '../components/Writing.astro';
+import NowSection from '../components/NowSection.astro';
 import SelectedFrames from '../components/SelectedFrames';
 import Footer from '../components/Footer.astro';
 import { getArchiveImages } from '../lib/archive';
 
 const archiveItems = await getArchiveImages();
+
+// Fetch Currently items from Notion database
+let nowItems: { task: string; description: string }[] = [];
+try {
+  const notionToken = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_TOKEN : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_TOKEN : undefined);
+  const notionNowId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_NOW_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_NOW_ID : undefined);
+
+  if (notionToken && notionNowId) {
+    const nowRes = await fetch(`https://api.notion.com/v1/databases/${notionNowId}/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${notionToken.trim()}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sorts: [{ property: 'Task', direction: 'ascending' }]
+      })
+    });
+
+    if (nowRes.ok) {
+      const nowData = await nowRes.json();
+      nowItems = (nowData.results || []).map((page: any) => ({
+        task: page.properties.Task?.title?.[0]?.plain_text ?? '',
+        description: page.properties.Description?.rich_text?.[0]?.plain_text ?? '',
+      })).filter((item: any) => item.task && item.description);
+    }
+  }
+} catch (e) {
+  console.warn('Notice: Failed to fetch Notion Now items', e);
+  nowItems = [];
+}
+
+// Fallback items if NOTION_NOW_ID is unconfigured or returns no items
+if (nowItems.length === 0) {
+  nowItems = [
+    { task: 'FIGURING OUT', description: 'Kubernetes' },
+    { task: 'LEARNING FOR', description: 'AWS CloudOps Certification' }
+  ];
+}
 ---
 
 <Base>
@@ -23,7 +63,7 @@ const archiveItems = await getArchiveImages();
         <div class="relative w-full overflow-hidden">
           <Experience />
           <Work />
-          <Writing />
+          <NowSection items={nowItems} />
           <SelectedFrames client:load items={archiveItems} />
           <Footer />
         </div>

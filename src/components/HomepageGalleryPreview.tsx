@@ -16,7 +16,6 @@ export const HomepageGalleryPreview: React.FC<HomepageGalleryPreviewProps> = ({ 
   const repeatCount = Math.max(3, Math.ceil(12 / displayItems.length));
   const setA = Array.from({ length: repeatCount }, () => displayItems).flat();
   const ribbonList = [...setA, ...setA]; // Set A + Set B (exact 50/50 split for smooth -50% to 0% marquee)
-s
   // Dynamic duration so scroll speed (pixels per second) is constant regardless of image count
   const animationDuration = Math.max(10, setA.length * 1.8);
 

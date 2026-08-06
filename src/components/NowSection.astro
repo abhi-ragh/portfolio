@@ -1,0 +1,84 @@
+---
+interface Props {
+  items: { task: string; description: string }[];
+}
+const { items } = Astro.props;
+---
+
+<section class="section-now" id="now">
+  <span class="section-label">[ NOW ]</span>
+
+  <div class="now-grid">
+    {items.map(item => (
+      <div class="now-row">
+        <span class="now-task">{item.task}</span>
+        <span class="now-description">{item.description}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .section-now {
+    padding: 2.5rem 2.5rem 3rem;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    border: 0.5px solid var(--ink-faint);
+    display: inline-block;
+    padding: 3px 8px;
+    margin-bottom: 2rem;
+  }
+
+  .now-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 640px;
+  }
+
+  .now-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 2rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-top: 0.5px solid var(--rule);
+  }
+
+  .now-row:last-child {
+    border-bottom: 0.5px solid var(--rule);
+  }
+
+  .now-task {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .now-description {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .section-now {
+      padding: 2rem 1.5rem;
+    }
+    .now-row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>
