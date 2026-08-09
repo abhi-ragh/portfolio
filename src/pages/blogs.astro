@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sidebar from '../components/Sidebar.astro';
-import Footer from '../components/Footer.astro';
 import BlogCard from '../components/BlogCard.astro';
 import { getArchiveBlogs } from '../lib/blogs';
 
@@ -45,8 +44,6 @@ try {
           ))}
         </div>
       )}
-
-      <Footer />
     </main>
   </div>
 </Base>

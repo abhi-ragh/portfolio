@@ -5,7 +5,6 @@ import Hero from '../components/Hero.astro';
 import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
 import SelectedFrames from '../components/SelectedFrames';
-import Footer from '../components/Footer.astro';
 import { getHomepageImages } from '../lib/archive';
 
 const archiveItems = await getHomepageImages();
@@ -22,7 +21,6 @@ const archiveItems = await getHomepageImages();
       <Experience />
       <Work />
       <SelectedFrames client:load items={archiveItems} />
-      <Footer />
     </main>
   </div>
 </Base>

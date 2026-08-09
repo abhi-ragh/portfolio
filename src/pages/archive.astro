@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Sidebar from '../components/Sidebar.astro';
-import Footer from '../components/Footer.astro';
 import ArchiveGrid from '../components/ArchiveGrid';
 import { getArchiveImages } from '../lib/archive';
 
@@ -30,8 +29,6 @@ const archiveItems = await getArchiveImages();
 
       {/* Editorial Archive Grid */}
       <ArchiveGrid client:load items={archiveItems} />
-      
-      <Footer />
     </main>
   </div>
 </Base>
