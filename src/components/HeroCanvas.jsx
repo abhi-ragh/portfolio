@@ -2,14 +2,10 @@
  * HeroCanvas.jsx
  *
  * Floating hero drawing canvas with unified Pen/Eraser tool, size slider,
- * Photoshop-style 2D Color Picker & Eyedropper tool,
- * Supabase 24h persistence, and real-time multi-user synchronization.
+ * and Photoshop-style 2D Color Picker & Eyedropper tool.
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase.js';
-
-const STROKE_LIMIT = 500;
+import { useEffect, useRef, useState } from 'react';
 
 function hsvToHex(h, s, v) {
   s /= 100; v /= 100;
@@ -60,106 +56,16 @@ export default function HeroCanvas() {
   const colorFieldRef = useRef(null);
   const isDrawing = useRef(false);
   const isPickingColor = useRef(false);
-  const currentStroke = useRef([]);
   const ctx = useRef(null);
 
   const [brushSize, setBrushSize] = useState(4);
   const [brushColor, setBrushColor] = useState('#1C1A17');
   const [isEraser, setIsEraser] = useState(false);
-  const [strokeCount, setStrokeCount] = useState(0);
-  const [loading, setLoading] = useState(true);
 
   // Photoshop Color Picker State (HSV)
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [hsv, setHsv] = useState({ h: 0, s: 0, v: 10 });
   const [hexInput, setHexInput] = useState('#1C1A17');
-
-  const replayStroke = useCallback((c, points, strokeColor, strokeSize) => {
-    if (!c || !points || points.length < 2) return;
-    c.save();
-    c.beginPath();
-    c.globalAlpha = 1.0;
-    c.lineCap = 'round';
-    c.lineJoin = 'round';
-    c.lineWidth = strokeSize;
-    c.strokeStyle = strokeColor;
-    c.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      c.lineTo(points[i].x, points[i].y);
-    }
-    c.stroke();
-    c.restore();
-  }, []);
-
-  // Load active user strokes (last 24h) from Supabase
-  const loadStrokes = useCallback(async () => {
-    const cutoff24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-    const { data, error } = await supabase
-      .from('canvas_strokes')
-      .select('*')
-      .gte('created_at', cutoff24h)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Load error:', error);
-      setLoading(false);
-      return;
-    }
-
-    const strokes = data || [];
-    const nonEraserCount = strokes.filter(s => s.color !== '#F5F0E8').length;
-    setStrokeCount(nonEraserCount);
-
-    const canvas = canvasRef.current;
-    const c = ctx.current;
-    if (canvas && c && strokes.length > 0) {
-      strokes.forEach(stroke => {
-        replayStroke(c, stroke.points, stroke.color, stroke.size);
-      });
-    }
-
-    setLoading(false);
-  }, [replayStroke]);
-
-  // Save completed stroke to Supabase
-  const saveStroke = async (points, strokeColor, strokeSize, isEraserStroke = false) => {
-    if (!isEraserStroke && strokeCount >= STROKE_LIMIT) return;
-    const { error } = await supabase
-      .from('canvas_strokes')
-      .insert({
-        points,
-        color: strokeColor,
-        size: strokeSize,
-      });
-    if (!error && !isEraserStroke) {
-      setStrokeCount(prev => prev + 1);
-    }
-  };
-
-  // Realtime Supabase Subscription
-  useEffect(() => {
-    const channel = supabase
-      .channel('canvas_strokes_realtime')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'canvas_strokes',
-      }, (payload) => {
-        const stroke = payload.new;
-        if (stroke && stroke.points && ctx.current) {
-          replayStroke(ctx.current, stroke.points, stroke.color, stroke.size);
-          if (stroke.color !== '#F5F0E8') {
-            setStrokeCount(prev => prev + 1);
-          }
-        }
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [replayStroke]);
 
   // Canvas setup & resize listener
   useEffect(() => {
@@ -184,11 +90,10 @@ export default function HeroCanvas() {
 
     ctx.current = canvas.getContext('2d');
     resize();
-    loadStrokes();
 
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
-  }, [loadStrokes]);
+  }, []);
 
   // Update Color & HSV Sync
   const updateColorFromHsv = (h, s, v) => {
@@ -273,12 +178,10 @@ export default function HeroCanvas() {
   };
 
   const startDraw = (e) => {
-    if (strokeCount >= STROKE_LIMIT) return;
     if (e.target !== canvasRef.current) return;
     e.preventDefault();
     isDrawing.current = true;
     const pos = getPos(e, canvasRef.current);
-    currentStroke.current = [pos];
 
     const c = ctx.current;
     c.beginPath();
@@ -289,7 +192,6 @@ export default function HeroCanvas() {
     if (!isDrawing.current) return;
     e.preventDefault();
     const pos = getPos(e, canvasRef.current);
-    currentStroke.current.push(pos);
 
     const c = ctx.current;
     c.globalAlpha = 1.0;
@@ -303,20 +205,10 @@ export default function HeroCanvas() {
     c.moveTo(pos.x, pos.y);
   };
 
-  const endDraw = async (e) => {
-    if (!isDrawing.current) return;
+  const endDraw = () => {
     isDrawing.current = false;
-
-    const points = currentStroke.current;
-    if (points && points.length >= 2) {
-      const strokeColor = isEraser ? '#F5F0E8' : brushColor;
-      const strokeSize = isEraser ? brushSize * 2 : brushSize;
-      await saveStroke(points, strokeColor, strokeSize, isEraser);
-    }
-    currentStroke.current = [];
   };
 
-  const atLimit = strokeCount >= STROKE_LIMIT;
   const currentHueHex = hsvToHex(hsv.h, 100, 100);
 
   return (
@@ -330,8 +222,6 @@ export default function HeroCanvas() {
           width: '100%',
           height: '100%',
           cursor: isEraser ? 'cell' : 'crosshair',
-          opacity: loading ? 0 : 1,
-          transition: 'opacity 0.3s',
           touchAction: 'none',
         }}
         onMouseDown={startDraw}
@@ -657,42 +547,7 @@ export default function HeroCanvas() {
           }} />
         </div>
 
-        {/* Divider */}
-        <div style={{ height: '0.5px', background: '#D8D2C6', width: '100%' }} />
-
-        {/* Stroke counter */}
-        <div style={{
-          fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: '8px',
-          color: atLimit ? '#8B5E3C' : '#B8B2A8',
-          textAlign: 'center',
-          lineHeight: 1.3,
-        }}>
-          {strokeCount}<br/>/{STROKE_LIMIT}
-        </div>
-
       </div>
-
-      {/* At limit message */}
-      {atLimit && (
-        <div style={{
-          position: 'absolute',
-          bottom: '3.5rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: '10px',
-          color: '#8B5E3C',
-          background: 'rgba(245,240,232,0.9)',
-          padding: '4px 12px',
-          borderRadius: '20px',
-          border: '0.5px solid #D8D2C6',
-          whiteSpace: 'nowrap',
-          zIndex: 20,
-        }}>
-          canvas full — clears in 24h
-        </div>
-      )}
     </div>
   );
 }
