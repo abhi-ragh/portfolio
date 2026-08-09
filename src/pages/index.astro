@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
+import Sidebar from '../components/Sidebar.astro';
 import Hero from '../components/Hero.astro';
 import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
@@ -12,21 +12,17 @@ const archiveItems = await getArchiveImages();
 ---
 
 <Base>
-  <div class="relative w-full min-h-screen bg-[#F5F0E8] overflow-hidden">
-    <!-- Z-30: Foreground Content Layer -->
-    <div class="relative z-30 w-full">
-      <Nav />
-      <main class="w-full">
-        <Hero />
-        
-        <div class="relative w-full overflow-hidden">
-          <Experience />
-          <Work />
-          <SelectedFrames client:load items={archiveItems} />
-          <Footer />
-        </div>
-      </main>
-    </div>
+  <div class="max-w-[1280px] mx-auto min-h-screen px-6 sm:px-10 lg:px-12 flex flex-col lg:flex-row gap-8 lg:gap-16 relative z-10">
+    {/* Left Fixed Identity & Nav Sidebar on Desktop / Top Shell on Mobile */}
+    <Sidebar />
+
+    {/* Right Scrolling Main Document Column */}
+    <main class="flex-1 min-w-0 py-8 lg:py-16 flex flex-col gap-16 lg:gap-24">
+      <Hero />
+      <Experience />
+      <Work />
+      <SelectedFrames client:load items={archiveItems} />
+      <Footer />
+    </main>
   </div>
 </Base>
-

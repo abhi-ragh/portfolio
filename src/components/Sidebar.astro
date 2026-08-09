@@ -1,0 +1,79 @@
+---
+interface Props {
+  activeSection?: string;
+}
+
+const { activeSection = '' } = Astro.props;
+---
+
+<header class="w-full lg:w-[340px] xl:w-[380px] lg:h-screen lg:sticky lg:top-0 flex flex-col justify-between py-8 lg:py-16 shrink-0 z-40 border-b lg:border-b-0 lg:border-r border-[var(--line)] lg:pr-8">
+  <!-- Top Block: Identity & Role -->
+  <div class="flex flex-col gap-4">
+    <!-- Brand / Identity Name in System A Handwritten Font -->
+    <div>
+      <a href="/" class="font-hand text-[38px] sm:text-[44px] font-bold text-[var(--ink)] tracking-tight hover:text-[var(--accent)] transition-colors leading-none inline-block">
+        abhiragh a r
+      </a>
+      <p class="font-serif italic text-[16px] text-[var(--ink-muted)] mt-2 leading-snug">
+        Cloud Infrastructure Engineer
+      </p>
+    </div>
+
+    <!-- Brief Bio / Personal Note -->
+    <p class="font-serif italic text-[14px] text-[var(--ink-faint)] leading-relaxed max-w-sm mt-1">
+      AWS infrastructure, Linux systems automation, 35mm film photography, and sketchbook notes based in Kochi, Kerala.
+    </p>
+
+    <!-- Navigation Links in System B Monospace Font -->
+    <nav class="flex flex-wrap lg:flex-col gap-3 lg:gap-4 mt-6 lg:mt-10 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink)]">
+      <a
+        href="/#experience"
+        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+      >
+        <span class="h-[1px] w-6 bg-[var(--ink-faint)] group-hover:w-10 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span>01 / EXPERIENCE</span>
+      </a>
+      <a
+        href="/projects"
+        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+      >
+        <span class="h-[1px] w-6 bg-[var(--ink-faint)] group-hover:w-10 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span>02 / PROJECTS</span>
+      </a>
+      <a
+        href="/archive"
+        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+      >
+        <span class="h-[1px] w-6 bg-[var(--ink-faint)] group-hover:w-10 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span>03 / COLLECTION</span>
+      </a>
+      <a
+        href="/blogs"
+        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+      >
+        <span class="h-[1px] w-6 bg-[var(--ink-faint)] group-hover:w-10 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span>04 / WRITING</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Bottom Block: Social Links & Location -->
+  <div class="flex flex-col gap-3 mt-8 lg:mt-0 font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.08em]">
+    <div class="flex items-center gap-4">
+      <a href="https://github.com/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors">
+        github
+      </a>
+      <span>&middot;</span>
+      <a href="https://linkedin.com/in/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors">
+        linkedin
+      </a>
+      <span>&middot;</span>
+      <a href="mailto:contact@abhiragh.com" class="hover:text-[var(--ink)] transition-colors">
+        email
+      </a>
+    </div>
+    <div class="text-[10px] uppercase tracking-[0.12em] opacity-70">
+      Kochi, Kerala &mdash; 9.9312&deg; N, 76.2673&deg; E
+    </div>
+  </div>
+</header>
