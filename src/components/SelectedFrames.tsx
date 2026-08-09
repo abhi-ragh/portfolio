@@ -22,7 +22,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
   ];
 
   return (
-    <section id="archive" className="flex flex-col gap-8 py-8 border-b border-[var(--line)] scroll-mt-12">
+    <section id="archive" className="flex flex-col gap-5 py-2 scroll-mt-12">
       {/* Section Eyebrow Header */}
       <div className="flex flex-col gap-2">
         <div>
