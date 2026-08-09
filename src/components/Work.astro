@@ -9,40 +9,43 @@ try {
 }
 ---
 
-<section id="projects" class="section-projects">
-  <!-- Top Bar -->
-  <div class="projects-top-bar">
-    <span class="section-label">[ 05 / PROJECTS ]</span>
-    <a href="/projects" class="projects-view-all">View all projects &rarr;</a>
+<section id="projects" class="flex flex-col gap-8 py-8 border-b border-[var(--line)] scroll-mt-12">
+  {/* Section Eyebrow Header */}
+  <div class="flex justify-between items-baseline">
+    <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-faint)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--surface)]/80 inline-block">
+      [ 02 / PROJECTS ]
+    </span>
   </div>
 
-  <!-- Horizontal Exhibition Grid -->
-  <div class="projects-exhibition-grid">
+  {/* Projects Grid */}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
     {projects.map((proj: any, idx: number) => (
-      <article key={proj.id || idx} class="project-exhibition-item">
+      <article key={proj.id || idx} class="flex flex-col gap-3 group">
+        {/* Plainer image crop with hairline border */}
         <a
           href={proj.github || "/projects"}
           target={proj.github ? "_blank" : "_self"}
           rel="noopener noreferrer"
-          class="project-thumb-anchor"
+          class="block w-full overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-300 group-hover:border-[var(--accent)]/60"
         >
-          <div class="project-thumb-box">
+          <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
             {proj.coverImage ? (
               <img
                 src={proj.coverImage}
                 alt={proj.title}
-                class="project-thumb-img"
+                class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-[1.02]"
                 loading="lazy"
               />
             ) : (
-              <div class="project-thumb-empty">
-                <span>{proj.title}</span>
+              <div class="w-full h-full flex items-center justify-center p-4 text-center font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.08em]">
+                {proj.title}
               </div>
             )}
           </div>
         </a>
 
-        <h3 class="project-item-title">
+        {/* Title (normal type, slightly larger) */}
+        <h3 class="font-serif text-[18px] sm:text-[20px] font-medium text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
           <a
             href={proj.github || "/projects"}
             target={proj.github ? "_blank" : "_self"}
@@ -52,23 +55,40 @@ try {
           </a>
         </h3>
 
+        {/* One-Line Description */}
         {proj.description && (
-          <p class="project-item-desc">{proj.description}</p>
+          <p class="font-serif italic text-[14px] text-[var(--ink-faint)] leading-relaxed line-clamp-2">
+            {proj.description}
+          </p>
         )}
 
-        <div class="project-item-tags">
+        {/* Tags */}
+        <div class="font-mono text-[9px] uppercase tracking-[0.08em] text-[var(--ink-faint)] mt-auto pt-1">
           {proj.tags || "PROJECT"}
         </div>
 
-        <a
-          href={proj.github || "/projects"}
-          target={proj.github ? "_blank" : "_self"}
-          rel="noopener noreferrer"
-          class="project-item-link"
-        >
-          View &rarr;
-        </a>
+        {/* View -> Link */}
+        <div class="pt-1">
+          <a
+            href={proj.github || "/projects"}
+            target={proj.github ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+            class="font-mono text-[10px] text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 hover:underline"
+          >
+            View &rarr;
+          </a>
+        </div>
       </article>
     ))}
+  </div>
+
+  {/* Full projects list → Link at end of section */}
+  <div class="pt-4">
+    <a
+      href="/projects"
+      class="font-mono text-[11px] text-[var(--ink-faint)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
+    >
+      Full projects list &rarr;
+    </a>
   </div>
 </section>
