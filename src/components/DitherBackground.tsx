@@ -25,6 +25,32 @@ export const DitherBackground: React.FC = () => {
     let targetMouseX = -1000;
     let targetMouseY = -1000;
 
+    // Theme color tracking (dynamically adapts dither dot color on light/dark toggle)
+    let dotR = 237;
+    let dotG = 232;
+    let dotB = 222;
+
+    const syncThemeColors = () => {
+      const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+      if (theme === 'dark') {
+        // Off-white dither dots over dark paper
+        dotR = 237;
+        dotG = 232;
+        dotB = 222;
+      } else {
+        // Near-black dither dots over light paper
+        dotR = 20;
+        dotG = 20;
+        dotB = 20;
+      }
+    };
+
+    syncThemeColors();
+    window.addEventListener('themechange', syncThemeColors);
+
+    const observer = new MutationObserver(() => syncThemeColors());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // 0.5x scaling for performant blocky paper dither grain
@@ -103,10 +129,10 @@ export const DitherBackground: React.FC = () => {
           const bayerThreshold = bayerRow[x & 3] / 16.0;
 
           if (intensity > bayerThreshold) {
-            data[ptr] = 20;      // R: #14
-            data[ptr + 1] = 20;  // G: #14
-            data[ptr + 2] = 20;  // B: #14
-            data[ptr + 3] = 28;  // A: ~11% opacity (visible ink grain)
+            data[ptr] = dotR;
+            data[ptr + 1] = dotG;
+            data[ptr + 2] = dotB;
+            data[ptr + 3] = 28;  // A: ~11% opacity (visible paper dither grain)
           } else {
             data[ptr] = 0;
             data[ptr + 1] = 0;
@@ -144,6 +170,8 @@ export const DitherBackground: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('themechange', syncThemeColors);
+      observer.disconnect();
     };
   }, []);
 

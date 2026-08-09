@@ -5,9 +5,12 @@ export default {
     extend: {
       colors: {
         paper: 'var(--paper)',
+        'paper-panel': 'var(--paper-panel)',
         ink: 'var(--ink)',
-        'ink-faint': 'var(--ink-faint)',
-        'ink-muted': 'var(--ink-muted)',
+        'ink-secondary': 'var(--ink-secondary)',
+        'ink-tertiary': 'var(--ink-tertiary)',
+        'ink-faint': 'var(--ink-tertiary)',
+        'ink-muted': 'var(--ink-secondary)',
         line: 'var(--line)',
         accent: 'var(--accent)',
         bg: 'var(--paper)',

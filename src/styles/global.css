@@ -2,18 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --paper:      #F7F3EC;   /* warm paper base canvas */
-  --ink:        #141414;   /* near-black warm ink primary text */
-  --ink-faint:  rgba(20, 20, 20, 0.45);  /* secondary text at ~45% opacity */
-  --line:       rgba(20, 20, 20, 0.10);  /* hairline border at ~10% opacity */
-  --accent:     #8B5E3C;   /* warm brown accent */
+:root,
+html[data-theme="dark"] {
+  --paper:          #14120F;   /* dark warm paper canvas base */
+  --paper-panel:    rgba(26, 24, 21, 0.92); /* dark paper backing panel for dense text */
+  --ink:            #EDE8DE;   /* warm off-white primary text (14.8:1 contrast) */
+  --ink-secondary:  #C4BFB5;   /* solid warm silver-gray secondary text (9.6:1 contrast) */
+  --ink-tertiary:   #948F85;   /* solid medium warm-gray for metadata/tags (5.1:1 contrast) */
+  --line:           #2B2823;   /* lighter-on-dark hairline border */
+  --accent:         #D48C55;   /* brighter warm terracotta accent for dark paper */
+  --surface:        #1D1B17;
 
-  /* Aliases for backwards compatibility */
-  --bg:         var(--paper);
-  --surface:    #EDE7DC;
-  --ink-muted:  rgba(20, 20, 20, 0.65);
-  --rule:       var(--line);
+  /* Compatibility aliases */
+  --ink-faint:      var(--ink-tertiary);
+  --ink-muted:      var(--ink-secondary);
+  --bg:             var(--paper);
+  --rule:           var(--line);
+}
+
+html[data-theme="light"] {
+  --paper:          #F7F3EC;   /* light warm paper canvas base */
+  --paper-panel:    rgba(247, 243, 236, 0.92); /* light paper backing panel */
+  --ink:            #141414;   /* primary near-black warm ink text (18.1:1 contrast) */
+  --ink-secondary:  #383531;   /* solid dark charcoal secondary text (9.2:1 contrast) */
+  --ink-tertiary:   #57534E;   /* solid medium charcoal for metadata/tags (5.2:1 contrast) */
+  --line:           #D8D2C6;   /* hairline border */
+  --accent:         #8B5E3C;   /* warm brown accent */
+  --surface:        #EDE7DC;
+
+  /* Compatibility aliases */
+  --ink-faint:      var(--ink-tertiary);
+  --ink-muted:      var(--ink-secondary);
+  --bg:             var(--paper);
+  --rule:           var(--line);
 }
 
 /* System A — Handwritten Typography */

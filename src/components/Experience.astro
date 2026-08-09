@@ -25,15 +25,15 @@ const roles = [
 ---
 
 <section id="experience" class="flex flex-col gap-8 py-8 border-b border-[var(--line)] scroll-mt-12">
-  {/* Section Eyebrow */}
+  {/* Section Eyebrow Header */}
   <div>
-    <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-faint)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--surface)]/80 inline-block">
+    <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--paper-panel)] inline-block">
       [ 01 / EXPERIENCE ]
     </span>
   </div>
 
-  {/* Roles Vertical Stack */}
-  <div class="flex flex-col gap-10 lg:gap-12">
+  {/* Roles Vertical Stack with Paper Backing Panel */}
+  <div class="bg-[var(--paper-panel)] backdrop-blur-[2px] p-6 sm:p-7 border border-[var(--line)]/60 flex flex-col gap-9 lg:gap-10">
     {roles.map((role) => (
       <div class="flex flex-col gap-2">
         {/* Title */}
@@ -42,19 +42,19 @@ const roles = [
         </h3>
 
         {/* Company & Date Range */}
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.08em]">
-          <span class="uppercase font-semibold text-[var(--ink)]">{role.company}</span>
-          <span>&middot;</span>
-          <span>{role.date}</span>
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tracking-[0.08em]">
+          <span class="uppercase font-semibold text-[var(--ink-secondary)]">{role.company}</span>
+          <span class="text-[var(--ink-tertiary)]">&middot;</span>
+          <span class="text-[var(--ink-tertiary)]">{role.date}</span>
         </div>
 
         {/* Single-Sentence Description */}
-        <p class="font-serif italic text-[14px] sm:text-[15px] text-[var(--ink)] leading-relaxed mt-1">
+        <p class="font-serif italic text-[14px] sm:text-[15px] text-[var(--ink-secondary)] leading-relaxed mt-0.5">
           {role.description}
         </p>
 
         {/* Tech-Tag Line (mono, ·-separated) */}
-        <div class="font-mono text-[10px] text-[var(--ink-faint)] tracking-[0.08em] uppercase mt-1">
+        <div class="font-mono text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em] uppercase font-semibold mt-1">
           {role.tags}
         </div>
       </div>
@@ -62,12 +62,12 @@ const roles = [
   </div>
 
   {/* Full Résumé Link (Inline text treatment) */}
-  <div class="pt-2">
+  <div class="pt-1">
     <a
       href="https://linkedin.com/in/abhiragh"
       target="_blank"
       rel="noopener noreferrer"
-      class="font-mono text-[11px] text-[var(--ink-faint)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
+      class="font-mono text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
     >
       Full r&eacute;sum&eacute; &rarr;
     </a>

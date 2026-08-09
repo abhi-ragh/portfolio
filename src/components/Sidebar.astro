@@ -22,12 +22,12 @@ const { activeSection = '' } = Astro.props;
       </h2>
 
       {/* 3. One-line tech/identity summary (reusing top tags) */}
-      <div class="font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.1em] uppercase font-medium mt-1">
+      <div class="font-mono text-[11px] text-[var(--ink-tertiary)] tracking-[0.1em] uppercase font-semibold mt-1">
         AWS &middot; Linux &middot; Docker
       </div>
 
       {/* 4. Kerala, India (Small normal/mono type) */}
-      <div class="font-mono text-[11px] text-[var(--ink-faint)] tracking-[0.06em]">
+      <div class="font-mono text-[11px] text-[var(--ink-tertiary)] tracking-[0.06em]">
         Kerala, India
       </div>
     </div>
@@ -36,49 +36,104 @@ const { activeSection = '' } = Astro.props;
     <nav class="flex flex-wrap lg:flex-col gap-3 lg:gap-3.5 mt-4 lg:mt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink)]">
       <a
         href="/#experience"
-        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-faint)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
         <span>EXPERIENCE</span>
       </a>
       <a
         href="/projects"
-        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-faint)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
         <span>PROJECTS</span>
       </a>
       <a
         href="/archive"
-        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-faint)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
         <span>COLLECTION</span>
       </a>
       <a
         href="/blogs"
-        class="group flex items-center gap-3 hover:text-[var(--accent)] transition-colors py-1"
+        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-faint)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
         <span>WRITING</span>
       </a>
     </nav>
   </div>
 
-  <!-- 6. Bottom-anchored within column: github, linkedin, email (Plain text links, lowercase) -->
-  <div class="flex flex-col gap-2 mt-8 lg:mt-0 font-mono text-[11px] lowercase tracking-[0.08em] text-[var(--ink-faint)]">
+  <!-- 6. Bottom-anchored within column: github, linkedin, email & Theme Toggle -->
+  <div class="flex flex-col gap-3 mt-8 lg:mt-0 font-mono text-[11px] tracking-[0.08em] text-[var(--ink-secondary)] select-none">
     <div class="flex items-center gap-3">
-      <a href="https://github.com/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors">
+      <a href="https://github.com/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors lowercase">
         github
       </a>
       <span>&middot;</span>
-      <a href="https://linkedin.com/in/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors">
+      <a href="https://linkedin.com/in/abhiragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors lowercase">
         linkedin
       </a>
       <span>&middot;</span>
-      <a href="mailto:contact@abhiragh.com" class="hover:text-[var(--ink)] transition-colors">
+      <a href="mailto:contact@abhiragh.com" class="hover:text-[var(--ink)] transition-colors lowercase">
         email
       </a>
     </div>
+
+    {/* Minimal Plain Text Theme Toggle Button */}
+    <div class="pt-0.5">
+      <button
+        id="theme-toggle-btn"
+        type="button"
+        class="font-mono text-[11px] text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors cursor-pointer inline-flex items-center gap-1.5 uppercase tracking-[0.1em]"
+        aria-label="Toggle theme mode"
+      >
+        <span id="theme-toggle-icon" class="text-[12px]">☾</span>
+        <span id="theme-toggle-label">DARK</span>
+      </button>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function() {
+    function bindThemeToggle() {
+      const btn = document.getElementById('theme-toggle-btn');
+      const icon = document.getElementById('theme-toggle-icon');
+      const label = document.getElementById('theme-toggle-label');
+
+      function updateUI(theme) {
+        if (icon && label) {
+          if (theme === 'dark') {
+            icon.textContent = '☾';
+            label.textContent = 'DARK';
+          } else {
+            icon.textContent = '☀';
+            label.textContent = 'LIGHT';
+          }
+        }
+      }
+
+      const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      updateUI(initialTheme);
+
+      if (btn && !btn.dataset.bound) {
+        btn.dataset.bound = 'true';
+        btn.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', current);
+          localStorage.setItem('theme', current);
+          updateUI(current);
+          window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: current } }));
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindThemeToggle);
+    } else {
+      bindThemeToggle();
+    }
+  })();
+</script>

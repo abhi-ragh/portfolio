@@ -26,24 +26,24 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
       {/* Section Eyebrow Header */}
       <div className="flex flex-col gap-2">
         <div>
-          <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink-faint)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--surface)]/80 inline-block">
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--paper-panel)] inline-block">
             [ 03 / COLLECTION ]
           </span>
         </div>
         {/* Handwritten Personal Aside (System A) */}
-        <p class="font-hand text-[22px] sm:text-[24px] text-[var(--ink)] leading-snug max-w-xl mt-1">
+        <p className="font-hand text-[22px] sm:text-[24px] text-[var(--ink)] leading-snug max-w-xl mt-1">
           frames captured on 35mm film &amp; pencil contour sketches&mdash;things worth keeping from quiet moments.
         </p>
       </div>
 
-      {/* Asymmetric Mixed-Span Masonry Grid */}
+      {/* Asymmetric Mixed-Span Masonry Grid (Open canvas over dither) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 items-start">
         {displayItems.map((item, index) => {
           const config = layoutConfigs[index % layoutConfigs.length];
           return (
             <div
               key={item.id || index}
-              className={`${config.gridSpan} flex flex-col gap-2 group cursor-pointer border border-[var(--line)] bg-[var(--surface)]/40 p-2.5 transition-all duration-300 hover:border-[var(--accent)]/60`}
+              className={`${config.gridSpan} flex flex-col gap-2 group cursor-pointer border border-[var(--line)] bg-[var(--paper-panel)]/90 p-2.5 transition-all duration-300 hover:border-[var(--accent)]/60`}
               onClick={() => setSelectedItem({
                 id: item.id,
                 src: item.imageUrl,
@@ -64,7 +64,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
                 <span className="font-serif italic text-[13px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate max-w-[75%]">
                   {item.caption}
                 </span>
-                <span className="text-[var(--ink-faint)] uppercase tracking-[0.08em]">
+                <span className="text-[var(--ink-tertiary)] font-semibold uppercase tracking-[0.08em]">
                   {item.type === 'SKETCHBOOK DRAFT' ? 'sketch' : '35mm'}
                 </span>
               </div>
@@ -77,7 +77,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
       <div className="pt-2">
         <a
           href="/archive"
-          className="font-mono text-[11px] text-[var(--ink-faint)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
+          className="font-mono text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
         >
           View the archive &rarr;
         </a>
