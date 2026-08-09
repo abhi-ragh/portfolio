@@ -11,16 +11,18 @@ const archiveItems = await getHomepageImages();
 ---
 
 <Base>
-  <div class="max-w-[1280px] mx-auto min-h-screen px-6 sm:px-10 lg:px-12 flex flex-col lg:flex-row gap-8 lg:gap-16 relative z-10">
-    {/* Left Fixed Identity & Nav Sidebar on Desktop / Top Shell on Mobile */}
+  <div class="w-full max-w-[1536px] mx-auto min-h-screen px-6 sm:px-10 lg:px-12 xl:px-16 flex flex-col lg:flex-row gap-8 lg:gap-12 xl:gap-16 relative z-10">
+    {/* Left Fixed Identity & Nav Sidebar on Desktop / Bottom Shell on Mobile */}
     <Sidebar />
 
-    {/* Right Scrolling Main Document Column */}
-    <main class="flex-1 min-w-0 py-8 lg:py-16 flex flex-col gap-16 lg:gap-24">
-      <Hero />
-      <Experience />
-      <Work />
-      <SelectedFrames client:load items={archiveItems} />
+    {/* Right Scrolling Main Document Column (Centered inside available track) */}
+    <main class="flex-1 min-w-0 py-8 lg:py-16 px-0 lg:px-4 xl:px-8">
+      <div class="w-full max-w-[920px] xl:max-w-[960px] mx-auto flex flex-col gap-16 lg:gap-24">
+        <Hero />
+        <Experience />
+        <Work />
+        <SelectedFrames client:load items={archiveItems} />
+      </div>
     </main>
   </div>
 </Base>
