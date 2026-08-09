@@ -91,43 +91,30 @@ export default function HeroCanvas() {
     c.restore();
   }, []);
 
-  // Load default baseline strokes + active live user strokes (last 24h)
+  // Load active user strokes (last 24h) from Supabase
   const loadStrokes = useCallback(async () => {
-    const DEFAULT_CUTOFF = '2026-08-07T02:18:00.000Z'; // Cutoff date for default baseline strokes
     const cutoff24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-    // 1. Fetch permanent default baseline strokes
-    const { data: defaultData, error: defaultErr } = await supabase
+    const { data, error } = await supabase
       .from('canvas_strokes')
       .select('*')
-      .lte('created_at', DEFAULT_CUTOFF)
-      .order('created_at', { ascending: true });
-
-    // 2. Fetch live user strokes from the last 24 hours
-    const { data: liveData, error: liveErr } = await supabase
-      .from('canvas_strokes')
-      .select('*')
-      .gt('created_at', DEFAULT_CUTOFF)
       .gte('created_at', cutoff24h)
       .order('created_at', { ascending: true });
 
-    if (defaultErr || liveErr) {
-      console.error('Load error:', defaultErr || liveErr);
+    if (error) {
+      console.error('Load error:', error);
       setLoading(false);
       return;
     }
 
-    const defaultStrokes = defaultData || [];
-    const liveStrokes = liveData || [];
-    const allStrokes = [...defaultStrokes, ...liveStrokes];
-
-    const nonEraserCount = liveStrokes.filter(s => s.color !== '#F5F0E8').length;
+    const strokes = data || [];
+    const nonEraserCount = strokes.filter(s => s.color !== '#F5F0E8').length;
     setStrokeCount(nonEraserCount);
 
     const canvas = canvasRef.current;
     const c = ctx.current;
-    if (canvas && c && allStrokes.length > 0) {
-      allStrokes.forEach(stroke => {
+    if (canvas && c && strokes.length > 0) {
+      strokes.forEach(stroke => {
         replayStroke(c, stroke.points, stroke.color, stroke.size);
       });
     }
