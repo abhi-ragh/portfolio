@@ -4,14 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: 'var(--bg)',
-        surface: 'var(--surface)',
+        paper: 'var(--paper)',
         ink: 'var(--ink)',
-        'ink-muted': 'var(--ink-muted)',
         'ink-faint': 'var(--ink-faint)',
-        accent: 'var(--accent)'
+        'ink-muted': 'var(--ink-muted)',
+        line: 'var(--line)',
+        accent: 'var(--accent)',
+        bg: 'var(--paper)',
+        surface: 'var(--surface)',
+        rule: 'var(--line)'
       },
       fontFamily: {
+        hand: ['Caveat', 'cursive', 'handwriting'],
         serif: ['Lora', 'Georgia', 'serif'],
         mono: ['"IBM Plex Mono"', 'monospace']
       }

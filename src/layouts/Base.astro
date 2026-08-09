@@ -13,7 +13,7 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="bg-[#F5F0E8] text-[#1C1A17]">
+<html lang="en" class="bg-[var(--paper)] text-[var(--ink)]">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,12 +25,12 @@ const {
 
     <title>{title}</title>
 
-    <!-- Google Fonts: Lora (Serif) & IBM Plex Mono (Monospace) -->
+    <!-- Google Fonts: Caveat (Handwriting System A), Lora (Serif) & IBM Plex Mono (Monospace) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F5F0E8] text-[#1C1A17] min-h-screen relative overflow-x-hidden font-serif">
+  <body class="bg-[var(--paper)] text-[var(--ink)] min-h-screen relative overflow-x-hidden font-serif">
     <slot />
   </body>
 </html>

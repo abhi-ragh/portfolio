@@ -3,13 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --bg:         #F5F0E8;   /* warm off-white — base canvas */
-  --surface:    #E8E2D8;   /* card/section surface, darker for visible lift */
-  --ink:        #1C1A17;   /* primary text — near-black warm */
-  --ink-muted:  #4A4540;   /* secondary text, captions — darker readable muted */
-  --ink-faint:  #6B6560;   /* borders, rules, faint labels — readable */
-  --rule:       #C8C2B8;   /* dividers, card borders — slightly darker, visible */
-  --accent:     #8B5E3C;   /* warm brown */
+  --paper:      #F7F3EC;   /* warm paper base canvas */
+  --ink:        #141414;   /* near-black warm ink primary text */
+  --ink-faint:  rgba(20, 20, 20, 0.45);  /* secondary text at ~45% opacity */
+  --line:       rgba(20, 20, 20, 0.10);  /* hairline border at ~10% opacity */
+  --accent:     #8B5E3C;   /* warm brown accent */
+
+  /* Aliases for backwards compatibility */
+  --bg:         var(--paper);
+  --surface:    #EDE7DC;
+  --ink-muted:  rgba(20, 20, 20, 0.65);
+  --rule:       var(--line);
+}
+
+/* System A — Handwritten Typography */
+.font-hand {
+  font-family: 'Caveat', cursive, handwriting;
 }
 
 /* Display — used for the big editorial moment in About */
