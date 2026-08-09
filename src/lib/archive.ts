@@ -125,7 +125,6 @@ export async function getHomepageImages(): Promise<ArchiveImage[]> {
   const allImages = await getArchiveImages();
   // Filter Published == true AND Homepage == true
   const homepageItems = allImages.filter(item => item.homepage);
-  // Return first six images (per spec v1.0)
-  return homepageItems.length >= 6 ? homepageItems.slice(0, 6) : allImages.slice(0, 6);
+  return homepageItems.length > 0 ? homepageItems : fallbackImages.filter(img => img.homepage && img.published);
 }
 

@@ -6,9 +6,9 @@ import Experience from '../components/Experience.astro';
 import Work from '../components/Work.astro';
 import SelectedFrames from '../components/SelectedFrames';
 import Footer from '../components/Footer.astro';
-import { getArchiveImages } from '../lib/archive';
+import { getHomepageImages } from '../lib/archive';
 
-const archiveItems = await getArchiveImages();
+const archiveItems = await getHomepageImages();
 ---
 
 <Base>
