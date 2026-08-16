@@ -22,19 +22,11 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
   ];
 
   return (
-    <section id="archive" className="flex flex-col gap-5 py-2 scroll-mt-12">
-      {/* Section Eyebrow Header */}
-      <div className="flex flex-col gap-2">
-        <div>
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none inline-block">
-            [ 03 / COLLECTION ]
-          </span>
-        </div>
-        {/* Handwritten Personal Aside (System A) */}
-        <p className="font-hand text-[22px] sm:text-[24px] text-[var(--ink)] leading-snug max-w-xl mt-1">
-          frames captured on 35mm film &amp; pencil contour sketches&mdash;things worth keeping from quiet moments.
-        </p>
-      </div>
+    <section id="collection" className="flex flex-col gap-5 py-2 scroll-mt-20">
+      {/* Handwritten Personal Aside (System A) */}
+      <p className="font-hand text-[22px] sm:text-[24px] text-[var(--ink)] leading-snug max-w-xl">
+        frames captured on 35mm film &amp; pencil contour sketches&mdash;things worth keeping from quiet moments.
+      </p>
 
       {/* Asymmetric Mixed-Span Masonry Grid (Open canvas over dither) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 items-start">

@@ -32,35 +32,47 @@ const { activeSection = '' } = Astro.props;
       </div>
     </div>
 
-    <!-- 5. Nav Links (Primary Navigation) -->
-    <nav class="flex flex-wrap lg:flex-col gap-3 lg:gap-3.5 mt-4 lg:mt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--ink)]">
+    <!-- 5. Nav Links (Primary Navigation with Active Section Highlighting) -->
+    <nav id="sidebar-nav" class="flex flex-wrap lg:flex-col gap-3 lg:gap-3.5 mt-4 lg:mt-6 font-mono text-[11px] uppercase tracking-[0.12em]">
+      <a
+        href="/#about"
+        data-nav-item="about"
+        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
+      >
+        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="nav-text transition-colors">ABOUT</span>
+      </a>
       <a
         href="/#experience"
-        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
+        data-nav-item="experience"
+        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
-        <span>EXPERIENCE</span>
+        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="nav-text transition-colors">EXPERIENCE</span>
       </a>
       <a
-        href="/projects"
-        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
+        href="/#projects"
+        data-nav-item="projects"
+        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
-        <span>PROJECTS</span>
+        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="nav-text transition-colors">PROJECTS</span>
       </a>
       <a
-        href="/archive"
-        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
+        href="/#collection"
+        data-nav-item="collection"
+        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
-        <span>COLLECTION</span>
+        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="nav-text transition-colors">COLLECTION</span>
       </a>
       <a
         href="/blogs"
-        class="group flex items-center gap-3 text-[var(--ink)] hover:text-[var(--accent)] transition-colors py-1"
+        data-nav-item="writing"
+        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
       >
-        <span class="h-[1px] w-5 bg-[var(--ink-tertiary)] group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
-        <span>WRITING</span>
+        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
+        <span class="nav-text transition-colors">WRITING</span>
       </a>
     </nav>
   </div>
@@ -98,7 +110,8 @@ const { activeSection = '' } = Astro.props;
 
 <script is:inline>
   (function() {
-    function bindThemeToggle() {
+    function initSidebar() {
+      // 1. Theme Toggle
       const btn = document.getElementById('theme-toggle-btn');
       const icon = document.getElementById('theme-toggle-icon');
       const label = document.getElementById('theme-toggle-label');
@@ -128,12 +141,104 @@ const { activeSection = '' } = Astro.props;
           window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: current } }));
         });
       }
+
+      // 2. Active Section Scrollspy Highlighting
+      const navItems = document.querySelectorAll('#sidebar-nav [data-nav-item]');
+      if (!navItems.length) return;
+
+      function setActive(activeId) {
+        navItems.forEach(item => {
+          const id = item.getAttribute('data-nav-item');
+          const indicator = item.querySelector('.nav-indicator');
+          const text = item.querySelector('.nav-text');
+
+          if (id === activeId) {
+            item.classList.add('active-nav');
+            item.classList.remove('text-[var(--ink-tertiary)]');
+            item.classList.add('text-[var(--ink)]');
+            if (indicator) {
+              indicator.classList.remove('w-4', 'bg-[var(--ink-tertiary)]/40');
+              indicator.classList.add('w-8', 'bg-[var(--accent)]');
+            }
+            if (text) {
+              text.classList.remove('text-[var(--ink-tertiary)]');
+              text.classList.add('text-[var(--accent)]', 'font-semibold');
+            }
+          } else {
+            item.classList.remove('active-nav');
+            item.classList.add('text-[var(--ink-tertiary)]');
+            item.classList.remove('text-[var(--ink)]');
+            if (indicator) {
+              indicator.classList.add('w-4', 'bg-[var(--ink-tertiary)]/40');
+              indicator.classList.remove('w-8', 'bg-[var(--accent)]');
+            }
+            if (text) {
+              text.classList.add('text-[var(--ink-tertiary)]');
+              text.classList.remove('text-[var(--accent)]', 'font-semibold');
+            }
+          }
+        });
+      }
+
+      const isHomepage = window.location.pathname === '/' || window.location.pathname === '';
+
+      if (isHomepage) {
+        const sectionIds = ['about', 'experience', 'projects', 'collection'];
+        const sectionElements = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+        let ticking = false;
+        function onScroll() {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              const scrollY = window.scrollY;
+              const viewportHeight = window.innerHeight;
+              const triggerOffset = scrollY + (viewportHeight * 0.35);
+
+              let current = sectionIds[0];
+
+              // Bottom of page priority
+              if ((window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 80)) {
+                current = 'collection';
+              } else {
+                for (let i = 0; i < sectionElements.length; i++) {
+                  const section = sectionElements[i];
+                  if (triggerOffset >= section.offsetTop) {
+                    current = section.id;
+                  }
+                }
+              }
+
+              setActive(current);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll(); // Run immediately for initial page position
+
+        // Immediate feedback on link click
+        navItems.forEach(link => {
+          link.addEventListener('click', () => {
+            const targetId = link.getAttribute('data-nav-item');
+            if (targetId && sectionIds.includes(targetId)) {
+              setActive(targetId);
+            }
+          });
+        });
+      } else {
+        const path = window.location.pathname;
+        if (path.startsWith('/projects')) setActive('projects');
+        else if (path.startsWith('/archive')) setActive('collection');
+        else if (path.startsWith('/blogs')) setActive('writing');
+      }
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', bindThemeToggle);
+      document.addEventListener('DOMContentLoaded', initSidebar);
     } else {
-      bindThemeToggle();
+      initSidebar();
     }
   })();
 </script>
