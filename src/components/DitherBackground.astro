@@ -31,31 +31,11 @@
       let animFrameId = null;
       let time = 0;
 
-      let dotR = 237;
-      let dotG = 232;
-      let dotB = 222;
-      let dotAlpha = 14; // Ultra-subtle ambient paper grain (~5.5% opacity)
-
-      function syncTheme() {
-        const theme = document.documentElement.getAttribute('data-theme') || 'dark';
-        if (theme === 'dark') {
-          dotR = 237;
-          dotG = 232;
-          dotB = 222;
-          dotAlpha = 14; // Barely perceptible warm off-white grain
-        } else {
-          dotR = 30;
-          dotG = 28;
-          dotB = 24;
-          dotAlpha = 10; // Faint, ultra-delicate watercolor grain
-        }
-      }
-
-      syncTheme();
-      window.addEventListener('themechange', syncTheme);
-
-      const observer = new MutationObserver(syncTheme);
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      // Dark paper ambient dot palette
+      const dotR = 237;
+      const dotG = 232;
+      const dotB = 222;
+      const dotAlpha = 14; // Ultra-subtle ambient paper grain (~5.5% opacity)
 
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const SCALE = 0.5;

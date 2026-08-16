@@ -69,7 +69,7 @@ const { activeSection = '' } = Astro.props;
     </nav>
   </div>
 
-  <!-- 6. Bottom-anchored within column: github, linkedin, email & Theme Toggle -->
+  <!-- 6. Bottom-anchored within column: github, linkedin, email -->
   <div class="flex flex-col gap-3 mt-8 lg:mt-0 font-mono text-[11px] tracking-[0.08em] text-[var(--ink-secondary)] select-none">
     <div class="flex items-center gap-3">
       <a href="https://www.github.com/abhi-ragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors lowercase">
@@ -84,57 +84,13 @@ const { activeSection = '' } = Astro.props;
         email
       </a>
     </div>
-
-    {/* Minimal Plain Text Theme Toggle Button */}
-    <div class="pt-0.5">
-      <button
-        id="theme-toggle-btn"
-        type="button"
-        class="font-mono text-[11px] text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors cursor-pointer inline-flex items-center gap-1.5 uppercase tracking-[0.1em]"
-        aria-label="Toggle theme mode"
-      >
-        <span id="theme-toggle-icon" class="text-[12px]">☾</span>
-        <span id="theme-toggle-label">DARK</span>
-      </button>
-    </div>
   </div>
 </header>
 
 <script is:inline>
   (function() {
     function initSidebar() {
-      // 1. Theme Toggle
-      const btn = document.getElementById('theme-toggle-btn');
-      const icon = document.getElementById('theme-toggle-icon');
-      const label = document.getElementById('theme-toggle-label');
-
-      function updateUI(theme) {
-        if (icon && label) {
-          if (theme === 'dark') {
-            icon.textContent = '☾';
-            label.textContent = 'DARK';
-          } else {
-            icon.textContent = '☀';
-            label.textContent = 'LIGHT';
-          }
-        }
-      }
-
-      const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-      updateUI(initialTheme);
-
-      if (btn && !btn.dataset.bound) {
-        btn.dataset.bound = 'true';
-        btn.addEventListener('click', () => {
-          const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', current);
-          localStorage.setItem('theme', current);
-          updateUI(current);
-          window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: current } }));
-        });
-      }
-
-      // 2. Active Section Scrollspy Highlighting
+      // Active Section Scrollspy Highlighting
       const navItems = document.querySelectorAll('#sidebar-nav [data-nav-item]');
       if (!navItems.length) return;
 

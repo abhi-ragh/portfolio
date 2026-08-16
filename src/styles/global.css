@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root,
-html[data-theme="dark"] {
+:root {
   --paper:          #14120F;   /* dark warm paper canvas base */
   --paper-panel:    rgba(26, 24, 21, 0.92); /* dark paper backing panel for dense text */
   --ink:            #EDE8DE;   /* warm off-white primary text (14.8:1 contrast) */
@@ -12,23 +11,6 @@ html[data-theme="dark"] {
   --line:           #2B2823;   /* lighter-on-dark hairline border */
   --accent:         #D48C55;   /* brighter warm terracotta accent for dark paper */
   --surface:        #1D1B17;
-
-  /* Compatibility aliases */
-  --ink-faint:      var(--ink-tertiary);
-  --ink-muted:      var(--ink-secondary);
-  --bg:             var(--paper);
-  --rule:           var(--line);
-}
-
-html[data-theme="light"] {
-  --paper:          #F7F3EC;   /* light warm paper canvas base */
-  --paper-panel:    rgba(247, 243, 236, 0.92); /* light paper backing panel */
-  --ink:            #141414;   /* primary near-black warm ink text (18.1:1 contrast) */
-  --ink-secondary:  #383531;   /* solid dark charcoal secondary text (9.2:1 contrast) */
-  --ink-tertiary:   #57534E;   /* solid medium charcoal for metadata/tags (5.2:1 contrast) */
-  --line:           #D8D2C6;   /* hairline border */
-  --accent:         #8B5E3C;   /* warm brown accent */
-  --surface:        #EDE7DC;
 
   /* Compatibility aliases */
   --ink-faint:      var(--ink-tertiary);

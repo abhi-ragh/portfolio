@@ -20,22 +20,9 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     
-    <!-- Lock Dark Reader and Extension Color Overrides -->
+    <!-- Lock Dark Theme -->
     <meta name="darkreader-lock" />
-    <meta name="color-scheme" content="dark light" />
-
-    {/* Blocking inline script executed before first paint to prevent flash-of-wrong-theme */}
-    <script is:inline>
-      (function() {
-        try {
-          const stored = localStorage.getItem('theme');
-          const theme = stored ? stored : 'dark';
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
-    </script>
+    <meta name="color-scheme" content="dark" />
 
     <title>{title}</title>
 
