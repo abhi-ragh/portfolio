@@ -17,39 +17,32 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages
     type: item.type
   }));
 
+  const aspectPatterns = ['aspect-[4/3]', 'aspect-[3/4]', 'aspect-square', 'aspect-[16/10]'];
+
   return (
     <div className="w-full flex flex-col gap-12">
-      {/* Broadsheet Masonry Layout: Natural True Dimensions (Uncropped) */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 md:gap-10 space-y-10">
-        {displayItems.map((item) => (
-          <div
-            key={item.id}
-            className="break-inside-avoid flex flex-col gap-2.5 group cursor-pointer"
-            onClick={() => setSelectedItem(item)}
-          >
-            {/* Image Container preserving true natural aspect ratio with hairline frame */}
-            <div className="w-full overflow-hidden border border-[var(--line)] bg-[var(--surface)] group-hover:border-[var(--accent)]/60 transition-colors flex items-center justify-center">
-              <img
-                src={item.src}
-                alt={item.title}
-                loading="lazy"
-                className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
-              />
+      {/* 3-Column Masonry Layout with 380-400px Max Height Cap */}
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
+        {displayItems.map((item, index) => {
+          const aspect = aspectPatterns[index % aspectPatterns.length];
+          return (
+            <div
+              key={item.id || index}
+              className="break-inside-avoid flex flex-col gap-2 group cursor-pointer"
+              onClick={() => setSelectedItem(item)}
+            >
+              {/* Image Container with Height Cap & Object-Cover Crop */}
+              <div className={`w-full ${aspect} max-h-[390px] overflow-hidden border border-[var(--line)] bg-[var(--surface)] group-hover:border-[var(--accent)]/60 transition-colors flex items-center justify-center`}>
+                <img
+                  src={item.src}
+                  alt={item.title || "Archive item"}
+                  loading="lazy"
+                  className="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-500"
+                />
+              </div>
             </div>
-
-            {/* Minimal Caption Footer (Title & Type) */}
-            <div className="flex justify-between items-baseline px-0.5 pt-0.5 font-mono text-[10px]">
-              <span className="font-serif italic text-[14px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate max-w-[80%]">
-                {item.title}
-              </span>
-              {item.type && (
-                <span className="text-[var(--ink-tertiary)] font-semibold uppercase tracking-[0.08em]">
-                  {item.type === 'SKETCHBOOK DRAFT' ? 'sketch' : '35mm'}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Lightbox Modal */}
