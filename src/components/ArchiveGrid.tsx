@@ -17,32 +17,27 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages
     type: item.type
   }));
 
-  const aspectPatterns = ['aspect-[4/3]', 'aspect-[3/4]', 'aspect-square', 'aspect-[16/10]'];
-
   return (
     <div className="w-full flex flex-col gap-12">
-      {/* Multi-Column Masonry Layout (2 columns on mobile, 3 columns on desktop) */}
-      <div className="columns-2 lg:columns-3 gap-3.5 sm:gap-6 md:gap-8 space-y-3.5 sm:space-y-6 md:space-y-8">
-        {displayItems.map((item, index) => {
-          const aspect = aspectPatterns[index % aspectPatterns.length];
-          return (
-            <div
-              key={item.id || index}
-              className="break-inside-avoid flex flex-col gap-2 group cursor-pointer"
-              onClick={() => setSelectedItem(item)}
-            >
-              {/* Image Container with Height Cap & Object-Cover Crop */}
-              <div className={`w-full ${aspect} max-h-[390px] overflow-hidden border border-[var(--line)] bg-[var(--surface)] group-hover:border-[var(--accent)]/60 transition-colors flex items-center justify-center`}>
-                <img
-                  src={item.src}
-                  alt={item.title || "Archive item"}
-                  loading="lazy"
-                  className="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-500"
-                />
-              </div>
+      {/* True Aspect Multi-Column Masonry Layout (Uncropped & Full Resolution) */}
+      <div className="columns-2 lg:columns-3 gap-4 sm:gap-6 md:gap-8 space-y-4 sm:space-y-6 md:space-y-8">
+        {displayItems.map((item, index) => (
+          <div
+            key={item.id || index}
+            className="break-inside-avoid flex flex-col gap-2 group cursor-pointer"
+            onClick={() => setSelectedItem(item)}
+          >
+            {/* Natural Uncropped Frame with Hairline Border */}
+            <div className="w-full overflow-hidden border border-[var(--line)] bg-[var(--surface)] group-hover:border-[var(--accent)]/60 transition-colors">
+              <img
+                src={item.src}
+                alt={item.title || "Archive item"}
+                loading="lazy"
+                className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
+              />
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {/* Lightbox Modal */}

@@ -33,14 +33,14 @@ export const Lightbox: React.FC<LightboxProps> = ({ item, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-[#F5F0E8]/95 backdrop-blur-md flex flex-col justify-between p-6 md:p-10 cursor-zoom-out select-none"
+      className="fixed inset-0 z-50 bg-[#14120F]/95 backdrop-blur-md flex flex-col justify-between p-6 md:p-10 cursor-zoom-out select-none"
       onClick={onClose}
     >
       {/* Top Bar with Close Button */}
       <div className="w-full flex justify-end">
         <button
           onClick={onClose}
-          className="font-mono text-[11px] text-[var(--ink-muted)] hover:text-[var(--ink)] tracking-[0.1em] border border-[var(--ink-faint)] px-3 py-1.5 transition-colors cursor-pointer"
+          className="font-mono text-[11px] text-[var(--ink-secondary)] hover:text-[var(--ink)] tracking-[0.1em] border border-[var(--line)] px-3 py-1.5 transition-colors cursor-pointer"
         >
           [ CLOSE &times; ]
         </button>
@@ -51,15 +51,17 @@ export const Lightbox: React.FC<LightboxProps> = ({ item, onClose }) => {
         <img
           src={item.src}
           alt={item.title}
-          className="max-h-[75vh] max-w-[90vw] object-contain shadow-2xl"
+          className="max-h-[82vh] max-w-[92vw] w-auto h-auto object-contain shadow-2xl"
         />
       </div>
 
-      {/* Bottom Metadata: Title in Bottom-Left Corner */}
+      {/* Bottom Metadata */}
       <div className="w-full flex flex-col items-start gap-1 pt-4" onClick={(e) => e.stopPropagation()}>
-        <div className="font-serif italic text-[15px] text-[var(--ink)]">
-          {item.title}
-        </div>
+        {item.title && (
+          <div className="font-serif italic text-[15px] text-[var(--ink)]">
+            {item.title}
+          </div>
+        )}
       </div>
     </div>
   );
