@@ -4,22 +4,22 @@ const roles = [
     title: "Junior Engineer — Cloud",
     company: "Saints & Masters",
     date: "May 2026 — Present",
-    description: "Building and maintaining AWS infrastructure and CI/CD pipelines for managed service clients.",
-    tags: "AWS · Terraform · Docker · GitLab CI/CD · Linux"
+    description: "Maintain AWS and Azure infrastructure for managed service clients. Manage CI/CD pipelines, Kubernetes environments, Infrastructure as Code, and internal platform tools. Provide 24/7 monitoring and support. Troubleshoot incidents and implement VAPT remediations. Maintain system availability and security.",
+    tags: "Python · AWS · Azure · Docker · Kubernetes · Terraform · ArgoCD · Grafana · Prometheus · Loki · PostgreSQL · GitHub Actions · Jenkins · Linux"
   },
   {
     title: "DevOps Intern",
     company: "Saints & Masters",
     date: "Apr 2026",
-    description: "Infrastructure automation, deployment pipelines, and Linux system reliability.",
-    tags: "Python · Linux · AWS"
+    description: "Monitored client workloads and responded to alerts. Configured web servers and supported AWS and Azure infrastructure. Maintained process documentation. Reviewed system logs to identify and resolve issues at an early stage.",
+    tags: "Python · AWS · Azure · Apache · Nginx · Grafana · Alloy · Linux · Bash"
   },
   {
-    title: "System Engineer Intern",
+    title: "Associate System Engineer Intern",
     company: "Bridge Global",
     date: "Jun 2025 — Dec 2025",
-    description: "Internal automation tooling, Linux server administration, and network configuration.",
-    tags: "Bash · Networking · Git"
+    description: "Provided internal IT support and Linux system administration. Installed and configured systems and resolved daily issues for development, design, and DevOps teams. Configured network servers. Troubleshot hardware and software issues.",
+    tags: "Python · Linux · Bash · C · MySQL · GitLab CI/CD · AWS · Apache"
   }
 ];
 ---
@@ -28,26 +28,28 @@ const roles = [
   {/* Roles Plain Vertical Stack with Subtle Hairline Dividers */}
   <div class="flex flex-col divide-y divide-[var(--line)]/40">
     {roles.map((role, idx) => (
-      <div class={`flex flex-col gap-2 ${idx === 0 ? 'pb-6 sm:pb-7 lg:pb-8' : idx === roles.length - 1 ? 'pt-6 sm:pt-7 lg:pt-8' : 'py-6 sm:py-7 lg:py-8'}`}>
-        {/* Title */}
-        <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] leading-snug">
-          {role.title}
-        </h3>
+      <div class={`flex flex-col ${idx === 0 ? 'pb-8 sm:pb-9 lg:pb-10' : idx === roles.length - 1 ? 'pt-8 sm:pt-9 lg:pt-10' : 'py-8 sm:py-9 lg:py-10'}`}>
+        {/* Title & Company Meta Group */}
+        <div class="flex flex-col gap-1.5">
+          <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] leading-snug">
+            {role.title}
+          </h3>
 
-        {/* Company & Date Range */}
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tracking-[0.08em]">
-          <span class="uppercase font-semibold text-[var(--ink-secondary)]">{role.company}</span>
-          <span class="text-[var(--ink-tertiary)]">&middot;</span>
-          <span class="text-[var(--ink-tertiary)]">{role.date}</span>
+          {/* Company & Date Range */}
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tracking-[0.08em]">
+            <span class="uppercase font-semibold text-[var(--ink-secondary)]">{role.company}</span>
+            <span class="text-[var(--ink-tertiary)]">&middot;</span>
+            <span class="text-[var(--ink-tertiary)]">{role.date}</span>
+          </div>
         </div>
 
-        {/* Single-Sentence Description */}
-        <p class="font-serif italic text-[14px] sm:text-[15px] text-[var(--ink-secondary)] leading-relaxed mt-0.5">
+        {/* Description */}
+        <p class="font-serif italic text-[15.5px] sm:text-[17px] text-[var(--ink-secondary)] leading-[1.8] mt-3 sm:mt-3.5">
           {role.description}
         </p>
 
         {/* Tech-Tag Line (mono, ·-separated) */}
-        <div class="font-mono text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em] uppercase font-semibold mt-1">
+        <div class="font-mono text-[10px] sm:text-[10.5px] text-[var(--ink-tertiary)] tracking-[0.08em] uppercase font-semibold mt-3.5 sm:mt-4 leading-[1.85]">
           {role.tags}
         </div>
       </div>

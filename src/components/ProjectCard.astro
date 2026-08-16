@@ -41,25 +41,25 @@ const { project, showMedia = true } = Astro.props;
   <div class="relative z-10 flex flex-col gap-2 pointer-events-none flex-1 justify-between">
     <div class="flex flex-col gap-1.5">
       {/* Title */}
-      <h3 class="font-serif font-medium text-[18px] sm:text-[19px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+      <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
         {project.title}
       </h3>
 
       {/* Description */}
       {project.description && (
-        <p class="font-serif italic text-[14px] sm:text-[14.5px] text-[var(--ink-secondary)] leading-relaxed">
+        <p class="font-serif italic text-[15.5px] sm:text-[17px] text-[var(--ink-secondary)] leading-[1.8]">
           {project.description}
         </p>
       )}
     </div>
 
     <!-- Tags & View Link Row -->
-    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2 mt-auto font-mono text-[10px]">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2 mt-auto font-mono text-[10px] sm:text-[10.5px]">
       <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
         {project.tags || "PROJECT"}
       </span>
 
-      <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[11px] shrink-0 ml-auto">
+      <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] sm:text-[11px] shrink-0 ml-auto">
         VIEW &rarr;
       </span>
     </div>
