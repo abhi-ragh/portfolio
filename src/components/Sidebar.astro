@@ -66,14 +66,6 @@ const { activeSection = '' } = Astro.props;
         <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
         <span class="nav-text transition-colors">COLLECTION</span>
       </a>
-      <a
-        href="/blogs"
-        data-nav-item="writing"
-        class="nav-item group flex items-center gap-3 text-[var(--ink-tertiary)] hover:text-[var(--ink)] transition-all py-1"
-      >
-        <span class="nav-indicator h-[1px] w-4 bg-[var(--ink-tertiary)]/40 group-hover:w-8 group-hover:bg-[var(--accent)] transition-all hidden lg:inline-block"></span>
-        <span class="nav-text transition-colors">WRITING</span>
-      </a>
     </nav>
   </div>
 
@@ -231,7 +223,6 @@ const { activeSection = '' } = Astro.props;
         const path = window.location.pathname;
         if (path.startsWith('/projects')) setActive('projects');
         else if (path.startsWith('/archive')) setActive('collection');
-        else if (path.startsWith('/blogs')) setActive('writing');
       }
     }
 

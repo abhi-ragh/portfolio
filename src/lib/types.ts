@@ -7,15 +7,6 @@ export interface ArchiveImage {
   type: 'FILM PHOTOGRAPHY' | 'SKETCHBOOK DRAFT';
 }
 
-export interface Blog {
-  id: string;
-  url: string;
-  title: string;
-  description: string;
-  image: string;
-  homepage: boolean;
-  published: boolean;
-}
 
 export interface Project {
   id: string;
