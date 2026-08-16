@@ -9,14 +9,14 @@ interface Props {
 const { project, showMedia = true } = Astro.props;
 ---
 
-<article class="flex flex-col sm:flex-row gap-5 sm:gap-6 lg:gap-7 group items-start">
-  {/* Left Thumbnail Column (Fixed Width & 16:10 Aspect Ratio) */}
+<article class="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 group items-start">
+  {/* Left Thumbnail Column (Compact ~160px Width & 16:10 Aspect Ratio) */}
   {showMedia && (
     <a
       href={project.github || "/projects"}
       target={project.github ? "_blank" : "_self"}
       rel="noopener noreferrer"
-      class="block w-full sm:w-[220px] md:w-[240px] lg:w-[260px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-300 group-hover:border-[var(--accent)]/60"
+      class="block w-full sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-300 group-hover:border-[var(--accent)]/60"
     >
       <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
         {project.coverImage ? (
@@ -27,7 +27,7 @@ const { project, showMedia = true } = Astro.props;
             class="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
           />
         ) : (
-          <div class="w-full h-full flex items-center justify-center p-4 text-center font-mono text-[11px] text-[var(--ink-tertiary)] tracking-[0.08em]">
+          <div class="w-full h-full flex items-center justify-center p-3 text-center font-mono text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
             {project.title}
           </div>
         )}
@@ -36,9 +36,9 @@ const { project, showMedia = true } = Astro.props;
   )}
 
   <!-- Right Text Content Block -->
-  <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2.5">
-    <div class="flex flex-col gap-1.5">
-      <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+  <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2">
+    <div class="flex flex-col gap-1">
+      <h3 class="font-serif font-medium text-[17px] sm:text-[18px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
         <a
           href={project.github || "/projects"}
           target={project.github ? "_blank" : "_self"}
@@ -48,14 +48,14 @@ const { project, showMedia = true } = Astro.props;
         </a>
       </h3>
       {project.description && (
-        <p class="font-serif italic text-[14px] sm:text-[15px] text-[var(--ink-secondary)] leading-relaxed">
+        <p class="font-serif italic text-[13px] sm:text-[14px] text-[var(--ink-secondary)] leading-relaxed line-clamp-2">
           {project.description}
         </p>
       )}
     </div>
 
     <!-- Tags & View Link Row -->
-    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 pt-1 font-mono text-[10px]">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pt-0.5 font-mono text-[10px]">
       <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
         {project.tags || "PROJECT"}
       </span>
@@ -65,7 +65,7 @@ const { project, showMedia = true } = Astro.props;
           href={project.github}
           target="_blank"
           rel="noopener noreferrer"
-          class="font-semibold text-[var(--accent)] hover:underline flex items-center gap-1 uppercase tracking-[0.06em] text-[11px] shrink-0 ml-auto"
+          class="font-semibold text-[var(--accent)] hover:underline flex items-center gap-1 uppercase tracking-[0.06em] text-[10.5px] shrink-0 ml-auto"
         >
           VIEW &rarr;
         </a>
