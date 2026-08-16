@@ -6,11 +6,11 @@ interface Props {
 const { activeSection = '' } = Astro.props;
 ---
 
-<header class="w-full lg:w-[320px] xl:w-[360px] lg:h-screen lg:sticky lg:top-0 flex flex-col justify-end gap-6 lg:gap-8 py-8 lg:py-16 shrink-0 z-40 lg:pr-8 order-last lg:order-first">
+<header class="w-full lg:w-[320px] xl:w-[360px] lg:h-screen lg:sticky lg:top-0 flex flex-col items-center lg:items-start justify-start lg:justify-end gap-0 lg:gap-8 pt-14 sm:pt-16 pb-0 lg:py-16 shrink-0 z-40 lg:pr-8 order-first text-center lg:text-left">
   <!-- Top Block: Identity Stack -->
-  <div class="flex flex-col gap-6">
+  <div class="flex flex-col items-center lg:items-start gap-0 lg:gap-6 w-full">
     <!-- Identity Stack in Exact Spec Order -->
-    <div class="flex flex-col gap-1.5">
+    <div class="flex flex-col items-center lg:items-start gap-1.5 w-full">
       {/* 1. abhiragh (Handwritten, large & bold) */}
       <a href="/" class="font-hand text-[48px] sm:text-[86px] font-bold text-[var(--ink)] leading-none tracking-tight hover:text-[var(--accent)] transition-colors inline-block select-none">
         abhiragh
@@ -32,8 +32,8 @@ const { activeSection = '' } = Astro.props;
       </div>
     </div>
 
-    <!-- 5. Nav Links (Primary Navigation with Active Section Highlighting) -->
-    <nav id="sidebar-nav" class="flex flex-wrap lg:flex-col gap-3 lg:gap-3.5 mt-4 lg:mt-6 font-mono text-[11px] uppercase tracking-[0.12em]">
+    <!-- 5. Nav Links (Primary Navigation with Active Section Highlighting - Desktop Only) -->
+    <nav id="sidebar-nav" class="hidden lg:flex flex-col gap-3.5 mt-6 font-mono text-[11px] uppercase tracking-[0.12em]">
       <a
         href="/#about"
         data-nav-item="about"
@@ -69,8 +69,8 @@ const { activeSection = '' } = Astro.props;
     </nav>
   </div>
 
-  <!-- 6. Bottom-anchored within column: github, linkedin, email -->
-  <div class="flex flex-col gap-3 mt-8 lg:mt-0 font-mono text-[11px] tracking-[0.08em] text-[var(--ink-secondary)] select-none">
+  <!-- 6. Bottom-anchored within column: github, linkedin, email (Desktop sticky column) -->
+  <div class="hidden lg:flex flex-col gap-3 font-mono text-[11px] tracking-[0.08em] text-[var(--ink-secondary)] select-none">
     <div class="flex items-center gap-3">
       <a href="https://www.github.com/abhi-ragh" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--ink)] transition-colors lowercase">
         github
