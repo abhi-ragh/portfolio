@@ -13,14 +13,21 @@ try {
   {/* Projects Compact Vertical Row Stack */}
   <div class="flex flex-col gap-6 lg:gap-7">
     {projects.map((proj: any, idx: number) => (
-      <article key={proj.id || idx} class="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 group items-start">
-        {/* Left Thumbnail Column (Compact ~160px Width & 16:10 Aspect Ratio) */}
+      <article
+        key={proj.id || idx}
+        class="relative flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 group items-start p-2.5 sm:p-3 -mx-2.5 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]"
+      >
+        {/* Full-row Clickable Link Overlay */}
         <a
           href={proj.github || "/projects"}
           target={proj.github ? "_blank" : "_self"}
           rel="noopener noreferrer"
-          class="block w-full sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-300 group-hover:border-[var(--accent)]/60"
-        >
+          class="absolute inset-0 z-0"
+          aria-label={`View ${proj.title}`}
+        ></a>
+
+        {/* Left Thumbnail Column (Compact ~160px Width & 16:10 Aspect Ratio) */}
+        <div class="relative z-10 block w-full sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
           <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
             {proj.coverImage ? (
               <img
@@ -35,20 +42,14 @@ try {
               </div>
             )}
           </div>
-        </a>
+        </div>
 
         {/* Right Text Content Block */}
-        <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2">
+        <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2 pointer-events-none">
           <div class="flex flex-col gap-1">
             {/* Title */}
             <h3 class="font-serif font-medium text-[17px] sm:text-[18px] text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
-              <a
-                href={proj.github || "/projects"}
-                target={proj.github ? "_blank" : "_self"}
-                rel="noopener noreferrer"
-              >
-                {proj.title}
-              </a>
+              {proj.title}
             </h3>
 
             {/* Description */}
@@ -65,14 +66,9 @@ try {
               {proj.tags || "PROJECT"}
             </span>
 
-            <a
-              href={proj.github || "/projects"}
-              target={proj.github ? "_blank" : "_self"}
-              rel="noopener noreferrer"
-              class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 hover:underline text-[10.5px] shrink-0 ml-auto"
-            >
+            <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] shrink-0 ml-auto">
               VIEW &rarr;
-            </a>
+            </span>
           </div>
         </div>
       </article>
