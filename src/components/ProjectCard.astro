@@ -9,8 +9,8 @@ interface Props {
 const { project, showMedia = true } = Astro.props;
 ---
 
-<article class="relative flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 group items-start p-2.5 sm:p-3 -mx-2.5 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]">
-  {/* Full-row Clickable Link Overlay */}
+<article class="relative flex flex-col gap-3.5 group p-3 sm:p-3.5 -mx-3 sm:-mx-3.5 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]">
+  {/* Full-cell Clickable Link Overlay */}
   <a
     href={project.github || "/projects"}
     target={project.github ? "_blank" : "_self"}
@@ -19,50 +19,49 @@ const { project, showMedia = true } = Astro.props;
     aria-label={`View ${project.title}`}
   ></a>
 
-  {/* Left Thumbnail Column (Compact ~160px Width & 16:10 Aspect Ratio) */}
+  {/* Top Thumbnail (Full Width within cell, 16:10 Aspect Ratio, Hairline Frame) */}
   {showMedia && (
-    <div class="relative z-10 block w-full sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
-      <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
-        {project.coverImage ? (
-          <img
-            src={project.coverImage}
-            alt={project.title}
-            loading="lazy"
-            class="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
-          />
-        ) : (
-          <div class="w-full h-full flex items-center justify-center p-3 text-center font-mono text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
-            {project.title}
-          </div>
-        )}
-      </div>
+    <div class="relative z-10 w-full aspect-[16/10] overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-colors duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
+      {project.coverImage ? (
+        <img
+          src={project.coverImage}
+          alt={project.title}
+          loading="lazy"
+          class="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center p-4 text-center font-mono text-[11px] text-[var(--ink-tertiary)] tracking-[0.08em]">
+          {project.title}
+        </div>
+      )}
     </div>
   )}
 
-  <!-- Right Text Content Block -->
-  <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2 pointer-events-none">
-    <div class="flex flex-col gap-1">
-      <h3 class="font-serif font-medium text-[17px] sm:text-[18px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+  <!-- Bottom Text Content Block -->
+  <div class="relative z-10 flex flex-col gap-2 pointer-events-none flex-1 justify-between">
+    <div class="flex flex-col gap-1.5">
+      {/* Title */}
+      <h3 class="font-serif font-medium text-[18px] sm:text-[19px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
         {project.title}
       </h3>
+
+      {/* Description */}
       {project.description && (
-        <p class="font-serif italic text-[13px] sm:text-[14px] text-[var(--ink-secondary)] leading-relaxed line-clamp-2">
+        <p class="font-serif italic text-[14px] sm:text-[14.5px] text-[var(--ink-secondary)] leading-relaxed">
           {project.description}
         </p>
       )}
     </div>
 
     <!-- Tags & View Link Row -->
-    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pt-0.5 font-mono text-[10px]">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2 mt-auto font-mono text-[10px]">
       <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
         {project.tags || "PROJECT"}
       </span>
 
-      {project.github && (
-        <span class="font-semibold text-[var(--accent)] group-hover:underline flex items-center gap-1 uppercase tracking-[0.06em] text-[10.5px] shrink-0 ml-auto">
-          VIEW &rarr;
-        </span>
-      )}
+      <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[11px] shrink-0 ml-auto">
+        VIEW &rarr;
+      </span>
     </div>
   </div>
 </article>
