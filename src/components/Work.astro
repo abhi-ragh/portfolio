@@ -15,7 +15,7 @@ try {
     {projects.map((proj: any, idx: number) => (
       <article
         key={proj.id || idx}
-        class="relative flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 group items-start p-2.5 sm:p-3 -mx-2.5 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]"
+        class="relative flex flex-row gap-3.5 sm:gap-5 lg:gap-6 group items-start p-2 sm:p-3 -mx-2 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]"
       >
         {/* Full-row Clickable Link Overlay */}
         <a
@@ -26,8 +26,8 @@ try {
           aria-label={`View ${proj.title}`}
         ></a>
 
-        {/* Left Thumbnail Column (Compact ~160px Width & 16:10 Aspect Ratio) */}
-        <div class="relative z-10 block w-full sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
+        {/* Left Thumbnail Column (Compact ~110px on mobile, ~160px on desktop & 16:10 Aspect Ratio) */}
+        <div class="relative z-10 block w-[110px] sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
           <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
             {proj.coverImage ? (
               <img
@@ -37,7 +37,7 @@ try {
                 loading="lazy"
               />
             ) : (
-              <div class="w-full h-full flex items-center justify-center p-3 text-center font-mono text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
+              <div class="w-full h-full flex items-center justify-center p-2 text-center font-mono text-[9px] sm:text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
                 {proj.title}
               </div>
             )}
@@ -45,28 +45,28 @@ try {
         </div>
 
         {/* Right Text Content Block */}
-        <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2 pointer-events-none">
-          <div class="flex flex-col gap-1">
+        <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-1.5 sm:gap-2 pointer-events-none">
+          <div class="flex flex-col gap-0.5 sm:gap-1">
             {/* Title */}
-            <h3 class="font-serif font-medium text-[17px] sm:text-[18px] text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
+            <h3 class="font-serif font-medium text-[15.5px] sm:text-[18px] text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
               {proj.title}
             </h3>
 
             {/* Description */}
             {proj.description && (
-              <p class="font-serif italic text-[13px] sm:text-[14px] text-[var(--ink-secondary)] leading-relaxed line-clamp-2">
+              <p class="font-serif italic text-[12.5px] sm:text-[14px] text-[var(--ink-secondary)] leading-relaxed line-clamp-2">
                 {proj.description}
               </p>
             )}
           </div>
 
           {/* Tags & View Link Row */}
-          <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pt-0.5 font-mono text-[10px]">
-            <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+          <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pt-0.5 font-mono text-[9.5px] sm:text-[10px]">
+            <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)] truncate max-w-[65%]">
               {proj.tags || "PROJECT"}
             </span>
 
-            <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] shrink-0 ml-auto">
+            <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10px] sm:text-[10.5px] shrink-0 ml-auto">
               VIEW &rarr;
             </span>
           </div>
