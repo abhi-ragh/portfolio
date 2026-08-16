@@ -24,18 +24,18 @@ const roles = [
 ];
 ---
 
-<section id="experience" class="flex flex-col gap-5 py-2 scroll-mt-12">
+<section id="experience" class="flex flex-col gap-6 scroll-mt-12">
   {/* Section Eyebrow Header */}
   <div>
-    <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--paper-panel)] inline-block">
+    <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none inline-block">
       [ 01 / EXPERIENCE ]
     </span>
   </div>
 
-  {/* Roles Vertical Stack with Paper Backing Panel */}
-  <div class="bg-[var(--paper-panel)] backdrop-blur-[2px] p-6 sm:p-7 border border-[var(--line)]/60 flex flex-col gap-9 lg:gap-10">
-    {roles.map((role) => (
-      <div class="flex flex-col gap-2">
+  {/* Roles Plain Vertical Stack with Subtle Hairline Dividers */}
+  <div class="flex flex-col divide-y divide-[var(--line)]/40">
+    {roles.map((role, idx) => (
+      <div class={`flex flex-col gap-2 ${idx === 0 ? 'pb-7 lg:pb-8' : idx === roles.length - 1 ? 'pt-7 lg:pt-8' : 'py-7 lg:py-8'}`}>
         {/* Title */}
         <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] leading-snug">
           {role.title}

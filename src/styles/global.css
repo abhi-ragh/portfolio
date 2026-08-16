@@ -812,25 +812,10 @@ html[data-theme="light"] {
   background: linear-gradient(135deg, rgba(200, 169, 110, 0.08) 0%, rgba(22, 21, 18, 0.3) 100%);
 }
 
-/* Force Light Scheme & Lock Colors */
-html, body {
-  color-scheme: light !important;
-  background-color: var(--bg) !important;
-  color: var(--ink) !important;
-}
-
-/* Prevent Canvas & Dither Pattern Inversion */
+/* Canvas & Dither Pattern Inversion Protection */
 canvas, svg {
   filter: none !important;
   -webkit-filter: none !important;
-}
-
-/* Override Dark Reader Injected Selectors */
-[data-darkreader-scheme],
-[data-darkreader-inline-stroke],
-[data-darkreader-inline-fill] {
-  background-color: #F5F0E8 !important;
-  color: #1C1A17 !important;
 }
 
 /* Print Press Mechanical Ink Deposition Reveal (Simultaneous Unified Start) */

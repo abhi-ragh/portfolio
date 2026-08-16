@@ -1,0 +1,146 @@
+---
+// Zero-hydration native Dither Canvas Background (Runs instantly on first paint)
+---
+
+<canvas
+  id="dither-canvas"
+  aria-hidden="true"
+  style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; image-rendering: pixelated;"
+></canvas>
+
+<script is:inline>
+  (function() {
+    function initDither() {
+      const canvas = document.getElementById('dither-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d', { alpha: true });
+      if (!ctx) return;
+
+      const BAYER_8X8 = [
+        [ 0, 32,  8, 40,  2, 34, 10, 42],
+        [48, 16, 56, 24, 50, 18, 58, 26],
+        [12, 44,  4, 36, 14, 46,  6, 38],
+        [60, 28, 52, 20, 62, 30, 54, 22],
+        [ 3, 35, 11, 43,  1, 33,  9, 41],
+        [51, 19, 59, 27, 49, 17, 57, 25],
+        [15, 47,  7, 39, 13, 45,  5, 37],
+        [63, 31, 55, 23, 61, 29, 53, 21]
+      ];
+
+      let animFrameId = null;
+      let time = 0;
+
+      let dotR = 237;
+      let dotG = 232;
+      let dotB = 222;
+      let dotAlpha = 14; // Ultra-subtle ambient paper grain (~5.5% opacity)
+
+      function syncTheme() {
+        const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+        if (theme === 'dark') {
+          dotR = 237;
+          dotG = 232;
+          dotB = 222;
+          dotAlpha = 14; // Barely perceptible warm off-white grain
+        } else {
+          dotR = 30;
+          dotG = 28;
+          dotB = 24;
+          dotAlpha = 10; // Faint, ultra-delicate watercolor grain
+        }
+      }
+
+      syncTheme();
+      window.addEventListener('themechange', syncTheme);
+
+      const observer = new MutationObserver(syncTheme);
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const SCALE = 0.5;
+
+      let width = 0;
+      let height = 0;
+      let imageData = null;
+
+      function resize() {
+        width = Math.max(1, Math.floor(window.innerWidth * SCALE));
+        height = Math.max(1, Math.floor(window.innerHeight * SCALE));
+        canvas.width = width;
+        canvas.height = height;
+        imageData = ctx.createImageData(width, height);
+        if (prefersReducedMotion) {
+          drawFrame();
+        }
+      }
+
+      resize();
+      window.addEventListener('resize', resize, { passive: true });
+
+      function drawFrame() {
+        if (!ctx || !imageData) return;
+
+        const data = imageData.data;
+        let ptr = 0;
+        const waveScaleX = 0.018;
+        const waveScaleY = 0.016;
+
+        for (let y = 0; y < height; y++) {
+          const bayerRow = BAYER_8X8[y & 7];
+          const yNoise = y * waveScaleY;
+
+          for (let x = 0; x < width; x++) {
+            const xNoise = x * waveScaleX;
+
+            // Pure organic flowing wave field (no cursor disturbance)
+            let wave = Math.sin(xNoise + time * 0.35) * Math.cos(yNoise + time * 0.28)
+                     + Math.sin((xNoise + yNoise) * 0.55 + time * 0.22) * 0.45;
+
+            const intensity = Math.max(0, Math.min(1, (wave + 1.45) / 2.9));
+            const bayerThreshold = bayerRow[x & 7] / 64.0;
+
+            if (intensity > bayerThreshold) {
+              data[ptr] = dotR;
+              data[ptr + 1] = dotG;
+              data[ptr + 2] = dotB;
+              data[ptr + 3] = dotAlpha;
+            } else {
+              data[ptr] = 0;
+              data[ptr + 1] = 0;
+              data[ptr + 2] = 0;
+              data[ptr + 3] = 0;
+            }
+            ptr += 4;
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      function loop() {
+        drawFrame();
+        if (!prefersReducedMotion) {
+          time += 0.026; // Smooth, steady ambient drift
+          animFrameId = requestAnimationFrame(loop);
+        }
+      }
+
+      loop();
+
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+          if (animFrameId) cancelAnimationFrame(animFrameId);
+        } else if (!prefersReducedMotion) {
+          animFrameId = requestAnimationFrame(loop);
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDither);
+    } else {
+      initDither();
+    }
+  })();
+</script>

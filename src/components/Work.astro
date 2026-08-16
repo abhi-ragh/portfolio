@@ -9,10 +9,10 @@ try {
 }
 ---
 
-<section id="projects" class="flex flex-col gap-5 py-2 scroll-mt-12">
+<section id="projects" class="flex flex-col gap-6 scroll-mt-12">
   {/* Section Eyebrow Header */}
   <div class="flex justify-between items-baseline">
-    <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--paper-panel)] inline-block">
+    <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none inline-block">
       [ 02 / PROJECTS ]
     </span>
   </div>
@@ -20,7 +20,7 @@ try {
   {/* Projects Grid */}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
     {projects.map((proj: any, idx: number) => (
-      <article key={proj.id || idx} class="flex flex-col gap-3 group bg-[var(--paper-panel)]/80 backdrop-blur-[2px] p-5 sm:p-6 border border-[var(--line)]/60">
+      <article key={proj.id || idx} class="flex flex-col gap-3.5 group">
         {/* Plainer image crop with hairline border */}
         <a
           href={proj.github || "/projects"}

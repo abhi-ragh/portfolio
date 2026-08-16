@@ -26,7 +26,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
       {/* Section Eyebrow Header */}
       <div className="flex flex-col gap-2">
         <div>
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none bg-[var(--paper-panel)] inline-block">
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--ink-secondary)] border border-[var(--line)] px-2.5 py-1 select-none inline-block">
             [ 03 / COLLECTION ]
           </span>
         </div>
@@ -37,13 +37,13 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
       </div>
 
       {/* Asymmetric Mixed-Span Masonry Grid (Open canvas over dither) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 items-start">
         {displayItems.map((item, index) => {
           const config = layoutConfigs[index % layoutConfigs.length];
           return (
             <div
               key={item.id || index}
-              className={`${config.gridSpan} flex flex-col gap-2 group cursor-pointer border border-[var(--line)] bg-[var(--paper-panel)]/90 p-2.5 transition-all duration-300 hover:border-[var(--accent)]/60`}
+              className={`${config.gridSpan} flex flex-col gap-2 group cursor-pointer`}
               onClick={() => setSelectedItem({
                 id: item.id,
                 src: item.imageUrl,
@@ -51,7 +51,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
                 type: item.type
               })}
             >
-              <div className={`w-full ${config.aspect} overflow-hidden bg-[var(--surface)] relative`}>
+              <div className={`w-full ${config.aspect} overflow-hidden border border-[var(--line)] group-hover:border-[var(--accent)]/60 transition-colors bg-[var(--surface)] relative`}>
                 <img
                   src={item.imageUrl}
                   alt={item.caption}
@@ -60,7 +60,7 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
                 />
               </div>
 
-              <div className="flex justify-between items-baseline px-1 pt-1 font-mono text-[10px]">
+              <div className="flex justify-between items-baseline px-0.5 pt-1 font-mono text-[10px]">
                 <span className="font-serif italic text-[13px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors truncate max-w-[75%]">
                   {item.caption}
                 </span>

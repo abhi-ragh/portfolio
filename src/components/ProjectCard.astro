@@ -9,15 +9,15 @@ interface Props {
 const { project, showMedia = true } = Astro.props;
 ---
 
-<div class="flex flex-col gap-4 border border-[var(--line)] bg-[var(--surface)]/50 p-5 group hover:border-[var(--accent)]/60 transition-colors">
+<div class="flex flex-col gap-3.5 group">
   {/* Plain image crop with hairline border */}
   {showMedia && project.coverImage && (
-    <div class="w-full aspect-[16/10] overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
+    <div class="w-full aspect-[16/10] overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-colors group-hover:border-[var(--accent)]/60">
       <img
         src={project.coverImage}
         alt={project.title}
         loading="lazy"
-        class="w-full h-full object-cover block group-hover:scale-[1.01] transition-transform duration-300"
+        class="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
       />
     </div>
   )}
