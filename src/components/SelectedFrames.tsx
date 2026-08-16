@@ -18,9 +18,11 @@ export const SelectedFrames: React.FC<SelectedFramesProps> = ({ items }) => {
   return (
     <section id="collection" className="flex flex-col gap-6 py-2 scroll-mt-20">
       {/* Handwritten Personal Aside (System A) */}
-      <p className="font-hand text-[24px] sm:text-[27px] text-[var(--ink)] leading-snug max-w-xl">
-        sketches and clicks that usually happen outside work life :)
-      </p>
+      <div className="overflow-hidden w-full">
+        <p className="font-hand text-[clamp(13px,3.6vw,26px)] text-[var(--ink)] leading-none whitespace-nowrap max-w-none">
+          sketches and clicks that usually happen outside work life :)
+        </p>
+      </div>
 
       {/* Multi-Column Masonry Grid (2 columns on mobile, 3 columns on desktop) */}
       <div className="columns-2 lg:columns-3 gap-3.5 sm:gap-6 lg:gap-8 space-y-3.5 sm:space-y-6 lg:space-y-8">
