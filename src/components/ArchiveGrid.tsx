@@ -21,8 +21,8 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages
 
   return (
     <div className="w-full flex flex-col gap-12">
-      {/* 3-Column Masonry Layout with 380-400px Max Height Cap */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
+      {/* Multi-Column Masonry Layout (2 columns on mobile, 3 columns on desktop) */}
+      <div className="columns-2 lg:columns-3 gap-3.5 sm:gap-6 md:gap-8 space-y-3.5 sm:space-y-6 md:space-y-8">
         {displayItems.map((item, index) => {
           const aspect = aspectPatterns[index % aspectPatterns.length];
           return (
