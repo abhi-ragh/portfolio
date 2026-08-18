@@ -10,78 +10,85 @@ try {
 ---
 
 <section id="projects" class="flex flex-col gap-6 scroll-mt-20">
-  {/* Projects Compact Vertical Row Stack */}
-  <div class="flex flex-col gap-6 lg:gap-7">
-    {projects.map((proj: any, idx: number) => (
-      <article
-        key={proj.id || idx}
-        class="relative flex flex-row gap-3.5 sm:gap-5 lg:gap-6 group items-start p-2 sm:p-3 -mx-2 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]"
-      >
-        {/* Full-row Clickable Link Overlay */}
-        <a
-          href={proj.github || "/projects"}
-          target={proj.github ? "_blank" : "_self"}
-          rel="noopener noreferrer"
-          class="absolute inset-0 z-0"
-          aria-label={`View ${proj.title}`}
-        ></a>
+  {projects.length === 0 ? (
+    <div class="py-4 font-serif italic text-[16.5px] sm:text-[18px] text-[var(--ink-secondary)]">
+      Projects coming soon &sim;
+    </div>
+  ) : (
+    <div class="flex flex-col gap-6 lg:gap-7">
+      {projects.map((proj: any, idx: number) => (
+        <article
+          key={proj.id || idx}
+          class="relative flex flex-row gap-3.5 sm:gap-5 lg:gap-6 group items-start p-2 sm:p-3 -mx-2 sm:-mx-3 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]"
+        >
+          {/* Full-row Clickable Link Overlay */}
+          <a
+            href={proj.github || "/projects"}
+            target={proj.github ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+            class="absolute inset-0 z-0"
+            aria-label={`View ${proj.title}`}
+          ></a>
 
-        {/* Left Thumbnail Column (Compact ~110px on mobile, ~160px on desktop & 16:10 Aspect Ratio) */}
-        <div class="relative z-10 block w-[110px] sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
-          <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
-            {proj.coverImage ? (
-              <img
-                src={proj.coverImage}
-                alt={proj.title}
-                class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-[1.02]"
-                loading="lazy"
-              />
-            ) : (
-              <div class="w-full h-full flex items-center justify-center p-2 text-center font-mono text-[9px] sm:text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
+          {/* Left Thumbnail Column (Compact ~110px on mobile, ~160px on desktop & 16:10 Aspect Ratio) */}
+          <div class="relative z-10 block w-[110px] sm:w-[150px] md:w-[165px] lg:w-[175px] shrink-0 overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-all duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
+            <div class="w-full aspect-[16/10] overflow-hidden bg-[var(--surface)]">
+              {proj.coverImage ? (
+                <img
+                  src={proj.coverImage}
+                  alt={proj.title}
+                  class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="w-full h-full flex items-center justify-center p-2 text-center font-mono text-[9px] sm:text-[10px] text-[var(--ink-tertiary)] tracking-[0.08em]">
+                  {proj.title}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Text Content Block */}
+          <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2 pointer-events-none">
+            <div class="flex flex-col gap-1">
+              {/* Title */}
+              <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
                 {proj.title}
-              </div>
-            )}
+              </h3>
+
+              {/* Description */}
+              {proj.description && (
+                <p class="font-serif italic text-[15.5px] sm:text-[17px] text-[var(--ink-secondary)] leading-[1.8] line-clamp-2">
+                  {proj.description}
+                </p>
+              )}
+            </div>
+
+            {/* Tags & View Link Row */}
+            <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pt-1 font-mono text-[10px] sm:text-[10.5px]">
+              <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)] truncate max-w-[65%]">
+                {proj.tags || "PROJECT"}
+              </span>
+
+              <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] sm:text-[11px] shrink-0 ml-auto">
+                VIEW &rarr;
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* Right Text Content Block */}
-        <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between self-stretch gap-2 pointer-events-none">
-          <div class="flex flex-col gap-1">
-            {/* Title */}
-            <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] leading-snug group-hover:text-[var(--accent)] transition-colors">
-              {proj.title}
-            </h3>
-
-            {/* Description */}
-            {proj.description && (
-              <p class="font-serif italic text-[15.5px] sm:text-[17px] text-[var(--ink-secondary)] leading-[1.8] line-clamp-2">
-                {proj.description}
-              </p>
-            )}
-          </div>
-
-          {/* Tags & View Link Row */}
-          <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pt-1 font-mono text-[10px] sm:text-[10.5px]">
-            <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)] truncate max-w-[65%]">
-              {proj.tags || "PROJECT"}
-            </span>
-
-            <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] sm:text-[11px] shrink-0 ml-auto">
-              VIEW &rarr;
-            </span>
-          </div>
-        </div>
-      </article>
-    ))}
-  </div>
+        </article>
+      ))}
+    </div>
+  )}
 
   {/* Full projects list → Link at end of section */}
-  <div class="pt-1">
-    <a
-      href="/projects"
-      class="font-mono text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
-    >
-      Full projects list &rarr;
-    </a>
-  </div>
+  {projects.length > 0 && (
+    <div class="pt-1">
+      <a
+        href="/projects"
+        class="font-mono text-[11px] font-semibold text-[var(--ink-secondary)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 uppercase tracking-[0.08em]"
+      >
+        Full projects list &rarr;
+      </a>
+    </div>
+  )}
 </section>
