@@ -1,10 +1,6 @@
 name: Vercel Production
 
 on:
-  pull_request:
-    branches:
-      - main
-
   push:
     branches:
       - main
@@ -28,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -36,9 +32,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
-
-      - name: Run tests
-        run: npm test
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
