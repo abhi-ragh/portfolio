@@ -1,53 +1,9 @@
 import { notion, NOTION_DATABASE_ID } from './notion.ts';
 import type { ArchiveImage } from './types.ts';
 
-// Fallback local media when Notion credentials are unconfigured or offline
-export const fallbackImages: ArchiveImage[] = [
-  {
-    id: 'local-1',
-    caption: 'Kochi Port & Monsoon Waves',
-    imageUrl: '/kochi_port_monsoon.jpg',
-    homepage: true,
-    published: true,
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: 'local-2',
-    caption: 'Western Ghats Contour Study',
-    imageUrl: '/mountain_sketch.jpg',
-    homepage: true,
-    published: true,
-    type: 'SKETCHBOOK DRAFT'
-  },
-  {
-    id: 'local-3',
-    caption: 'MG Road at Twilight',
-    imageUrl: '/street_rain.jpg',
-    homepage: true,
-    published: true,
-    type: 'FILM PHOTOGRAPHY'
-  },
-  {
-    id: 'local-4',
-    caption: 'Structural Elevation Study',
-    imageUrl: '/brutalist_sketch.jpg',
-    homepage: true,
-    published: true,
-    type: 'SKETCHBOOK DRAFT'
-  },
-  {
-    id: 'local-5',
-    caption: 'Monsoon Dew & Palms',
-    imageUrl: '/palm_photo.jpg',
-    homepage: false,
-    published: true,
-    type: 'FILM PHOTOGRAPHY'
-  }
-];
-
 export async function getArchiveImages(): Promise<ArchiveImage[]> {
   if (!notion || !NOTION_DATABASE_ID) {
-    return fallbackImages.filter(img => img.published);
+    return [];
   }
 
   try {
@@ -105,7 +61,7 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
       return {
         id: page.id,
         caption,
-        imageUrl: imageUrl || '/kochi_port_monsoon.jpg',
+        imageUrl: imageUrl,
         homepage,
         published,
         type: isSketch ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
@@ -114,10 +70,10 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
 
     // Filter only published entries with valid image URLs
     const valid = parsed.filter(item => item.published && item.imageUrl);
-    return valid.length > 0 ? valid : fallbackImages.filter(img => img.published);
+    return valid;
   } catch (error) {
-    console.warn('Notion API query notice: returning fallback images', error);
-    return fallbackImages.filter(img => img.published);
+    console.warn('Notion API query notice:', error);
+    return [];
   }
 }
 
@@ -125,6 +81,6 @@ export async function getHomepageImages(): Promise<ArchiveImage[]> {
   const allImages = await getArchiveImages();
   // Filter Published == true AND Homepage == true
   const homepageItems = allImages.filter(item => item.homepage);
-  return homepageItems.length > 0 ? homepageItems : fallbackImages.filter(img => img.homepage && img.published);
+  return homepageItems.length > 0 ? homepageItems : allImages;
 }
 

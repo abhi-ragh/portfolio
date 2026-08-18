@@ -8,7 +8,12 @@ import SelectedFrames from '../components/SelectedFrames';
 import Footer from '../components/Footer.astro';
 import { getHomepageImages } from '../lib/archive';
 
-const archiveItems = await getHomepageImages();
+let archiveItems = [];
+try {
+  archiveItems = await getHomepageImages();
+} catch (e) {
+  archiveItems = [];
+}
 ---
 
 <Base>

@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import Lightbox, { GalleryItem } from './Lightbox';
 import type { ArchiveImage } from '../lib/types';
-import { fallbackImages } from '../lib/archive';
 
 interface ArchiveGridProps {
   items?: ArchiveImage[];
 }
 
-export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = fallbackImages }) => {
+export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = [] }) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
-  const displayItems: GalleryItem[] = items.map(item => ({
+  const displayItems: GalleryItem[] = (items || []).map(item => ({
     id: item.id,
     src: item.imageUrl,
     title: item.caption,
     type: item.type
   }));
+
+  if (displayItems.length === 0) {
+    return (
+      <div className="font-serif italic text-[17px] sm:text-[19px] text-[var(--ink-secondary)] py-8">
+        Oops? No images were loaded &sim;
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-12">

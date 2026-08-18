@@ -5,7 +5,12 @@ import ArchiveGrid from '../components/ArchiveGrid';
 import Footer from '../components/Footer.astro';
 import { getArchiveImages } from '../lib/archive';
 
-const archiveItems = await getArchiveImages();
+let archiveItems = [];
+try {
+  archiveItems = await getArchiveImages();
+} catch (e) {
+  archiveItems = [];
+}
 ---
 
 <Base title="Archive — Complete Collection | abhiragh a r">
