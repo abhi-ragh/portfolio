@@ -40,6 +40,17 @@ jobs:
             --environment=preview \
             --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Verify Notion token
+        run: |
+          TOKEN=$(sed -n 's/^NOTION_TOKEN=//p' .vercel/.env.preview.local)
+
+          if [ -z "$TOKEN" ]; then
+            echo "NOTION_TOKEN was not found in Vercel environment file"
+            exit 1
+          fi
+
+    echo -n "$TOKEN" | sha256sum
+
       - name: Build Vercel application
         run: |
           vercel build \
