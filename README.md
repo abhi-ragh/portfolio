@@ -1,49 +1,45 @@
-# Abhiragh A R - Portfolio Website
+# Abhiragh A R — Portfolio
 
-This is the repository for my personal portfolio website. It is designed to showcase my skills and experience.
+Personal portfolio website showcasing cloud infrastructure engineering, projects, 35mm film photography, and sketchbook drafts.
 
 ## Tech Stack
 
-*   **Framework**: [React](https://reactjs.org/)
-*   **Styling**: [@emotion/react](https://emotion.sh/docs/introduction)
-*   **Animations**: [Framer Motion](https://www.framer.com/motion/)
-*   **Icons**: [Lucide React](https://lucide.dev/)
-*   **Build Tool**: [Vite](https://vitejs.dev/)
+* **Framework**: [Astro](https://astro.build/) v7 (Island Architecture / Static Site Generation)
+* **UI**: [React](https://react.dev/)
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+* **CMS**: [Notion API](https://developers.notion.com/) (`@notionhq/client`)
 
-## Running the Project Locally
+## Running Locally
 
-To run the project locally, follow these steps:
-
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/your-username/portfolio.git
-    ```
-2.  Navigate to the project directory:
-    ```bash
-    cd portfolio
-    ```
-3.  Install the dependencies:
-    ```bash
-    npm install
-    ```
-4.  Start the development server:
-    ```bash
-    npm run dev
-    ```
-5.  Open your browser and visit `http://localhost:5173` to see the portfolio.
-
-Or use Docker:
-
-1. Build the docker image
-   ``` bash
-   docker build -t portfolio .
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/abhi-ragh/portfolio.git
+   cd portfolio
    ```
-2. Run it
-   ``` bash
-   docker run -p 5173:5173 --name portfolio portfolio
+
+2. **Install dependencies:**
+   ```bash
+   npm install
    ```
-3. Open your browser and visit `http://localhost:5173` to see the portfolio.
-     
+
+3. **Configure environment variables:**
+   Create a `.env` file with your Notion credentials:
+   ```env
+   NOTION_TOKEN=your_notion_integration_token
+   NOTION_DATABASE_ID=your_archive_database_id
+   NOTION_PROJECTS_ID=your_projects_database_id
+   ```
+
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
