@@ -25,3 +25,5 @@ dist-ssr
 .env
 .vercel
 .env*
+.astro
+public/notion-assets/

@@ -39,6 +39,7 @@ jobs:
             --yes \
             --environment=preview \
             --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.preview.local .env
 
       - name: Build Vercel application
         run: |

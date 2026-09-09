@@ -42,6 +42,7 @@ jobs:
             --yes \
             --environment=production \
             --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.production.local .env
 
       - name: Build Vercel application
         run: |

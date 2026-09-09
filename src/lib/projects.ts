@@ -1,5 +1,6 @@
 import { notion, NOTION_PROJECTS_ID } from './notion.ts';
 import type { Project } from './types.ts';
+import { cacheNotionImage } from './download.ts';
 
 function getProp(props: Record<string, any>, keyNames: string[]) {
   const keys = Object.keys(props);
@@ -96,7 +97,33 @@ export async function getArchiveProjects(): Promise<Project[]> {
     }
 
     projects.sort((a, b) => (a.homepageOrder || 999) - (b.homepageOrder || 999));
-    return projects;
+
+    // Cache project cover images and screenshots locally for permanent CDN hosting
+    const cachedProjects = await Promise.all(
+      projects.map(async (project) => {
+        let coverImage = project.coverImage;
+        if (coverImage) {
+          coverImage = await cacheNotionImage(coverImage, `project-cover-${project.id}`);
+        }
+
+        let screenshots = project.screenshots || [];
+        if (screenshots.length > 0) {
+          screenshots = await Promise.all(
+            screenshots.map((shot: string, idx: number) =>
+              cacheNotionImage(shot, `project-shot-${project.id}-${idx}`)
+            )
+          );
+        }
+
+        return {
+          ...project,
+          coverImage,
+          screenshots
+        };
+      })
+    );
+
+    return cachedProjects;
   } catch (error) {
     console.warn('Notion Projects query notice:', error);
     return [];

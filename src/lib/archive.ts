@@ -1,5 +1,6 @@
 import { notion, NOTION_DATABASE_ID } from './notion.ts';
 import type { ArchiveImage } from './types.ts';
+import { cacheNotionImage } from './download.ts';
 
 export async function getArchiveImages(): Promise<ArchiveImage[]> {
   if (!notion || !NOTION_DATABASE_ID) {
@@ -70,7 +71,19 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
 
     // Filter only published entries with valid image URLs
     const valid = parsed.filter(item => item.published && item.imageUrl);
-    return valid;
+
+    // Cache Notion S3 images locally for permanent CDN hosting without 1-hour expiration
+    const cached = await Promise.all(
+      valid.map(async (item) => {
+        const localUrl = await cacheNotionImage(item.imageUrl, `archive-${item.id}`);
+        return {
+          ...item,
+          imageUrl: localUrl
+        };
+      })
+    );
+
+    return cached;
   } catch (error) {
     console.warn('Notion API query notice:', error);
     return [];
