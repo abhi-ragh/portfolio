@@ -15,37 +15,138 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------------------------------
+      # 1. Checkout
+      # --------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      # --------------------------------------------------
+      # 2. Node.js
+      # --------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
 
+      # --------------------------------------------------
+      # 3. Install dependencies
+      # --------------------------------------------------
       - name: Install dependencies
         run: npm ci
 
+      # --------------------------------------------------
+      # 4. Lint
+      # --------------------------------------------------
       - name: Lint
         run: npm run lint
 
+      # --------------------------------------------------
+      # 5. Install Vercel CLI
+      # --------------------------------------------------
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      # --------------------------------------------------
+      # 6. Pull Vercel Preview environment
+      #
+      # This creates:
+      # .vercel/.env.preview.local
+      #
+      # It contains:
+      # NOTION_TOKEN
+      # NOTION_DATABASE_ID
+      # NOTION_PROJECTS_ID
+      # and other Preview variables.
+      # --------------------------------------------------
       - name: Pull Vercel environment
         run: |
           vercel pull \
             --yes \
             --environment=preview \
             --token=${{ secrets.VERCEL_TOKEN }}
+
           cp .vercel/.env.preview.local .env
 
+      # --------------------------------------------------
+      # 7. Cache Notion images
+      #
+      # IMPORTANT:
+      # This happens BEFORE vercel build.
+      #
+      # The script downloads the temporary Notion S3
+      # images and writes them into:
+      #
+      # public/notion-assets/
+      #
+      # Those files then exist before Astro/Vercel
+      # creates the deployment output.
+      # --------------------------------------------------
+      - name: Cache Notion images
+        run: npm run cache:notion
+
+      # --------------------------------------------------
+      # 8. Verify cached images
+      # --------------------------------------------------
+      - name: Verify Notion image cache
+        run: |
+          echo "Checking public/notion-assets..."
+
+          if [ ! -d "public/notion-assets" ]; then
+            echo "ERROR: public/notion-assets directory does not exist."
+            exit 1
+          fi
+
+          FILE_COUNT=$(find public/notion-assets -type f | wc -l)
+
+          echo "Cached image files: $FILE_COUNT"
+
+          if [ "$FILE_COUNT" -eq 0 ]; then
+            echo "ERROR: No Notion images were cached."
+            exit 1
+          fi
+
+          echo ""
+          echo "Cached files:"
+          find public/notion-assets -type f -maxdepth 1 -print
+
+      # --------------------------------------------------
+      # 9. Build Vercel application
+      # --------------------------------------------------
       - name: Build Vercel application
         run: |
           vercel build \
             --token=${{ secrets.VERCEL_TOKEN }}
 
+      # --------------------------------------------------
+      # 10. Verify images are present in Vercel build
+      # --------------------------------------------------
+      - name: Verify Vercel build assets
+        run: |
+          echo "Checking Vercel build output..."
+
+          if [ ! -d ".vercel/output/static/notion-assets" ]; then
+            echo "ERROR: Notion assets are missing from Vercel build output."
+            exit 1
+          fi
+
+          FILE_COUNT=$(find .vercel/output/static/notion-assets -type f | wc -l)
+
+          echo "Notion images in Vercel output: $FILE_COUNT"
+
+          if [ "$FILE_COUNT" -eq 0 ]; then
+            echo "ERROR: Vercel build contains no Notion images."
+            exit 1
+          fi
+
+          echo ""
+          echo "Vercel build assets:"
+          find .vercel/output/static/notion-assets -type f -maxdepth 1 -print
+
+      # --------------------------------------------------
+      # 11. Deploy prebuilt application
+      # --------------------------------------------------
       - name: Deploy to Vercel Preview
         run: |
           vercel deploy \
