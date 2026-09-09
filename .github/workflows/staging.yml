@@ -15,51 +15,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # --------------------------------------------------
-      # 1. Checkout
-      # --------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      # --------------------------------------------------
-      # 2. Node.js
-      # --------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
 
-      # --------------------------------------------------
-      # 3. Install dependencies
-      # --------------------------------------------------
       - name: Install dependencies
         run: npm ci
 
-      # --------------------------------------------------
-      # 4. Lint
-      # --------------------------------------------------
       - name: Lint
         run: npm run lint
 
-      # --------------------------------------------------
-      # 5. Install Vercel CLI
-      # --------------------------------------------------
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # --------------------------------------------------
-      # 6. Pull Vercel Preview environment
-      #
-      # This creates:
-      # .vercel/.env.preview.local
-      #
-      # It contains:
-      # NOTION_TOKEN
-      # NOTION_DATABASE_ID
-      # NOTION_PROJECTS_ID
-      # and other Preview variables.
-      # --------------------------------------------------
       - name: Pull Vercel environment
         run: |
           vercel pull \
@@ -69,26 +42,32 @@ jobs:
 
           cp .vercel/.env.preview.local .env
 
-      # --------------------------------------------------
-      # 7. Cache Notion images
-      #
-      # IMPORTANT:
-      # This happens BEFORE vercel build.
-      #
-      # The script downloads the temporary Notion S3
-      # images and writes them into:
-      #
-      # public/notion-assets/
-      #
-      # Those files then exist before Astro/Vercel
-      # creates the deployment output.
-      # --------------------------------------------------
+          set -a
+          source .env
+          set +a
+
+      - name: Verify Notion environment
+        run: |
+          test -n "$NOTION_TOKEN" || {
+            echo "ERROR: NOTION_TOKEN is not available"
+            exit 1
+          }
+
+          test -n "$NOTION_DATABASE_ID" || {
+            echo "ERROR: NOTION_DATABASE_ID is not available"
+            exit 1
+          }
+
+          test -n "$NOTION_PROJECTS_ID" || {
+            echo "ERROR: NOTION_PROJECTS_ID is not available"
+            exit 1
+          }
+
+          echo "Notion environment variables are available."
+
       - name: Cache Notion images
         run: npm run cache:notion
 
-      # --------------------------------------------------
-      # 8. Verify cached images
-      # --------------------------------------------------
       - name: Verify Notion image cache
         run: |
           echo "Checking public/notion-assets..."
@@ -109,19 +88,13 @@ jobs:
 
           echo ""
           echo "Cached files:"
-          find public/notion-assets -type f -maxdepth 1 -print
+          find public/notion-assets -maxdepth 1 -type f -print
 
-      # --------------------------------------------------
-      # 9. Build Vercel application
-      # --------------------------------------------------
       - name: Build Vercel application
         run: |
           vercel build \
             --token=${{ secrets.VERCEL_TOKEN }}
 
-      # --------------------------------------------------
-      # 10. Verify images are present in Vercel build
-      # --------------------------------------------------
       - name: Verify Vercel build assets
         run: |
           echo "Checking Vercel build output..."
@@ -140,13 +113,6 @@ jobs:
             exit 1
           fi
 
-          echo ""
-          echo "Vercel build assets:"
-          find .vercel/output/static/notion-assets -type f -maxdepth 1 -print
-
-      # --------------------------------------------------
-      # 11. Deploy prebuilt application
-      # --------------------------------------------------
       - name: Deploy to Vercel Preview
         run: |
           vercel deploy \
