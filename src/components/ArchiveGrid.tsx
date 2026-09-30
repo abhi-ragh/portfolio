@@ -18,31 +18,35 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = [] }) => {
 
   if (displayItems.length === 0) {
     return (
-      <div className="font-serif italic text-[17px] sm:text-[19px] text-[var(--ink-secondary)] py-8">
-        Oops? No images were loaded &sim;
+      <div className="font-serif italic text-[16px] text-[var(--ink-secondary)]">
+        No images were loaded ~
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-12">
-      {/* True Aspect Multi-Column Masonry Layout (Uncropped & Full Resolution) */}
-      <div className="columns-2 lg:columns-3 gap-4 sm:gap-6 md:gap-8 space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="w-full flex flex-col gap-10">
+      {/* Masonry of rounded tiles */}
+      <div className="columns-2 lg:columns-3 gap-4 sm:gap-5 md:gap-6 space-y-4 sm:space-y-5 md:space-y-6">
         {displayItems.map((item, index) => (
           <div
             key={item.id || index}
-            className="break-inside-avoid flex flex-col gap-2 group cursor-pointer"
+            className="break-inside-avoid group relative cursor-pointer overflow-hidden rounded-[14px] bg-[var(--surface)] transition-colors duration-200 hover:bg-[var(--surface-hover)]"
             onClick={() => setSelectedItem(item)}
           >
-            {/* Natural Uncropped Frame with Hairline Border */}
-            <div className="w-full overflow-hidden border border-[var(--line)] bg-[var(--surface)] group-hover:border-[var(--accent)]/60 transition-colors">
-              <img
-                src={item.src}
-                alt={item.title || "Archive item"}
-                loading="lazy"
-                className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
-              />
-            </div>
+            <img
+              src={item.src}
+              alt={item.title || 'Archive item'}
+              loading="lazy"
+              className="w-full h-auto block object-contain transition-transform duration-500 group-hover:scale-[1.015]"
+            />
+            {item.title && (
+              <div className="pointer-events-none absolute inset-x-2 bottom-2 flex justify-start">
+                <span className="max-w-full truncate rounded-[6px] bg-black/70 px-1.5 py-1 font-mono text-[9.5px] tracking-[0.03em] text-white/80 backdrop-blur-sm">
+                  {item.title}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>

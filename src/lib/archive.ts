@@ -10,7 +10,6 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
   try {
     let pages: any[] = [];
 
-    // Support both notion.dataSources.query and notion.databases.query API versions
     if (typeof (notion as any).dataSources?.query === 'function') {
       const res = await (notion as any).dataSources.query({
         data_source_id: NOTION_DATABASE_ID
@@ -29,11 +28,9 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
     const parsed: ArchiveImage[] = pages.map((page: any) => {
       const props = page.properties || {};
 
-      // Extract Caption (Title property: Caption, Title, or Name)
       const captionObj = props.Caption?.title || props.Title?.title || props.Name?.title || [];
       const caption = captionObj.map((t: any) => t.plain_text).join('') || 'Untitled Frame';
 
-      // Extract Image URL (Files property: Images or Image or Files)
       const filesObj = props.Images?.files || props.Image?.files || props.Files?.files || [];
       let imageUrl = '';
       if (filesObj.length > 0) {
@@ -41,38 +38,32 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
         imageUrl = fileItem.file?.url || fileItem.external?.url || '';
       }
 
-      // Checkboxes (support Homepage, homepage, Featured, featured; default true if property unconfigured)
-      const homepage = props.Homepage?.checkbox ??
-                      props.homepage?.checkbox ??
-                      props.Featured?.checkbox ??
-                      props.featured?.checkbox ??
-                      true;
+      // Homepage field is a Select with values: "Photograph", "Sketch"
+      const homepageSelect = props.Homepage?.select?.name || props.homepage?.select?.name || '';
+      const homepageValue = homepageSelect.toLowerCase();
 
       const published = props.Published?.checkbox ??
                         props.published?.checkbox ??
                         true;
 
-      // Determine type hint based on caption keywords
       const isSketch = caption.toLowerCase().includes('sketch') ||
-                      caption.toLowerCase().includes('contour') ||
-                      caption.toLowerCase().includes('elevation') ||
-                      caption.toLowerCase().includes('drawing') ||
-                      caption.toLowerCase().includes('pencil');
+                       caption.toLowerCase().includes('contour') ||
+                       caption.toLowerCase().includes('elevation') ||
+                       caption.toLowerCase().includes('drawing') ||
+                       caption.toLowerCase().includes('pencil');
 
       return {
         id: page.id,
         caption,
         imageUrl: imageUrl,
-        homepage,
+        homepage: homepageValue,
         published,
         type: isSketch ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
       };
     });
 
-    // Filter only published entries with valid image URLs
     const valid = parsed.filter(item => item.published && item.imageUrl);
 
-    // Cache Notion S3 images locally for permanent CDN hosting without 1-hour expiration
     const cached = await Promise.all(
       valid.map(async (item) => {
         const localUrl = await cacheNotionImage(item.imageUrl, `archive-${item.id}`);
@@ -90,10 +81,14 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
   }
 }
 
-export async function getHomepageImages(): Promise<ArchiveImage[]> {
+export async function getHomepagePhotograph(): Promise<ArchiveImage | null> {
   const allImages = await getArchiveImages();
-  // Filter Published == true AND Homepage == true
-  const homepageItems = allImages.filter(item => item.homepage);
-  return homepageItems.length > 0 ? homepageItems : allImages;
+  const photographs = allImages.filter(item => item.homepage === 'photograph');
+  return photographs.length > 0 ? photographs[0] : null;
 }
 
+export async function getHomepageSketch(): Promise<ArchiveImage | null> {
+  const allImages = await getArchiveImages();
+  const sketches = allImages.filter(item => item.homepage === 'sketch');
+  return sketches.length > 0 ? sketches[0] : null;
+}

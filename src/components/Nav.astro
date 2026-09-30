@@ -1,0 +1,34 @@
+---
+interface Props {
+  active?: 'about' | 'projects' | 'gallery' | 'others' | '';
+}
+
+const { active = '' } = Astro.props;
+
+const items = [
+  { id: 'about', label: 'About', href: '/about' },
+  { id: 'projects', label: 'Projects', href: '/projects' },
+  { id: 'gallery', label: 'Gallery', href: '/archive' },
+  { id: 'others', label: 'Others', href: '/others' },
+];
+---
+
+<nav
+  class="inline-flex items-center gap-0.5 rounded-[10px] border border-[var(--line)] bg-[var(--surface)] px-1.5 py-1 font-mono text-[11.5px] leading-none"
+  aria-label="Main navigation"
+>
+  {items.map((item) => (
+    <a
+      href={item.href}
+      class:list={[
+        'rounded-[7px] px-2.5 py-1.5 transition-colors duration-150',
+        active === item.id
+          ? 'text-[var(--ink)]'
+          : 'text-[var(--ink-tertiary)] hover:text-[var(--ink)]',
+      ]}
+      aria-current={active === item.id ? 'page' : undefined}
+    >
+      {item.label}
+    </a>
+  ))}
+</nav>

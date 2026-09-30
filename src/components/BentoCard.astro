@@ -1,0 +1,75 @@
+---
+interface Props {
+  category: string;
+  title?: string;
+  href?: string;
+  external?: boolean;
+  bodyClass?: string;
+  class?: string;
+  bare?: boolean;
+  reveal?: boolean;
+}
+
+const {
+  category,
+  title,
+  href,
+  external = false,
+  bodyClass = 'px-3.5 pb-3.5',
+  class: className = '',
+  bare = false,
+  reveal = false,
+} = Astro.props;
+
+const isLink = Boolean(href);
+const Tag = isLink ? 'a' : 'div';
+const linkAttrs = isLink
+  ? {
+      href,
+      target: external ? '_blank' : undefined,
+      rel: external ? 'noopener noreferrer' : undefined,
+    }
+  : {};
+---
+
+<Tag
+  {...linkAttrs}
+  class:list={[
+    'group relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[14px] bg-[var(--surface)] transition-colors duration-200',
+    isLink && 'hover:bg-[var(--surface-hover)]',
+    className,
+  ]}
+>
+  {
+    !bare && (
+      <div
+        class:list={[
+          'flex shrink-0 items-center justify-between gap-3 px-3.5 pt-3 pb-2 transition-opacity duration-200',
+          reveal && 'hover-reveal opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100',
+        ]}
+      >
+        <div class="flex min-w-0 items-baseline gap-1.5 font-mono text-[10.5px] leading-none">
+          <span class="shrink-0 text-[var(--ink-tertiary)]">{category}</span>
+          {title && (
+            <>
+              <span class="shrink-0 text-[var(--ink-tertiary)] opacity-50">·</span>
+              <span class="truncate text-[var(--ink-secondary)] transition-colors group-hover:text-[var(--ink)]">
+                {title}
+              </span>
+            </>
+          )}
+        </div>
+        {isLink && (
+          <span
+            class="shrink-0 font-mono text-[11px] leading-none text-[var(--ink-tertiary)] transition-colors group-hover:text-[var(--accent)]"
+            aria-hidden="true">↗</span
+          >
+        )}
+      </div>
+    )
+  }
+
+  <div class:list={['relative min-h-0 flex-1', bare ? '' : bodyClass]}>
+    <slot />
+  </div>
+</Tag>

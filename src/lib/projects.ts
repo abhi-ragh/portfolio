@@ -135,3 +135,9 @@ export async function getHomepageProjects(): Promise<Project[]> {
   const homepageItems = allProjects.filter(p => p.homepage);
   return homepageItems.length > 0 ? homepageItems : allProjects;
 }
+
+export async function getHomepageProjectTeaser(): Promise<Project | null> {
+  const allProjects = await getArchiveProjects();
+  const homepageItems = allProjects.filter(p => p.homepage);
+  return homepageItems.length > 0 ? homepageItems[0] : null;
+}

@@ -1,35 +1,470 @@
 ---
 import Base from '../layouts/Base.astro';
-import Sidebar from '../components/Sidebar.astro';
-import Hero from '../components/Hero.astro';
-import Experience from '../components/Experience.astro';
-import Work from '../components/Work.astro';
-import SelectedFrames from '../components/SelectedFrames';
-import Footer from '../components/Footer.astro';
-import { getHomepageImages } from '../lib/archive';
+import Nav from '../components/Nav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BentoCard from '../components/BentoCard.astro';
+import { getHomepageProjectTeaser } from '../lib/projects.ts';
+import { getHomepagePhotograph, getHomepageSketch } from '../lib/archive.ts';
+import { getCurrentReading } from '../lib/books.ts';
 
-let archiveItems = [];
+let projectTeaser = null;
+let photographTeaser = null;
+let sketchTeaser = null;
+let readingTeaser = null;
+
 try {
-  archiveItems = await getHomepageImages();
+  projectTeaser = await getHomepageProjectTeaser();
 } catch (e) {
-  archiveItems = [];
+  console.warn('Failed to fetch project teaser:', e);
 }
+
+try {
+  photographTeaser = await getHomepagePhotograph();
+} catch (e) {
+  console.warn('Failed to fetch photograph teaser:', e);
+}
+
+try {
+  sketchTeaser = await getHomepageSketch();
+} catch (e) {
+  console.warn('Failed to fetch sketch teaser:', e);
+}
+
+try {
+  readingTeaser = await getCurrentReading();
+} catch (e) {
+  console.warn('Failed to fetch reading teaser:', e);
+}
+
+const roles = [
+  {
+    title: 'Junior Engineer — Cloud',
+    company: 'Saints & Masters',
+    date: 'May 2026 — Present',
+  },
+  {
+    title: 'DevOps Intern',
+    company: 'Saints & Masters',
+    date: 'Apr 2026',
+  },
+  {
+    title: 'Associate System Engineer Intern',
+    company: 'Bridge Global',
+    date: 'Jun 2025 — Dec 2025',
+  },
+];
 ---
 
 <Base>
-  <div class="w-full max-w-[1536px] mx-auto min-h-screen px-6 sm:px-10 lg:px-12 xl:px-16 flex flex-col lg:flex-row gap-2 sm:gap-4 lg:gap-12 xl:gap-16 relative z-10">
-    {/* Left Fixed Identity & Nav Sidebar on Desktop / Top Shell on Mobile */}
-    <Sidebar />
-
-    {/* Right Scrolling Main Document Column (Centered inside available track) */}
-    <main class="flex-1 min-w-0 pt-0 pb-6 sm:pb-8 lg:py-16 px-0 lg:px-4 xl:px-8 flex flex-col justify-between">
-      <div class="w-full max-w-[920px] xl:max-w-[960px] mx-auto flex flex-col gap-16 lg:gap-20 xl:gap-24">
-        <Hero />
-        <Experience />
-        <Work />
-        <SelectedFrames client:load items={archiveItems} />
+  <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-5 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
+    <main class="bento">
+      {/* Intro cell: nav pill + wordmark */}
+      <div class="bento-intro flex min-w-0 flex-col">
+        <Nav />
+        <div class="flex min-h-0 flex-1 flex-col justify-center pt-10 pb-4 lg:pt-6 lg:pb-2">
+          <a
+            href="/"
+            class="font-hand inline-block text-[clamp(52px,7.5vw,88px)] font-bold leading-[0.95] tracking-tight text-[var(--ink)] underline decoration-dotted decoration-orange-400 decoration-2 underline-offset-[10px] transition-all hover:underline"
+          >
+            abhiragh
+          </a>
+          <p class="font-hand mt-1 text-[clamp(18px,2vw,26px)] leading-none text-[var(--ink-tertiary)]">
+            human - engineer - nerd
+          </p>
+        </div>
       </div>
-      <Footer />
+
+      {/* Project card */}
+      <BentoCard
+        category="Project"
+        title={projectTeaser?.title || 'Coming soon'}
+        href={projectTeaser?.github || '/projects'}
+        external={Boolean(projectTeaser?.github)}
+        class="bento-project"
+        bodyClass="px-3.5 pb-3.5 pt-0"
+      >
+        {projectTeaser?.coverImage ? (
+          <div class="img-frame">
+            <img
+              src={projectTeaser.coverImage}
+              alt={projectTeaser.title}
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          </div>
+        ) : (
+          <div class="img-frame flex items-center justify-center">
+            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
+          </div>
+        )}
+      </BentoCard>
+
+      {/* Music card */}
+      <BentoCard category="Music" title="Recently played" class="bento-music" bodyClass="px-3.5 pb-3.5 pt-0">
+        <div class="flex h-full min-w-0 items-center gap-3.5">
+          <div
+            class="flex aspect-square h-[72%] max-h-[96px] shrink-0 items-center justify-center overflow-hidden rounded-[9px] bg-[var(--surface-hover)]"
+          >
+            <img id="music-art" src="" alt="" class="hidden h-full w-full object-cover" />
+            <span id="music-art-fallback" class="text-[18px] leading-none text-[var(--ink-tertiary)]">♪</span>
+          </div>
+          <div class="flex min-w-0 flex-col gap-1.5">
+            <p id="music-track" class="font-serif line-clamp-2 text-[15px] leading-snug text-[var(--ink)] sm:text-[16px]">
+              —
+            </p>
+            <p id="music-artist" class="truncate font-mono text-[10.5px] text-[var(--ink-tertiary)]">
+              loading spotify…
+            </p>
+          </div>
+        </div>
+      </BentoCard>
+
+      {/* Photograph card — caption revealed on hover */}
+      <BentoCard
+        category="Photograph"
+        title={photographTeaser?.caption || '35mm'}
+        href="/archive"
+        class="bento-photo"
+        reveal
+        bodyClass="px-3.5 pb-3.5 pt-0"
+      >
+        {photographTeaser?.imageUrl ? (
+          <div class="img-frame">
+            <img
+              src={photographTeaser.imageUrl}
+              alt={photographTeaser.caption}
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+            <span class="media-caption">{photographTeaser.caption}</span>
+          </div>
+        ) : (
+          <div class="img-frame flex items-center justify-center">
+            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no frames yet ~</span>
+          </div>
+        )}
+      </BentoCard>
+
+      {/* Career card */}
+      <BentoCard
+        category="Career"
+        title="Cloud Engineer"
+        href="https://www.linkedin.com/in/abhi-ragh/"
+        external
+        class="bento-career"
+        bodyClass="px-3.5 pb-3.5 pt-0"
+      >
+        <div class="flex h-full flex-col justify-between gap-2">
+          <div class="flex flex-col divide-y divide-[var(--line)]/50">
+            {roles.map((role) => (
+              <div class="flex flex-col gap-1 py-2.5 first:pt-0">
+                <p class="font-serif text-[14px] leading-snug text-[var(--ink)] sm:text-[15px]">{role.title}</p>
+                <p class="truncate font-mono text-[9.5px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+                  {role.company} · {role.date}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p class="truncate font-mono text-[9.5px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+            AWS · Azure · Kubernetes · Terraform · Docker · Linux
+          </p>
+        </div>
+      </BentoCard>
+
+      {/* Sketch card (tall) — caption revealed on hover */}
+      <BentoCard
+        category="Sketch"
+        title={sketchTeaser?.caption || 'Sketchbook'}
+        href="/archive"
+        class="bento-sketch"
+        reveal
+        bodyClass="px-3.5 pb-3.5 pt-0"
+      >
+        {sketchTeaser?.imageUrl ? (
+          <div class="img-frame">
+            <img
+              src={sketchTeaser.imageUrl}
+              alt={sketchTeaser.caption}
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+            <span class="media-caption">{sketchTeaser.caption}</span>
+          </div>
+        ) : (
+          <div class="img-frame flex items-center justify-center">
+            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no drafts yet ~</span>
+          </div>
+        )}
+      </BentoCard>
+
+      {/* Reading card (short) */}
+      <BentoCard
+        category="Reading"
+        title={readingTeaser ? 'In progress' : '—'}
+        class="bento-reading"
+        bodyClass="px-3.5 pb-3.5 pt-0"
+      >
+        <div class="flex h-full min-w-0 items-center gap-3">
+          {readingTeaser?.coverImage && (
+            <div
+              class="aspect-[2/3] h-[78%] max-h-[64px] shrink-0 overflow-hidden rounded-[6px] bg-[var(--surface-hover)]"
+            >
+              <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
+            </div>
+          )}
+          <div class="flex min-w-0 flex-col gap-1">
+            <p class="font-serif truncate text-[14px] leading-snug text-[var(--ink)]">
+              {readingTeaser?.title || 'No book in progress'}
+            </p>
+            <p class="truncate font-mono text-[10px] text-[var(--ink-tertiary)]">
+              {readingTeaser?.author || readingTeaser?.status || 'check back soon ~'}
+            </p>
+          </div>
+        </div>
+      </BentoCard>
+
+      {/* Screen / Animation card (short) — animation fills the box, no title */}
+      <BentoCard category="Screen" title="Animation" class="bento-screen" bare>
+        <canvas id="screen-loop" class="absolute inset-0 block h-full w-full"></canvas>
+      </BentoCard>
     </main>
+
+    <SiteFooter class="mt-5 lg:mt-6" />
   </div>
+
+  <style>
+    :global(.bento) {
+      display: grid;
+      flex: 1 1 auto;
+      min-height: 0;
+      gap: 0.75rem;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'intro'
+        'project'
+        'music'
+        'photo'
+        'career'
+        'sketch'
+        'reading'
+        'screen';
+    }
+
+    :global(.bento-intro) {
+      grid-area: intro;
+      min-height: 180px;
+    }
+    :global(.bento-project) {
+      grid-area: project;
+      min-height: 250px;
+    }
+    :global(.bento-music) {
+      grid-area: music;
+      min-height: 128px;
+    }
+    :global(.bento-photo) {
+      grid-area: photo;
+      min-height: 250px;
+    }
+    :global(.bento-career) {
+      grid-area: career;
+      min-height: 260px;
+    }
+    :global(.bento-sketch) {
+      grid-area: sketch;
+      min-height: 340px;
+    }
+    :global(.bento-reading) {
+      grid-area: reading;
+      min-height: 92px;
+    }
+    :global(.bento-screen) {
+      grid-area: screen;
+      min-height: 92px;
+    }
+
+    :global(.img-frame) {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 9px;
+      background: var(--surface-hover);
+    }
+    :global(.img-frame) img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    :global(.group:hover) :global(.img-frame) img {
+      transform: scale(1.02);
+    }
+
+    /* Caption overlay for media cards: hidden until hover */
+    :global(.media-caption) {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 22px 10px 9px;
+      background: linear-gradient(to top, var(--overlay) 0%, transparent 100%);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      line-height: 1.3;
+      color: #f4f4f5;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    :global(.group:hover) :global(.media-caption),
+    :global(.group:focus-visible) :global(.media-caption) {
+      opacity: 1;
+    }
+
+    /* Touch devices have no hover: always show the caption */
+    @media (hover: none) {
+      :global(.media-caption),
+      :global(.hover-reveal) {
+        opacity: 1 !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      :global(.bento) {
+        grid-template-columns: 0.9fr 1.05fr 1fr;
+        grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr) minmax(92px, 0.42fr);
+        grid-template-areas:
+          'intro   project music'
+          'photo   career  sketch'
+          'reading screen  sketch';
+      }
+
+      :global(.bento-intro),
+      :global(.bento-project),
+      :global(.bento-music),
+      :global(.bento-photo),
+      :global(.bento-career),
+      :global(.bento-sketch),
+      :global(.bento-reading),
+      :global(.bento-screen) {
+        min-height: 0;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      // ---- Screen / Animation card: flowing wave lines ----
+      function initScreenLoop() {
+        var canvas = document.getElementById('screen-loop');
+        if (!canvas || !canvas.getContext) return;
+
+        var ctx = canvas.getContext('2d');
+        var width = 0;
+        var height = 0;
+        var animId = null;
+        var time = 0;
+        var prefersReducedMotion =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function resize() {
+          var rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : null;
+          if (!rect) return;
+          var dpr = Math.min(window.devicePixelRatio || 1, 2);
+          width = rect.width;
+          height = rect.height;
+          canvas.width = Math.max(1, Math.floor(width * dpr));
+          canvas.height = Math.max(1, Math.floor(height * dpr));
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          var lines = 4;
+          for (var i = 0; i < lines; i++) {
+            var baseY = height * (0.3 + 0.14 * i);
+            ctx.beginPath();
+            for (var x = 0; x <= width; x += 2) {
+              var y =
+                baseY +
+                Math.sin(x * 0.022 + time * (0.55 + i * 0.16) + i * 1.7) *
+                  (height * 0.075);
+              if (x === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = 'rgba(23, 23, 23, ' + (0.55 - i * 0.11) + ')';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+
+          if (!prefersReducedMotion) {
+            time += 0.016;
+            animId = requestAnimationFrame(draw);
+          }
+        }
+
+        function start() {
+          resize();
+          window.addEventListener('resize', resize, { passive: true });
+          draw();
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') {
+              if (animId) cancelAnimationFrame(animId);
+            } else if (!prefersReducedMotion) {
+              animId = requestAnimationFrame(draw);
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', start);
+        } else {
+          start();
+        }
+      }
+
+      // ---- Music card: recently played from server endpoint ----
+      function initMusic() {
+        var trackEl = document.getElementById('music-track');
+        var artistEl = document.getElementById('music-artist');
+        var artEl = document.getElementById('music-art');
+        var fallbackEl = document.getElementById('music-art-fallback');
+
+        fetch('/api/spotify')
+          .then(function (res) {
+            if (!res.ok) throw new Error('bad status');
+            return res.json();
+          })
+          .then(function (data) {
+            if (data && data.track && trackEl) {
+              trackEl.textContent = data.track;
+              if (artistEl) artistEl.textContent = data.artist || 'spotify';
+              if (data.albumArt && artEl) {
+                artEl.src = data.albumArt;
+                artEl.classList.remove('hidden');
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+              }
+            } else {
+              if (trackEl) trackEl.textContent = 'Nothing playing';
+              if (artistEl) artistEl.textContent = 'spotify';
+            }
+          })
+          .catch(function () {
+            if (trackEl) trackEl.textContent = 'Spotify unavailable';
+            if (artistEl) artistEl.textContent = 'check back later ~';
+          });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          initScreenLoop();
+          initMusic();
+        });
+      } else {
+        initScreenLoop();
+        initMusic();
+      }
+    })();
+  </script>
 </Base>

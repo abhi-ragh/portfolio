@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Sidebar from '../components/Sidebar.astro';
+import Nav from '../components/Nav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import Footer from '../components/Footer.astro';
-import { getArchiveProjects } from '../lib/projects';
+import { getArchiveProjects } from '../lib/projects.ts';
 
 let projects = [];
 try {
@@ -13,33 +13,31 @@ try {
 }
 ---
 
-<Base title="Projects — Selected Engineering Work | abhiragh a r">
-  <div class="w-full max-w-[1536px] mx-auto min-h-screen px-6 sm:px-10 lg:px-12 xl:px-16 flex flex-col lg:flex-row gap-2 sm:gap-4 lg:gap-12 xl:gap-16 relative z-10">
-    <Sidebar />
+<Base title="Projects — abhiragh a r">
+  <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-5 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
+    <Nav active="projects" />
 
-    <main class="flex-1 min-w-0 pt-0 pb-8 lg:py-16 px-0 lg:px-4 xl:px-8">
-      <div class="w-full max-w-[920px] xl:max-w-[960px] mx-auto flex flex-col gap-12">
-        {/* Header Subheading */}
-        <div class="pb-2">
-          <p class="font-serif italic text-[17px] sm:text-[19px] text-[var(--ink-secondary)] leading-relaxed max-w-none">
-            side projects, infra experiments, and automations that make my own life a bit easier
-          </p>
-        </div>
-
-        {projects.length === 0 ? (
-          <div class="font-serif italic text-[17px] sm:text-[19px] text-[var(--ink-secondary)] py-8">
-            Projects coming soon &sim;
-          </div>
-        ) : (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-start">
-            {projects.map((project) => (
-              <ProjectCard project={project} showMedia={true} />
-            ))}
-          </div>
-        )}
+    <main class="mt-8 flex-1 lg:mt-10">
+      <div class="mb-8 flex flex-col gap-2 lg:mb-10">
+        <h1 class="font-hand text-[42px] font-bold leading-none text-[var(--ink)] sm:text-[52px]">projects</h1>
+        <p class="font-mono text-[11px] tracking-[0.04em] text-[var(--ink-tertiary)]">
+          side projects, infra experiments, and automations that make my own life a bit easier
+        </p>
       </div>
 
-      <Footer />
+      {projects.length === 0 ? (
+        <div class="font-serif text-[16px] italic text-[var(--ink-secondary)]">
+          Projects coming soon ~
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5">
+          {projects.map((project) => (
+            <ProjectCard project={project} showMedia={true} />
+          ))}
+        </div>
+      )}
     </main>
+
+    <SiteFooter class="mt-10" />
   </div>
 </Base>

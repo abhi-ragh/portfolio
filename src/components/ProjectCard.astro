@@ -7,61 +7,67 @@ interface Props {
 }
 
 const { project, showMedia = true } = Astro.props;
+const isExternal = Boolean(project.github);
 ---
 
-<article class="relative flex flex-col gap-3.5 group p-3 sm:p-3.5 -mx-3 sm:-mx-3.5 transition-colors duration-200 ease-out hover:bg-[var(--ink)]/[0.04]">
-  {/* Full-cell Clickable Link Overlay */}
+<article class="group relative flex flex-col overflow-hidden rounded-[14px] bg-[var(--surface)] transition-colors duration-200 hover:bg-[var(--surface-hover)]">
+  {/* Full-cell clickable link overlay */}
   <a
-    href={project.github || "/projects"}
-    target={project.github ? "_blank" : "_self"}
-    rel="noopener noreferrer"
+    href={project.github || '/projects'}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
     class="absolute inset-0 z-0"
     aria-label={`View ${project.title}`}
   ></a>
 
-  {/* Top Thumbnail (Full Width within cell, 16:10 Aspect Ratio, Hairline Frame) */}
-  {showMedia && (
-    <div class="relative z-10 w-full aspect-[16/10] overflow-hidden border border-[var(--line)] bg-[var(--surface)] transition-colors duration-200 group-hover:border-[var(--accent)]/60 pointer-events-none">
-      {project.coverImage ? (
-        <img
-          src={project.coverImage}
-          alt={project.title}
-          loading="lazy"
-          class="w-full h-full object-cover block group-hover:scale-[1.02] transition-transform duration-300"
-        />
-      ) : (
-        <div class="w-full h-full flex items-center justify-center p-4 text-center font-mono text-[11px] text-[var(--ink-tertiary)] tracking-[0.08em]">
-          {project.title}
-        </div>
-      )}
-    </div>
-  )}
-
-  <!-- Bottom Text Content Block -->
-  <div class="relative z-10 flex flex-col gap-2 pointer-events-none flex-1 justify-between">
-    <div class="flex flex-col gap-1.5">
-      {/* Title */}
-      <h3 class="font-serif font-medium text-[19px] sm:text-[21px] text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-snug">
+  {/* Header: Category · Title + arrow */}
+  <div class="relative z-10 flex shrink-0 items-center justify-between gap-3 px-4 pt-3.5 pb-2.5">
+    <div class="flex min-w-0 items-baseline gap-1.5 font-mono text-[10.5px] leading-none">
+      <span class="shrink-0 text-[var(--ink-tertiary)]">Project</span>
+      <span class="shrink-0 text-[var(--ink-tertiary)] opacity-50">·</span>
+      <span class="truncate text-[var(--ink-secondary)] transition-colors group-hover:text-[var(--ink)]">
         {project.title}
-      </h3>
-
-      {/* Description */}
-      {project.description && (
-        <p class="font-serif italic text-[15.5px] sm:text-[17px] text-[var(--ink-secondary)] leading-[1.8]">
-          {project.description}
-        </p>
-      )}
-    </div>
-
-    <!-- Tags & View Link Row -->
-    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2 mt-auto font-mono text-[10px] sm:text-[10.5px]">
-      <span class="font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
-        {project.tags || "PROJECT"}
-      </span>
-
-      <span class="font-semibold text-[var(--accent)] tracking-[0.06em] uppercase inline-flex items-center gap-1 group-hover:underline text-[10.5px] sm:text-[11px] shrink-0 ml-auto">
-        VIEW &rarr;
       </span>
     </div>
+    <span
+      class="shrink-0 font-mono text-[11px] leading-none text-[var(--ink-tertiary)] transition-colors group-hover:text-[var(--accent)]"
+      aria-hidden="true">↗</span
+    >
+  </div>
+
+  <div class="relative z-10 flex flex-1 flex-col gap-3 px-4 pb-4">
+    {/* Cover image */}
+    {showMedia && (
+      <div class="w-full overflow-hidden rounded-[9px] bg-[var(--surface-hover)]">
+        <div class="aspect-[16/9] w-full overflow-hidden">
+          {project.coverImage ? (
+            <img
+              src={project.coverImage}
+              alt={project.title}
+              loading="lazy"
+              class="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center p-4 text-center font-mono text-[10.5px] tracking-[0.04em] text-[var(--ink-tertiary)]">
+              {project.title}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* Description */}
+    {project.description && (
+      <p class="font-serif text-[14px] italic leading-[1.7] text-[var(--ink-secondary)] line-clamp-3 sm:text-[15px]">
+        {project.description}
+      </p>
+    )}
+
+    {/* Tags */}
+    {project.tags && (
+      <p class="mt-auto truncate font-mono text-[9.5px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
+        {project.tags}
+      </p>
+    )}
   </div>
 </article>
