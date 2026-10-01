@@ -82,35 +82,35 @@ const roles = [
     </div>
 
     <main class="bento">
-      {/* Column 1: Intro + Photograph */}
-      <div class="bento-col bento-col-1">
-        {/* Intro cell: playful intro */}
-        <div class="bento-intro flex shrink-0 flex-col gap-6 pt-1 pb-7">
-          <div class="flex flex-col gap-6 px-1 py-2 sm:py-3">
-            <h1 class="font-serif text-[clamp(28px,3.4vw,44px)] font-normal leading-[1.2] tracking-tight text-[var(--ink)]">
-              Hello there! I'm <strong class="font-medium text-[var(--ink)]">Abhiragh</strong>.
-            </h1>
+      {/* About — spans the first two columns */}
+      <div class="bento-intro flex shrink-0 flex-col gap-8 px-8 pt-10 pb-12 sm:px-14 sm:pt-12 sm:pb-16 lg:px-20">
+        <div class="bento-about-text flex flex-col gap-10 sm:gap-12">
+          <h1 class="font-serif text-[clamp(30px,4vw,52px)] font-normal leading-[1.2] tracking-tight text-[var(--ink)]">
+            Hello there! I'm <strong class="font-medium text-[var(--ink)]">Abhiragh</strong>.
+          </h1>
 
-            <div class="flex flex-col gap-6 font-serif text-[clamp(15px,1.4vw,17px)] leading-[1.85] text-[var(--ink-secondary)]">
-              <p>
-                I do a little bit of everything, but <strong class="font-medium text-[var(--ink)]">breaking things</strong> (<span class="font-serif italic text-[var(--ink)]">& maybe fixing them</span>) is kind of my thing.
-              </p>
+          <div class="flex flex-col gap-8 font-serif text-[clamp(15px,1.4vw,17px)] leading-[2] text-[var(--ink-secondary)] sm:gap-10">
+            <p>
+              I do a little bit of everything, but <strong class="font-medium text-[var(--ink)]">breaking things</strong> (<span class="font-serif italic text-[var(--ink)]">& maybe fixing them</span>) is kind of my thing.
+            </p>
 
-              <p>
-                Currently trying to figure out this whole <span class="text-[var(--ink)] underline decoration-dotted decoration-[var(--ink-tertiary)] underline-offset-[5px]">work-life balance</span> thing, but so far, Only thing I got is a <strong class="font-medium italic text-[var(--ink)]">messed-up sleep schedule</strong>.
-              </p>
+            <p>
+              Currently trying to figure out this whole <span class="text-[var(--ink)] underline decoration-dotted decoration-[var(--ink-tertiary)] underline-offset-[5px]">work-life balance</span> thing, but so far, Only thing I got is a <strong class="font-medium italic text-[var(--ink)]">messed-up sleep schedule</strong>.
+            </p>
 
-              <p>
-                Outside of work, I'm trying to <strong class="font-medium text-[var(--ink)]">read more</strong>, <span class="font-serif italic text-[var(--ink)]">draw more</span>, and <span class="font-serif italic text-[var(--ink-secondary)]">Learn Random things ig....</span>
-              </p>
-            </div>
+            <p>
+              Outside of work, I'm trying to <strong class="font-medium text-[var(--ink)]">read more</strong>, <span class="font-serif italic text-[var(--ink)]">draw more</span>, and <span class="font-serif italic text-[var(--ink-secondary)]">Learn Random things ig....</span>
+            </p>
           </div>
         </div>
+      </div>
 
+      {/* Column 1: Photograph */}
+      <div class="bento-col bento-col-1">
         {/* Photograph card — completely fills the box, zero borders, top title pops up on hover only */}
         <a
           href="/archive"
-          class="bento-photo group relative flex min-h-[300px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          class="bento-photo group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
           aria-label="View photograph in archive"
         >
           {photographTeaser?.imageUrl ? (
@@ -118,10 +118,10 @@ const roles = [
               src={photographTeaser.imageUrl}
               alt={photographTeaser.caption}
               loading="lazy"
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              class="block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]"
             />
           ) : (
-            <div class="flex h-full w-full items-center justify-center">
+            <div class="flex aspect-[3/2] w-full items-center justify-center">
               <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
             </div>
           )}
@@ -141,21 +141,8 @@ const roles = [
 
       </div>
 
-      {/* Column 2: Obi-Wan GIF + Career + Screen + Books */}
+      {/* Column 2: Career + Screen + Books */}
       <div class="bento-col bento-col-2">
-        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
-        <div
-          class="bento-hello group relative flex h-[200px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          title="Hello there! — Obi-Wan Kenobi"
-        >
-          <img
-            src="/obi-wan-hello-there.gif"
-            alt="Obi-Wan Kenobi saying Hello there"
-            loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-        </div>
-
         {/* Career card — current job & company, skills pop on hover only */}
         <BentoCard
           category="Career"
@@ -228,8 +215,21 @@ const roles = [
         </BentoCard>
       </div>
 
-      {/* Column 3: Project + Music (compact + rotating circle) + Sketch (tall) */}
+      {/* Column 3: Obi-Wan GIF + Project + Music + Sketch */}
       <div class="bento-col bento-col-3">
+        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
+        <div
+          class="bento-hello group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300 aspect-[480/208] w-full"
+          title="Hello there! — Obi-Wan Kenobi"
+        >
+          <img
+            src="/obi-wan-hello-there.gif"
+            alt="Obi-Wan Kenobi saying Hello there"
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        </div>
+
         {/* Project card — completely fills the box, zero borders, top title pops up on hover only */}
         <a
           href={projectTeaser?.github || '/projects'}
@@ -302,7 +302,7 @@ const roles = [
         {/* Sketch card (tall) — completely fills the box, zero borders, top title pops up on hover only */}
         <a
           href="/archive"
-          class="bento-sketch group relative flex min-h-[420px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          class="bento-sketch group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
           aria-label="View sketch in archive"
         >
           {sketchTeaser?.imageUrl ? (
@@ -310,10 +310,10 @@ const roles = [
               src={sketchTeaser.imageUrl}
               alt={sketchTeaser.caption}
               loading="lazy"
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              class="block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]"
             />
           ) : (
-            <div class="flex h-full w-full items-center justify-center">
+            <div class="flex aspect-[3/2] w-full items-center justify-center">
               <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no drafts yet ~</span>
             </div>
           )}
@@ -347,11 +347,11 @@ const roles = [
         display: contents;
       }
       :global(.bento-intro) { order: 1; min-height: 170px; }
-      :global(.bento-hello) { order: 2; min-height: 200px; }
+      :global(.bento-hello) { order: 2; }
       :global(.bento-career) { order: 3; min-height: 125px; }
-      :global(.bento-sketch) { order: 4; min-height: 320px; }
+      :global(.bento-sketch) { order: 4; }
       :global(.bento-project) { order: 5; min-height: 240px; }
-      :global(.bento-photo) { order: 6; min-height: 240px; }
+      :global(.bento-photo) { order: 6; }
       :global(.bento-music) { order: 7; min-height: 105px; }
       :global(.bento-reading) { order: 8; min-height: 152px; }
       :global(.bento-screen) { order: 9; min-height: 130px; }
@@ -359,8 +359,30 @@ const roles = [
 
     @media (min-width: 1024px) {
       :global(.bento) {
+        --breakout: 12rem;
         grid-template-columns: 1fr 1.1fr 1fr;
+        grid-template-rows: auto 1fr;
       }
+
+      /* About keeps its position but yields width so the project can grow into it */
+      :global(.bento-about-text) {
+        max-width: min(720px, calc(100% - var(--breakout)));
+      }
+
+      /* Project card breaks out of column 3 — the Obi-Wan GIF above is untouched */
+      :global(.bento-project) {
+        margin-left: calc(var(--breakout) * -1);
+        width: calc(100% + var(--breakout));
+      }
+
+      :global(.bento-intro) {
+        grid-column: 1 / 3;
+        grid-row: 1;
+      }
+
+      :global(.bento-col-1) { grid-column: 1; grid-row: 2; }
+      :global(.bento-col-2) { grid-column: 2; grid-row: 2; }
+      :global(.bento-col-3) { grid-column: 3; grid-row: 1 / span 2; }
 
       :global(.bento-col) {
         display: flex;
