@@ -82,7 +82,7 @@ const roles = [
     </div>
 
     <main class="bento">
-      {/* Column 1: Intro + Photograph + Reading */}
+      {/* Column 1: Intro + Photograph */}
       <div class="bento-col bento-col-1">
         {/* Intro cell: playful intro */}
         <div class="bento-intro flex shrink-0 flex-col gap-6 pt-1 pb-7">
@@ -139,76 +139,22 @@ const roles = [
           </div>
         </a>
 
-        {/* Reading card (compact) */}
-        <BentoCard
-          category="Reading"
-          title="Books"
-          class="bento-reading h-[152px] shrink-0"
-          reveal
-          bodyClass="px-4 py-3.5 h-full flex items-center"
-        >
-          <div class="flex h-full min-w-0 items-center gap-4">
-            {readingTeaser?.coverImage ? (
-              <div
-                class="relative aspect-[2/3] h-[112px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
-              >
-                <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
-              </div>
-            ) : (
-              <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
-                📖
-              </div>
-            )}
-            <div class="flex min-w-0 flex-1 flex-col gap-1.5">
-              <span class="inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                {readingTeaser?.status || 'READING'}
-              </span>
-              <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
-                {readingTeaser?.title || 'No book in progress'}
-              </p>
-              <p class="truncate font-sans text-[12px] text-[var(--ink-secondary)]">
-                {readingTeaser?.author || 'check back soon ~'}
-              </p>
-            </div>
-          </div>
-        </BentoCard>
       </div>
 
-      {/* Column 2: Project + Career + Screen */}
+      {/* Column 2: Obi-Wan GIF + Career + Screen + Books */}
       <div class="bento-col bento-col-2">
-        {/* Project card — completely fills the box, zero borders, top title pops up on hover only */}
-        <a
-          href={projectTeaser?.github || '/projects'}
-          target={projectTeaser?.github ? '_blank' : undefined}
-          rel={projectTeaser?.github ? 'noopener noreferrer' : undefined}
-          class="bento-project group relative flex h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          aria-label={`View ${projectTeaser?.title || 'project'}`}
+        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
+        <div
+          class="bento-hello group relative flex h-[200px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          title="Hello there! — Obi-Wan Kenobi"
         >
-          {projectTeaser?.coverImage ? (
-            <img
-              src={projectTeaser.coverImage}
-              alt={projectTeaser.title}
-              loading="lazy"
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div class="flex h-full w-full items-center justify-center">
-              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
-            </div>
-          )}
-
-          {/* Top title bar — pops up on hover only */}
-          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
-            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
-              <span class="opacity-70">Projects</span>
-              <span class="opacity-40">·</span>
-              <span class="font-sans font-medium text-white">{projectTeaser?.title || 'Featured'}</span>
-            </div>
-            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
-              ↗
-            </span>
-          </div>
-        </a>
+          <img
+            src="/obi-wan-hello-there.gif"
+            alt="Obi-Wan Kenobi saying Hello there"
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        </div>
 
         {/* Career card — current job & company, skills pop on hover only */}
         <BentoCard
@@ -246,22 +192,77 @@ const roles = [
             <canvas id="screen-loop" class="absolute inset-0 block h-full w-full"></canvas>
           </div>
         </BentoCard>
+
+        {/* Reading card (compact) */}
+        <BentoCard
+          category="Reading"
+          title="Books"
+          class="bento-reading h-[152px] shrink-0"
+          reveal
+          bodyClass="px-4 py-3.5 h-full flex items-center"
+        >
+          <div class="flex h-full min-w-0 items-center gap-4">
+            {readingTeaser?.coverImage ? (
+              <div
+                class="relative aspect-[2/3] h-[112px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
+              >
+                <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
+              </div>
+            ) : (
+              <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
+                📖
+              </div>
+            )}
+            <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+              <span class="inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                {readingTeaser?.status || 'READING'}
+              </span>
+              <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
+                {readingTeaser?.title || 'No book in progress'}
+              </p>
+              <p class="truncate font-sans text-[12px] text-[var(--ink-secondary)]">
+                {readingTeaser?.author || 'check back soon ~'}
+              </p>
+            </div>
+          </div>
+        </BentoCard>
       </div>
 
-      {/* Column 3: Obi-Wan GIF + Music (compact + rotating circle) + Sketch (tall) */}
+      {/* Column 3: Project + Music (compact + rotating circle) + Sketch (tall) */}
       <div class="bento-col bento-col-3">
-        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
-        <div
-          class="bento-hello group relative flex h-[200px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          title="Hello there! — Obi-Wan Kenobi"
+        {/* Project card — completely fills the box, zero borders, top title pops up on hover only */}
+        <a
+          href={projectTeaser?.github || '/projects'}
+          target={projectTeaser?.github ? '_blank' : undefined}
+          rel={projectTeaser?.github ? 'noopener noreferrer' : undefined}
+          class="bento-project group relative flex h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          aria-label={`View ${projectTeaser?.title || 'project'}`}
         >
-          <img
-            src="/obi-wan-hello-there.gif"
-            alt="Obi-Wan Kenobi saying Hello there"
-            loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-        </div>
+          {projectTeaser?.coverImage ? (
+            <img
+              src={projectTeaser.coverImage}
+              alt={projectTeaser.title}
+              loading="lazy"
+              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center">
+              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
+            </div>
+          )}
+
+          {/* Top title bar — pops up on hover only */}
+          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
+              <span class="opacity-70">Projects</span>
+              <span class="opacity-40">·</span>
+              <span class="font-sans font-medium text-white">{projectTeaser?.title || 'Featured'}</span>
+            </div>
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
+              ↗
+            </span>
+          </div>
+        </a>
 
         {/* Music card — rotating circular vinyl thumbnail matching uploaded screenshot */}
         <BentoCard
