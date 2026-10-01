@@ -2,28 +2,70 @@ import { notion, NOTION_DATABASE_ID } from './notion.ts';
 import type { ArchiveImage } from './types.ts';
 import { cacheNotionImage } from './download.ts';
 
+/** Collects every page of results — Notion caps a single query at 100 rows. */
+async function queryAllRows(databaseId: string): Promise<any[]> {
+  const all: any[] = [];
+  let cursor: string | undefined = undefined;
+
+  for (let guard = 0; guard < 20; guard++) {
+    const body: Record<string, unknown> = { page_size: 100 };
+    if (cursor) body.start_cursor = cursor;
+
+    let res: any;
+    if (typeof (notion as any).dataSources?.query === 'function') {
+      res = await (notion as any).dataSources.query({ data_source_id: databaseId, ...body });
+    } else if (typeof (notion as any).databases?.query === 'function') {
+      res = await (notion as any).databases.query({ database_id: databaseId, ...body });
+    } else {
+      res = await (notion as any).search({});
+      return (res.results || []).filter((item: any) => item.object === 'page');
+    }
+
+    all.push(...(res.results || []));
+    if (!res.has_more || !res.next_cursor) break;
+    cursor = res.next_cursor;
+  }
+
+  return all;
+}
+
+/** Best-effort photo/sketch guess from the caption. The site never needs an explicit type. */
+function looksLikeSketch(caption: string): boolean {
+  const c = caption.toLowerCase();
+  return (
+    c.includes('sketch') ||
+    c.includes('contour') ||
+    c.includes('elevation') ||
+    c.includes('drawing') ||
+    c.includes('pencil')
+  );
+}
+
+/**
+ * Homepage is a checkbox. Older rows may still carry the old
+ * "Photograph" / "Sketch" select, so both shapes are accepted.
+ */
+function readHomepageFlag(props: Record<string, any>): boolean {
+  const prop = props.Homepage ?? props.homepage;
+
+  if (prop?.type === 'checkbox' || typeof prop?.checkbox === 'boolean') {
+    return prop.checkbox === true;
+  }
+
+  // Legacy select: any non-empty value counts as opted in.
+  const legacy = prop?.select?.name;
+  if (typeof legacy === 'string' && legacy.trim() !== '') return true;
+
+  return false;
+}
+
 export async function getArchiveImages(): Promise<ArchiveImage[]> {
   if (!notion || !NOTION_DATABASE_ID) {
     return [];
   }
 
   try {
-    let pages: any[] = [];
-
-    if (typeof (notion as any).dataSources?.query === 'function') {
-      const res = await (notion as any).dataSources.query({
-        data_source_id: NOTION_DATABASE_ID
-      });
-      pages = res.results || [];
-    } else if (typeof (notion as any).databases?.query === 'function') {
-      const res = await (notion as any).databases.query({
-        database_id: NOTION_DATABASE_ID
-      });
-      pages = res.results || [];
-    } else {
-      const res = await (notion as any).search({});
-      pages = (res.results || []).filter((item: any) => item.object === 'page');
-    }
+    const pages = await queryAllRows(NOTION_DATABASE_ID);
 
     const parsed: ArchiveImage[] = pages.map((page: any) => {
       const props = page.properties || {};
@@ -38,27 +80,17 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
         imageUrl = fileItem.file?.url || fileItem.external?.url || '';
       }
 
-      // Homepage field is a Select with values: "Photograph", "Sketch"
-      const homepageSelect = props.Homepage?.select?.name || props.homepage?.select?.name || '';
-      const homepageValue = homepageSelect.toLowerCase();
-
       const published = props.Published?.checkbox ??
                         props.published?.checkbox ??
                         true;
-
-      const isSketch = caption.toLowerCase().includes('sketch') ||
-                       caption.toLowerCase().includes('contour') ||
-                       caption.toLowerCase().includes('elevation') ||
-                       caption.toLowerCase().includes('drawing') ||
-                       caption.toLowerCase().includes('pencil');
 
       return {
         id: page.id,
         caption,
         imageUrl: imageUrl,
-        homepage: homepageValue,
+        homepage: readHomepageFlag(props),
         published,
-        type: isSketch ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
+        type: looksLikeSketch(caption) ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
       };
     });
 
@@ -66,10 +98,12 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
 
     const cached = await Promise.all(
       valid.map(async (item) => {
-        const localUrl = await cacheNotionImage(item.imageUrl, `archive-${item.id}`);
+        const cachedImage = await cacheNotionImage(item.imageUrl, `archive-${item.id}`);
         return {
           ...item,
-          imageUrl: localUrl
+          imageUrl: cachedImage.url,
+          width: cachedImage.width,
+          height: cachedImage.height
         };
       })
     );
@@ -81,14 +115,19 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
   }
 }
 
-export async function getHomepagePhotograph(): Promise<ArchiveImage | null> {
-  const allImages = await getArchiveImages();
-  const photographs = allImages.filter(item => item.homepage === 'photograph');
-  return photographs.length > 0 ? photographs[0] : null;
-}
+/**
+ * Every row ticked on the homepage is returned. Which column it lands in
+ * is decided by the caption guess above, not by the database.
+ */
+export async function getHomepageImages(): Promise<{
+  photographs: ArchiveImage[];
+  sketches: ArchiveImage[];
+}> {
+  const all = await getArchiveImages();
+  const ticked = all.filter(item => item.homepage);
 
-export async function getHomepageSketch(): Promise<ArchiveImage | null> {
-  const allImages = await getArchiveImages();
-  const sketches = allImages.filter(item => item.homepage === 'sketch');
-  return sketches.length > 0 ? sketches[0] : null;
+  return {
+    photographs: ticked.filter(item => item.type === 'FILM PHOTOGRAPHY'),
+    sketches: ticked.filter(item => item.type === 'SKETCHBOOK DRAFT')
+  };
 }

@@ -17,7 +17,10 @@ export interface Book {
   title: string;
   author: string;
   coverImage?: string;
+  coverWidth?: number;
+  coverHeight?: number;
   status: string;
+  homepage: boolean;
   published: boolean;
 }
 
@@ -32,7 +35,13 @@ function getProp(props: Record<string, any>, keyNames: string[]) {
   return undefined;
 }
 
-const CURRENT_STATUS = 'in progress';
+/** Preferred ordering when several books are ticked at once. */
+const STATUS_RANK: Record<string, number> = {
+  reading: 0,
+  'in progress': 0,
+  read: 1,
+  finished: 1,
+};
 
 /** The title column can be named anything (e.g. "Task"), so match on its type. */
 function getTitle(props: Record<string, any>): string {
@@ -72,12 +81,22 @@ async function findDataSourceByTitle(): Promise<string | null> {
   }
 }
 
+/** Notion caps a single query at 100 rows, so follow the cursor. */
 async function queryDataSource(dataSourceId: string): Promise<any[]> {
-  const res = await (notion as any).dataSources.query({
-    data_source_id: dataSourceId,
-    page_size: 100,
-  });
-  return res.results || [];
+  const all: any[] = [];
+  let cursor: string | undefined = undefined;
+
+  for (let guard = 0; guard < 20; guard++) {
+    const body: Record<string, unknown> = { data_source_id: dataSourceId, page_size: 100 };
+    if (cursor) body.start_cursor = cursor;
+
+    const res = await (notion as any).dataSources.query(body);
+    all.push(...(res.results || []));
+    if (!res.has_more || !res.next_cursor) break;
+    cursor = res.next_cursor;
+  }
+
+  return all;
 }
 
 async function queryDatabase(): Promise<any[]> {
@@ -106,48 +125,80 @@ async function queryDatabase(): Promise<any[]> {
   }
 }
 
-export async function getCurrentReading(): Promise<Book | null> {
+function readHomepageFlag(props: Record<string, any>): boolean {
+  const prop = getProp(props, ['Homepage']);
+  if (typeof prop?.checkbox === 'boolean') return prop.checkbox;
+  // Tolerate the old select shape while the column is being migrated.
+  const legacy = prop?.select?.name;
+  return typeof legacy === 'string' && legacy.trim() !== '';
+}
+
+function parseBook(page: any, props: Record<string, any>): Book & { rawCover?: string } {
+  const title = getTitle(props) || 'Untitled';
+
+  const authorProp = getProp(props, ['Author', 'Authors'])?.rich_text || [];
+  const author = authorProp.map((t: any) => t.plain_text).join('');
+
+  const status = readStatus(props) || 'Reading';
+
+  const publishedProp = getProp(props, ['Published']);
+  const published = publishedProp?.checkbox ?? true;
+
+  const homepageProp = getProp(props, ['Homepage']);
+  const homepage = homepageProp?.checkbox ?? false;
+
+  const coverProp = getProp(props, ['Cover', 'Cover Image', 'Image', 'Thumbnail']);
+  const coverFiles = coverProp?.files || [];
+  const rawCover =
+    coverFiles.length > 0 ? coverFiles[0].file?.url || coverFiles[0].external?.url : undefined;
+
+  return {
+    id: page.id,
+    title,
+    author,
+    coverImage: undefined,
+    coverWidth: undefined,
+    coverHeight: undefined,
+    status,
+    homepage,
+    published,
+    rawCover
+  };
+}
+
+/**
+ * Every book ticked for the homepage, with its Status (Reading / Read).
+ * Ticking three books means three reading cards.
+ */
+export async function getHomepageBooks(): Promise<Book[]> {
   if (!notion || !NOTION_BOOKS_ID) {
-    return null;
+    return [];
   }
 
   try {
     const pages = await queryDatabase();
+    // Covers are downloaded after filtering, so unticked books cost nothing.
+    const withCovers = await Promise.all(
+      pages
+        .map((page: any) => parseBook(page, page.properties || {}))
+        .filter((book) => book.published && book.homepage && book.rawCover)
+        .map(async (book) => {
+          const cached = await cacheNotionImage(book.rawCover!, book.id);
+          return {
+            ...book,
+            coverImage: cached.url,
+            coverWidth: cached.width,
+            coverHeight: cached.height
+          };
+        })
+    );
 
-    if (!pages.length) return null;
-
-    const page =
-      pages.find((p: any) => readStatus(p.properties || {}).toLowerCase() === CURRENT_STATUS) ??
-      pages[0];
-    const props = page.properties || {};
-
-    const title = getTitle(props) || 'Untitled';
-
-    const authorProp = getProp(props, ['Author', 'Authors'])?.rich_text || [];
-    const author = authorProp.map((t: any) => t.plain_text).join('');
-
-    const status = readStatus(props) || 'In Progress';
-
-    const coverProp = getProp(props, ['Cover', 'Cover Image', 'Image', 'Thumbnail']);
-    const coverFiles = coverProp?.files || [];
-    const rawCover = coverFiles.length > 0 ? coverFiles[0].file?.url || coverFiles[0].external?.url : undefined;
-    const coverImage = rawCover ? await cacheNotionImage(rawCover, page.id) : undefined;
-
-    const publishedProp = getProp(props, ['Published']);
-    const published = publishedProp?.checkbox ?? true;
-
-    if (!published) return null;
-
-    return {
-      id: page.id,
-      title,
-      author,
-      coverImage,
-      status,
-      published
-    };
+    // Books being read float above ones already finished.
+    return withCovers.sort(
+      (a, b) => (STATUS_RANK[a.status.toLowerCase()] ?? 2) - (STATUS_RANK[b.status.toLowerCase()] ?? 2)
+    );
   } catch (error) {
     console.warn('Notion Books query notice:', error);
-    return null;
+    return [];
   }
 }

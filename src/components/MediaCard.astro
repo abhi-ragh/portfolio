@@ -1,0 +1,55 @@
+---
+interface Props {
+  src: string;
+  caption?: string;
+  href?: string;
+  category?: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, caption, href = '/archive', category = 'Gallery', width, height } = Astro.props;
+
+/**
+ * Ceiling on a media card, matching MEDIA_HEIGHT_FACTOR in pages/index.astro.
+ * Height is capped at a multiple of the card width, so the cap scales with the
+ * fluid columns instead of fighting them. Expressed as a width percentage
+ * because the image's own ratio converts the height limit into a width limit,
+ * which is what lets the card shrink to hug the picture.
+ */
+const MEDIA_HEIGHT_FACTOR = 1.26;
+const ratio = width && height ? width / height : null;
+const maxWidth = ratio
+  ? `min(100%, ${(MEDIA_HEIGHT_FACTOR * ratio * 100).toFixed(2)}%)`
+  : '100%';
+---
+
+<a
+  href={href}
+  class="bento-media group mx-auto block w-fit max-w-full shrink-0"
+  style={`max-width:${maxWidth}`}
+>
+  <span class="relative block overflow-hidden rounded-[20px]">
+    <img
+      src={src}
+      alt={caption || 'Archive image'}
+      loading="lazy"
+      class="block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]"
+    />
+
+    {/* Top title bar — pops up on hover only */}
+    <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+      <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
+        <span class="opacity-70">{category}</span>
+        <span class="opacity-40">·</span>
+        <span class="truncate font-sans font-medium text-white">{caption}</span>
+      </div>
+      <span
+        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105"
+        aria-hidden="true"
+      >
+        ↗
+      </span>
+    </div>
+  </span>
+</a>

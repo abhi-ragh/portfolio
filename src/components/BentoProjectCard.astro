@@ -1,0 +1,65 @@
+---
+interface Props {
+  title?: string;
+  coverImage?: string;
+  github?: string;
+  href?: string;
+  wide?: boolean;
+  category?: string;
+}
+
+const { title, coverImage, github, href, wide = false, category = 'Projects' } = Astro.props;
+const link = href ?? github ?? '/projects';
+const isExternal = !href && Boolean(github);
+---
+
+<a
+  href={link}
+  target={isExternal ? '_blank' : undefined}
+  rel={isExternal ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'bento-project group relative block h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300',
+    wide && 'bento-project--wide',
+  ]}
+  aria-label={`View ${title || 'project'}`}
+>
+  {
+    coverImage ? (
+      /* Resting: fills the box, cropped and pushed in.
+         Hover: only the top band is given up, so the crop relaxes to reveal
+         a little more of the thumbnail and the title has room above it. */
+      <div class="absolute inset-0 flex items-end justify-center">
+        <img
+          src={coverImage}
+          alt={title}
+          loading="lazy"
+          class="block h-full w-full scale-[1.08] object-cover transition-all duration-500 ease-out group-hover:h-auto group-hover:w-auto group-hover:max-h-[calc(100%-2.75rem)] group-hover:scale-100"
+        />
+      </div>
+    ) : (
+      <div class="flex h-full w-full items-center justify-center px-4 text-center">
+        <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">{title || 'no cover yet ~'}</span>
+      </div>
+    )
+  }
+
+  {/* Soft scrim band so the title stays legible over the cover */}
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-black/45 via-black/15 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"></div>
+
+  {/* Title sits in the band the thumbnail gives up, above the image */}
+  <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col items-center gap-0.5 px-6 pt-3 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+    <span class="font-mono text-[10px] uppercase tracking-wider text-white/75">
+      {category}
+    </span>
+    <span class="font-serif text-[21px] font-bold leading-tight tracking-tight text-white sm:text-[24px]">
+      {title || 'Featured'}
+    </span>
+  </div>
+
+  <span
+    class="pointer-events-none absolute bottom-3.5 right-3.5 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 shadow-xs text-neutral-900 text-[11px] leading-none opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    aria-hidden="true"
+  >
+    ↗
+  </span>
+</a>

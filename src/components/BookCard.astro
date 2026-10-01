@@ -1,0 +1,53 @@
+---
+interface Props {
+  title?: string;
+  author?: string;
+  coverImage?: string;
+  status?: string;
+}
+
+const { title, author, coverImage, status } = Astro.props;
+
+// "Read" books are dimmed so whatever you are reading right now stands out.
+const isFinished = (status || '').toLowerCase() === 'read' ||
+                  (status || '').toLowerCase() === 'finished';
+---
+
+<article
+  class:list={[
+    'bento-book group relative flex h-[152px] shrink-0 items-center gap-4 overflow-visible rounded-[20px] bg-[var(--surface)] px-4 py-3.5 transition-all duration-300 hover:z-20',
+    isFinished && 'opacity-75',
+  ]}
+>
+  {/* Cover pops up out of the card on hover */}
+  {
+    coverImage ? (
+      <div class="relative aspect-[2/3] h-[112px] shrink-0 origin-bottom overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-all duration-300 ease-out group-hover:z-10 group-hover:scale-[1.16] group-hover:shadow-[0_22px_44px_-10px_rgba(0,0,0,0.55)]">
+        <img src={coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
+      </div>
+    ) : (
+      <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
+        📖
+      </div>
+    )
+  }
+
+  <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+    <span
+      class:list={[
+        'inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider',
+        isFinished
+          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+          : 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+      ]}
+    >
+      {status || 'Reading'}
+    </span>
+    <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
+      {title || 'Untitled'}
+    </p>
+    <p class="truncate font-sans text-[12px] text-[var(--ink-secondary)]">
+      {author || 'check back soon ~'}
+    </p>
+  </div>
+</article>

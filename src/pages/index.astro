@@ -2,38 +2,126 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import BentoCard from '../components/BentoCard.astro';
-import { getHomepageProjectTeaser } from '../lib/projects.ts';
-import { getHomepagePhotograph, getHomepageSketch } from '../lib/archive.ts';
-import { getCurrentReading } from '../lib/books.ts';
+import MediaCard from '../components/MediaCard.astro';
+import BentoProjectCard from '../components/BentoProjectCard.astro';
+import BookCard from '../components/BookCard.astro';
+import { getHomepageProjects } from '../lib/projects.ts';
+import { getHomepageImages } from '../lib/archive.ts';
+import { getHomepageBooks } from '../lib/books.ts';
 
-let projectTeaser = null;
-let photographTeaser = null;
-let sketchTeaser = null;
-let readingTeaser = null;
+let featuredProject = null;
+let restProjects = [];
+let projectColumns = [[], [], []];
+let bookColumns = [[], [], []];
+let mediaColumns = [[], [], []];
+let mediaItems = [];
+let books = [];
 
-try {
-  projectTeaser = await getHomepageProjectTeaser();
-} catch (e) {
-  console.warn('Failed to fetch project teaser:', e);
+const GAP = 13.6; // 0.85rem, matches the bento gap
+
+/**
+ * Deals each card into whichever column is currently shortest, using real
+ * intrinsic dimensions measured at build time.
+ *
+ * Columns are sized in `fr` units, so their widths keep a fixed 1 : 1.1 : 1
+ * ratio at every viewport. Heights scale uniformly with that ratio, which
+ * means the packing decision made here stays correct at any screen size.
+ */
+function packByHeight(items, widths, seeds = []) {
+  const totals = widths.map((_, i) => seeds[i] ?? 0);
+  const buckets = widths.map(() => []);
+
+  for (const item of items) {
+    let shortest = 0;
+    for (let i = 1; i < totals.length; i++) {
+      if (totals[i] < totals[shortest]) shortest = i;
+    }
+    buckets[shortest].push(item);
+    totals[shortest] += cardHeight(item, widths[shortest]) + GAP;
+  }
+
+  return buckets;
+}
+
+/**
+ * Ceiling on a media card, as a multiple of the card width so it scales with
+ * the fluid columns. Aspect ratio is never touched — a tall image is scaled
+ * down to fit and the card then hugs it.
+ * Keep in sync with MEDIA_HEIGHT_FACTOR in MediaCard.astro.
+ *
+ * Deliberately NOT applied here. Planning with the cap makes the estimates
+ * scale unevenly — a capped image stops shrinking with the viewport while the
+ * uncapped ones keep going — which is what threw the narrow-width columns out
+ * of balance. CSS still enforces the cap; the packer just plans without it and
+ * absorbs the small difference.
+ */
+const MEDIA_HEIGHT_FACTOR = 1.26;
+
+/** Media cards size to their own ratio; project and book cards are fixed. */
+function cardHeight(item, columnWidth) {
+  if (item.kind === 'project') return 260;
+  if (item.kind === 'book') return 152;
+  const ratio = item.width && item.height ? item.width / item.height : 1.5;
+  return columnWidth / ratio;
 }
 
 try {
-  photographTeaser = await getHomepagePhotograph();
+  // First ticked project stays the wide featured card in column 3.
+  // Any extras are packed by height like the media cards.
+  const [featured, ...rest] = await getHomepageProjects();
+  featuredProject = featured ?? null;
+  restProjects = rest;
 } catch (e) {
-  console.warn('Failed to fetch photograph teaser:', e);
+  console.warn('Failed to fetch homepage projects:', e);
 }
 
 try {
-  sketchTeaser = await getHomepageSketch();
+  const home = await getHomepageImages();
+  // Photographs and sketches are just media cards — no column is reserved
+  // for either. Every ticked image is packed into the shortest column.
+  mediaItems = [...home.photographs, ...home.sketches].map((item) => ({ ...item, kind: 'media' }));
 } catch (e) {
-  console.warn('Failed to fetch sketch teaser:', e);
+  console.warn('Failed to fetch homepage images:', e);
 }
 
 try {
-  readingTeaser = await getCurrentReading();
+  // Every book ticked on the homepage, each showing its own Status.
+  books = (await getHomepageBooks()).map((book) => ({ ...book, kind: 'book' }));
 } catch (e) {
-  console.warn('Failed to fetch reading teaser:', e);
+  console.warn('Failed to fetch homepage books:', e);
 }
+
+// Column widths follow the 1fr 1.1fr 1fr grid. Because those are fr units the
+// ratio is constant, so any reference width yields the same packing.
+const COLUMN_RATIOS = [1, 1.1, 1];
+const REFERENCE_WIDTH = 1312;
+const unit = (REFERENCE_WIDTH - GAP * 2) / COLUMN_RATIOS.reduce((a, b) => a + b, 0);
+const columnWidths = COLUMN_RATIOS.map((r) => r * unit);
+
+// Each column already holds fixed-height cards before any packed image lands,
+// so that height is banked up front. Column 3 additionally starts a full row
+// higher, which its GIF + featured project + music card roughly cancel out.
+const columnSeeds = [
+  0,
+  125 + GAP,                    // career
+  179 + 260 + 132 + GAP * 3,    // gif + featured project + music
+];
+
+// Media and extra projects are packed in a single joint pass, so a tall image
+// placed early can still be balanced against a project card later.
+const packed = packByHeight(
+  [
+    ...mediaItems,
+    ...restProjects.map((project) => ({ ...project, kind: 'project' })),
+    ...books,
+  ],
+  columnWidths,
+  columnSeeds
+);
+
+mediaColumns = packed.map((col) => col.filter((item) => item.kind === 'media'));
+projectColumns = packed.map((col) => col.filter((item) => item.kind === 'project'));
+bookColumns = packed.map((col) => col.filter((item) => item.kind === 'book'));
 
 const roles = [
   {
@@ -105,40 +193,28 @@ const roles = [
         </div>
       </div>
 
-      {/* Column 1: Photograph */}
+      {/* Column 1: media dealt round-robin from the shared pool */}
       <div class="bento-col bento-col-1">
-        {/* Photograph card — completely fills the box, zero borders, top title pops up on hover only */}
-        <a
-          href="/archive"
-          class="bento-photo group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          aria-label="View photograph in archive"
-        >
-          {photographTeaser?.imageUrl ? (
-            <img
-              src={photographTeaser.imageUrl}
-              alt={photographTeaser.caption}
-              loading="lazy"
-              class="block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div class="flex aspect-[3/2] w-full items-center justify-center">
-              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
-            </div>
-          )}
+        {mediaColumns[0].map((item) => (
+          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
+        ))}
 
-          {/* Top title bar — pops up on hover only */}
-          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
-            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
-              <span class="opacity-70">Gallery</span>
-              <span class="opacity-40">·</span>
-              <span class="font-sans font-medium text-white">{photographTeaser?.caption || 'Photograph'}</span>
-            </div>
-            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
-              ↗
-            </span>
-          </div>
-        </a>
+        {bookColumns[0].map((book) => (
+          <BookCard
+            title={book.title}
+            author={book.author}
+            coverImage={book.coverImage}
+            status={book.status}
+          />
+        ))}
 
+        {projectColumns[0].map((project) => (
+          <BentoProjectCard
+            title={project.title}
+            coverImage={project.coverImage}
+            github={project.github}
+          />
+        ))}
       </div>
 
       {/* Column 2: Career + Screen + Books */}
@@ -173,49 +249,29 @@ const roles = [
           </div>
         </BentoCard>
 
-        {/* Screen / Animation card */}
-        <BentoCard category="Canvas" title="Sine Flow" class="bento-screen h-[130px] shrink-0" bare>
-          <div class="relative h-full w-full overflow-hidden rounded-[20px] bg-[var(--surface)]">
-            <canvas id="screen-loop" class="absolute inset-0 block h-full w-full"></canvas>
-          </div>
-        </BentoCard>
+        {mediaColumns[1].map((item) => (
+          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
+        ))}
 
-        {/* Reading card (compact) */}
-        <BentoCard
-          category="Reading"
-          title="Books"
-          class="bento-reading h-[152px] shrink-0"
-          reveal
-          bodyClass="px-4 py-3.5 h-full flex items-center"
-        >
-          <div class="flex h-full min-w-0 items-center gap-4">
-            {readingTeaser?.coverImage ? (
-              <div
-                class="relative aspect-[2/3] h-[112px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
-              >
-                <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
-              </div>
-            ) : (
-              <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
-                📖
-              </div>
-            )}
-            <div class="flex min-w-0 flex-1 flex-col gap-1.5">
-              <span class="inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                {readingTeaser?.status || 'READING'}
-              </span>
-              <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
-                {readingTeaser?.title || 'No book in progress'}
-              </p>
-              <p class="truncate font-sans text-[12px] text-[var(--ink-secondary)]">
-                {readingTeaser?.author || 'check back soon ~'}
-              </p>
-            </div>
-          </div>
-        </BentoCard>
+        {bookColumns[1].map((book) => (
+          <BookCard
+            title={book.title}
+            author={book.author}
+            coverImage={book.coverImage}
+            status={book.status}
+          />
+        ))}
+
+        {projectColumns[1].map((project) => (
+          <BentoProjectCard
+            title={project.title}
+            coverImage={project.coverImage}
+            github={project.github}
+          />
+        ))}
       </div>
 
-      {/* Column 3: Obi-Wan GIF + Project + Music + Sketch */}
+      {/* Column 3: Obi-Wan GIF + Project + Music + media */}
       <div class="bento-col bento-col-3">
         {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
         <div
@@ -230,51 +286,31 @@ const roles = [
           />
         </div>
 
-        {/* Project card — completely fills the box, zero borders, top title pops up on hover only */}
-        <a
-          href={projectTeaser?.github || '/projects'}
-          target={projectTeaser?.github ? '_blank' : undefined}
-          rel={projectTeaser?.github ? 'noopener noreferrer' : undefined}
-          class="bento-project group relative flex h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          aria-label={`View ${projectTeaser?.title || 'project'}`}
-        >
-          {projectTeaser?.coverImage ? (
-            <img
-              src={projectTeaser.coverImage}
-              alt={projectTeaser.title}
-              loading="lazy"
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div class="flex h-full w-full items-center justify-center">
-              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
-            </div>
-          )}
-
-          {/* Top title bar — pops up on hover only */}
-          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
-            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
-              <span class="opacity-70">Projects</span>
-              <span class="opacity-40">·</span>
-              <span class="font-sans font-medium text-white">{projectTeaser?.title || 'Featured'}</span>
-            </div>
-            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
-              ↗
-            </span>
+        {/* Featured project — the one wide card, directly under the GIF */}
+        {featuredProject ? (
+          <BentoProjectCard
+            wide
+            title={featuredProject.title}
+            coverImage={featuredProject.coverImage}
+            github={featuredProject.github}
+            category="Featured"
+          />
+        ) : (
+          <div class="bento-project bento-project--wide group relative flex h-[260px] shrink-0 items-center justify-center overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300">
+            <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
           </div>
-        </a>
+        )}
 
         {/* Music card — rotating circular vinyl thumbnail matching uploaded screenshot */}
         <BentoCard
-          category="Music"
-          title="Recently played"
-          class="bento-music h-[105px] shrink-0"
+          category="Recently played"
+          class="bento-music h-[132px] shrink-0 transition-transform duration-300 ease-out hover:z-20 hover:scale-[1.03]"
           reveal
           bodyClass="px-4 py-3 h-full flex items-center"
         >
           <div class="flex w-full min-w-0 items-center gap-3.5">
             <div
-              class="relative flex aspect-square h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface-hover)] shadow-xs"
+              class="relative flex aspect-square h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface-hover)] shadow-xs transition-all duration-300 ease-out group-hover:h-[70px] group-hover:w-[70px]"
             >
               <img
                 id="music-art"
@@ -295,41 +331,44 @@ const roles = [
               <p id="music-artist" class="truncate font-mono text-[10.5px] text-[var(--ink-secondary)]">
                 loading spotify…
               </p>
+              {/* Album + year stay hidden until hover */}
+              <div class="grid grid-rows-[0fr] opacity-0 transition-all duration-300 ease-out group-hover:grid-rows-[1fr] group-hover:opacity-100">
+                <div class="overflow-hidden">
+                  <p id="music-extra" class="truncate font-mono text-[10px] leading-tight text-[var(--ink-tertiary)]">
+                    —
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </BentoCard>
 
-        {/* Sketch card (tall) — completely fills the box, zero borders, top title pops up on hover only */}
-        <a
-          href="/archive"
-          class="bento-sketch group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
-          aria-label="View sketch in archive"
-        >
-          {sketchTeaser?.imageUrl ? (
-            <img
-              src={sketchTeaser.imageUrl}
-              alt={sketchTeaser.caption}
-              loading="lazy"
-              class="block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div class="flex aspect-[3/2] w-full items-center justify-center">
-              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no drafts yet ~</span>
-            </div>
-          )}
+        {mediaColumns[2].map((item) => (
+          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
+        ))}
 
-          {/* Top title bar — pops up on hover only */}
-          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
-            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
-              <span class="opacity-70">Gallery</span>
-              <span class="opacity-40">·</span>
-              <span class="font-sans font-medium text-white">{sketchTeaser?.caption || 'Sketch'}</span>
-            </div>
-            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
-              ↗
-            </span>
+        {bookColumns[2].map((book) => (
+          <BookCard
+            title={book.title}
+            author={book.author}
+            coverImage={book.coverImage}
+            status={book.status}
+          />
+        ))}
+
+        {projectColumns[2].map((project) => (
+          <BentoProjectCard
+            title={project.title}
+            coverImage={project.coverImage}
+            github={project.github}
+          />
+        ))}
+
+        {mediaItems.length === 0 && (
+          <div class="bento-media flex aspect-[3/2] w-full shrink-0 items-center justify-center rounded-[20px] bg-[var(--surface)]">
+            <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
           </div>
-        </a>
+        )}
       </div>
     </main>
 
@@ -349,17 +388,15 @@ const roles = [
       :global(.bento-intro) { order: 1; min-height: 170px; }
       :global(.bento-hello) { order: 2; }
       :global(.bento-career) { order: 3; min-height: 125px; }
-      :global(.bento-sketch) { order: 4; }
-      :global(.bento-project) { order: 5; min-height: 240px; }
-      :global(.bento-photo) { order: 6; }
-      :global(.bento-music) { order: 7; min-height: 105px; }
-      :global(.bento-reading) { order: 8; min-height: 152px; }
-      :global(.bento-screen) { order: 9; min-height: 130px; }
+      :global(.bento-project) { order: 4; min-height: 240px; }
+      :global(.bento-media) { order: 5; }
+      :global(.bento-music) { order: 6; min-height: 132px; }
+      :global(.bento-book) { order: 7; min-height: 152px; }
     }
 
     @media (min-width: 1024px) {
       :global(.bento) {
-        --breakout: 12rem;
+        --breakout: 6rem;
         grid-template-columns: 1fr 1.1fr 1fr;
         grid-template-rows: auto 1fr;
       }
@@ -369,8 +406,9 @@ const roles = [
         max-width: min(720px, calc(100% - var(--breakout)));
       }
 
-      /* Project card breaks out of column 3 — the Obi-Wan GIF above is untouched */
-      :global(.bento-project) {
+      /* Only the featured project breaks out — safe in column 3, which sits
+         clear of the columns below it. Extras stay at column width. */
+      :global(.bento-project--wide) {
         margin-left: calc(var(--breakout) * -1);
         width: calc(100% + var(--breakout));
       }
@@ -394,79 +432,6 @@ const roles = [
 
   <script is:inline>
     (function () {
-      // ---- Screen / Animation card: flowing wave lines ----
-      function initScreenLoop() {
-        var canvas = document.getElementById('screen-loop');
-        if (!canvas || !canvas.getContext) return;
-
-        var ctx = canvas.getContext('2d');
-        var width = 0;
-        var height = 0;
-        var animId = null;
-        var time = 0;
-        var prefersReducedMotion =
-          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function resize() {
-          var rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : null;
-          if (!rect) return;
-          var dpr = Math.min(window.devicePixelRatio || 1, 2);
-          width = rect.width;
-          height = rect.height;
-          canvas.width = Math.max(1, Math.floor(width * dpr));
-          canvas.height = Math.max(1, Math.floor(height * dpr));
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-
-        function draw() {
-          ctx.clearRect(0, 0, width, height);
-          var inkColor = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#171717';
-          var lines = 4;
-          for (var i = 0; i < lines; i++) {
-            var baseY = height * (0.3 + 0.14 * i);
-            ctx.beginPath();
-            for (var x = 0; x <= width; x += 2) {
-              var y =
-                baseY +
-                Math.sin(x * 0.022 + time * (0.55 + i * 0.16) + i * 1.7) *
-                  (height * 0.075);
-              if (x === 0) ctx.moveTo(x, y);
-              else ctx.lineTo(x, y);
-            }
-            ctx.save();
-            ctx.strokeStyle = inkColor;
-            ctx.globalAlpha = Math.max(0.08, 0.45 - i * 0.1);
-            ctx.lineWidth = 1.25;
-            ctx.stroke();
-            ctx.restore();
-          }
-
-          if (!prefersReducedMotion) {
-            time += 0.016;
-            animId = requestAnimationFrame(draw);
-          }
-        }
-
-        function start() {
-          resize();
-          window.addEventListener('resize', resize, { passive: true });
-          draw();
-          document.addEventListener('visibilitychange', function () {
-            if (document.visibilityState === 'hidden') {
-              if (animId) cancelAnimationFrame(animId);
-            } else if (!prefersReducedMotion) {
-              animId = requestAnimationFrame(draw);
-            }
-          });
-        }
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', start);
-        } else {
-          start();
-        }
-      }
-
       // ---- Music card: recently played from server endpoint ----
       function initMusic() {
         var trackEl = document.getElementById('music-track');
@@ -483,6 +448,13 @@ const roles = [
             if (data && data.track && trackEl) {
               trackEl.textContent = data.track;
               if (artistEl) artistEl.textContent = data.artist || 'spotify';
+              var extraEl = document.getElementById('music-extra');
+              if (extraEl) {
+                var bits = [];
+                if (data.album) bits.push(data.album);
+                if (data.year) bits.push(data.year);
+                extraEl.textContent = bits.length ? bits.join(' · ') : 'open in spotify ↗';
+              }
               if (data.albumArt && artEl) {
                 artEl.src = data.albumArt;
                 artEl.classList.remove('hidden');
@@ -501,11 +473,9 @@ const roles = [
 
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
-          initScreenLoop();
           initMusic();
         });
       } else {
-        initScreenLoop();
         initMusic();
       }
     })();

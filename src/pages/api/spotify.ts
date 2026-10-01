@@ -91,6 +91,10 @@ export const GET: APIRoute = async () => {
         track: track.name || null,
         artist: (track.artists && track.artists[0] && track.artists[0].name) || null,
         albumArt: (track.album && track.album.images && track.album.images[0] && track.album.images[0].url) || null,
+        album: (track.album && track.album.name) || null,
+        year: (track.album && track.album.release_date
+          ? String(track.album.release_date).slice(0, 4)
+          : null),
         url: (track.external_urls && track.external_urls.spotify) || null,
       }),
       { headers: { ...jsonHeaders, 'Cache-Control': 'public, max-age=60' } }

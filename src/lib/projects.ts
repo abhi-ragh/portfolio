@@ -2,6 +2,33 @@ import { notion, NOTION_PROJECTS_ID } from './notion.ts';
 import type { Project } from './types.ts';
 import { cacheNotionImage } from './download.ts';
 
+/** Collects every page of results — Notion caps a single query at 100 rows. */
+async function queryAllRows(databaseId: string): Promise<any[]> {
+  const all: any[] = [];
+  let cursor: string | undefined = undefined;
+
+  for (let guard = 0; guard < 20; guard++) {
+    const body: Record<string, unknown> = { page_size: 100 };
+    if (cursor) body.start_cursor = cursor;
+
+    let res: any;
+    if (typeof (notion as any).dataSources?.query === 'function') {
+      res = await (notion as any).dataSources.query({ data_source_id: databaseId, ...body });
+    } else if (typeof (notion as any).databases?.query === 'function') {
+      res = await (notion as any).databases.query({ database_id: databaseId, ...body });
+    } else {
+      const res = await (notion as any).search({});
+      return (res.results || []).filter((item: any) => item.object === 'page');
+    }
+
+    all.push(...(res.results || []));
+    if (!res.has_more || !res.next_cursor) break;
+    cursor = res.next_cursor;
+  }
+
+  return all;
+}
+
 function getProp(props: Record<string, any>, keyNames: string[]) {
   const keys = Object.keys(props);
   for (const name of keyNames) {
@@ -19,18 +46,7 @@ export async function getArchiveProjects(): Promise<Project[]> {
   }
 
   try {
-    let pages: any[] = [];
-
-    if (typeof (notion as any).dataSources?.query === 'function') {
-      const res = await (notion as any).dataSources.query({ data_source_id: NOTION_PROJECTS_ID });
-      pages = res.results || [];
-    } else if (typeof (notion as any).databases?.query === 'function') {
-      const res = await (notion as any).databases.query({ database_id: NOTION_PROJECTS_ID });
-      pages = res.results || [];
-    } else {
-      const res = await (notion as any).search({});
-      pages = (res.results || []).filter((item: any) => item.object === 'page');
-    }
+    const pages: any[] = await queryAllRows(NOTION_PROJECTS_ID);
 
     const projects: any[] = [];
 
@@ -102,15 +118,20 @@ export async function getArchiveProjects(): Promise<Project[]> {
     const cachedProjects = await Promise.all(
       projects.map(async (project) => {
         let coverImage = project.coverImage;
+        let coverWidth: number | undefined;
+        let coverHeight: number | undefined;
         if (coverImage) {
-          coverImage = await cacheNotionImage(coverImage, `project-cover-${project.id}`);
+          const cachedCover = await cacheNotionImage(coverImage, `project-cover-${project.id}`);
+          coverImage = cachedCover.url;
+          coverWidth = cachedCover.width;
+          coverHeight = cachedCover.height;
         }
 
         let screenshots = project.screenshots || [];
         if (screenshots.length > 0) {
           screenshots = await Promise.all(
-            screenshots.map((shot: string, idx: number) =>
-              cacheNotionImage(shot, `project-shot-${project.id}-${idx}`)
+            screenshots.map(async (shot: string, idx: number) =>
+              (await cacheNotionImage(shot, `project-shot-${project.id}-${idx}`)).url
             )
           );
         }
@@ -118,6 +139,8 @@ export async function getArchiveProjects(): Promise<Project[]> {
         return {
           ...project,
           coverImage,
+          coverWidth,
+          coverHeight,
           screenshots
         };
       })
@@ -130,14 +153,11 @@ export async function getArchiveProjects(): Promise<Project[]> {
   }
 }
 
+/**
+ * Every project ticked for the homepage, in Homepage Order. Ticking two
+ * projects means two project cards — not one.
+ */
 export async function getHomepageProjects(): Promise<Project[]> {
   const allProjects = await getArchiveProjects();
-  const homepageItems = allProjects.filter(p => p.homepage);
-  return homepageItems.length > 0 ? homepageItems : allProjects;
-}
-
-export async function getHomepageProjectTeaser(): Promise<Project | null> {
-  const allProjects = await getArchiveProjects();
-  const homepageItems = allProjects.filter(p => p.homepage);
-  return homepageItems.length > 0 ? homepageItems[0] : null;
+  return allProjects.filter(p => p.homepage);
 }
