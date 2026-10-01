@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 import BentoCard from '../components/BentoCard.astro';
 import { getHomepageProjectTeaser } from '../lib/projects.ts';
 import { getHomepagePhotograph, getHomepageSketch } from '../lib/archive.ts';
@@ -56,299 +55,316 @@ const roles = [
 ---
 
 <Base>
-  <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-5 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
-    <main class="bento">
-      {/* Intro cell: nav pill + wordmark */}
-      <div class="bento-intro flex min-w-0 flex-col">
-        <Nav />
-        <div class="flex min-h-0 flex-1 flex-col justify-center pt-10 pb-4 lg:pt-6 lg:pb-2">
-          <a
-            href="/"
-            class="font-hand inline-block text-[clamp(52px,7.5vw,88px)] font-bold leading-[0.95] tracking-tight text-[var(--ink)] underline decoration-dotted decoration-orange-400 decoration-2 underline-offset-[10px] transition-all hover:underline"
-          >
-            abhiragh
-          </a>
-          <p class="font-hand mt-1 text-[clamp(18px,2vw,26px)] leading-none text-[var(--ink-tertiary)]">
-            human - engineer - nerd
-          </p>
-        </div>
+  <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-8 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
+    {/* Top bar — nav on the left, socials on the right */}
+    <div class="mb-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 sm:mb-9">
+      <Nav />
+
+      <div
+        class="flex shrink-0 items-center gap-2 whitespace-nowrap font-mono text-[11.5px] tracking-[0.02em] text-[var(--ink-tertiary)]"
+      >
+        <a href="mailto:abhiragh0@gmail.com" class="transition-colors hover:text-[var(--ink)]">email</a>
+        <span aria-hidden="true" class="opacity-50">·</span>
+        <a
+          href="https://www.github.com/abhi-ragh"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--ink)]">github</a
+        >
+        <span aria-hidden="true" class="opacity-50">·</span>
+        <a
+          href="https://www.linkedin.com/in/abhi-ragh/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--ink)]">linkedin</a
+        >
       </div>
+    </div>
 
-      {/* Project card */}
-      <BentoCard
-        category="Project"
-        title={projectTeaser?.title || 'Coming soon'}
-        href={projectTeaser?.github || '/projects'}
-        external={Boolean(projectTeaser?.github)}
-        class="bento-project"
-        bodyClass="px-3.5 pb-3.5 pt-0"
-      >
-        {projectTeaser?.coverImage ? (
-          <div class="img-frame">
-            <img
-              src={projectTeaser.coverImage}
-              alt={projectTeaser.title}
-              loading="lazy"
-              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-            />
-          </div>
-        ) : (
-          <div class="img-frame flex items-center justify-center">
-            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
-          </div>
-        )}
-      </BentoCard>
+    <main class="bento">
+      {/* Column 1: Intro + Photograph + Reading */}
+      <div class="bento-col bento-col-1">
+        {/* Intro cell: playful intro */}
+        <div class="bento-intro flex shrink-0 flex-col gap-6 pt-1 pb-7">
+          <div class="flex flex-col gap-6 px-1 py-2 sm:py-3">
+            <h1 class="font-serif text-[clamp(28px,3.4vw,44px)] font-normal leading-[1.2] tracking-tight text-[var(--ink)]">
+              Hello there! I'm <strong class="font-medium text-[var(--ink)]">Abhiragh</strong>.
+            </h1>
 
-      {/* Music card */}
-      <BentoCard category="Music" title="Recently played" class="bento-music" bodyClass="px-3.5 pb-3.5 pt-0">
-        <div class="flex h-full min-w-0 items-center gap-3.5">
-          <div
-            class="flex aspect-square h-[72%] max-h-[96px] shrink-0 items-center justify-center overflow-hidden rounded-[9px] bg-[var(--surface-hover)]"
-          >
-            <img id="music-art" src="" alt="" class="hidden h-full w-full object-cover" />
-            <span id="music-art-fallback" class="text-[18px] leading-none text-[var(--ink-tertiary)]">♪</span>
-          </div>
-          <div class="flex min-w-0 flex-col gap-1.5">
-            <p id="music-track" class="font-serif line-clamp-2 text-[15px] leading-snug text-[var(--ink)] sm:text-[16px]">
-              —
-            </p>
-            <p id="music-artist" class="truncate font-mono text-[10.5px] text-[var(--ink-tertiary)]">
-              loading spotify…
-            </p>
+            <div class="flex flex-col gap-6 font-serif text-[clamp(15px,1.4vw,17px)] leading-[1.85] text-[var(--ink-secondary)]">
+              <p>
+                I do a little bit of everything, but <strong class="font-medium text-[var(--ink)]">breaking things</strong> (<span class="font-serif italic text-[var(--ink)]">& maybe fixing them</span>) is kind of my thing.
+              </p>
+
+              <p>
+                Currently trying to figure out this whole <span class="text-[var(--ink)] underline decoration-dotted decoration-[var(--ink-tertiary)] underline-offset-[5px]">work-life balance</span> thing, but so far, Only thing I got is a <strong class="font-medium italic text-[var(--ink)]">messed-up sleep schedule</strong>.
+              </p>
+
+              <p>
+                Outside of work, I'm trying to <strong class="font-medium text-[var(--ink)]">read more</strong>, <span class="font-serif italic text-[var(--ink)]">draw more</span>, and <span class="font-serif italic text-[var(--ink-secondary)]">Learn Random things ig....</span>
+              </p>
+            </div>
           </div>
         </div>
-      </BentoCard>
 
-      {/* Photograph card — caption revealed on hover */}
-      <BentoCard
-        category="Photograph"
-        title={photographTeaser?.caption || '35mm'}
-        href="/archive"
-        class="bento-photo"
-        reveal
-        bodyClass="px-3.5 pb-3.5 pt-0"
-      >
-        {photographTeaser?.imageUrl ? (
-          <div class="img-frame">
+        {/* Photograph card — completely fills the box, zero borders, top title pops up on hover only */}
+        <a
+          href="/archive"
+          class="bento-photo group relative flex min-h-[300px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          aria-label="View photograph in archive"
+        >
+          {photographTeaser?.imageUrl ? (
             <img
               src={photographTeaser.imageUrl}
               alt={photographTeaser.caption}
               loading="lazy"
-              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
-            <span class="media-caption">{photographTeaser.caption}</span>
-          </div>
-        ) : (
-          <div class="img-frame flex items-center justify-center">
-            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no frames yet ~</span>
-          </div>
-        )}
-      </BentoCard>
+          ) : (
+            <div class="flex h-full w-full items-center justify-center">
+              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
+            </div>
+          )}
 
-      {/* Career card */}
-      <BentoCard
-        category="Career"
-        title="Cloud Engineer"
-        href="https://www.linkedin.com/in/abhi-ragh/"
-        external
-        class="bento-career"
-        bodyClass="px-3.5 pb-3.5 pt-0"
-      >
-        <div class="flex h-full flex-col justify-between gap-2">
-          <div class="flex flex-col divide-y divide-[var(--line)]/50">
-            {roles.map((role) => (
-              <div class="flex flex-col gap-1 py-2.5 first:pt-0">
-                <p class="font-serif text-[14px] leading-snug text-[var(--ink)] sm:text-[15px]">{role.title}</p>
-                <p class="truncate font-mono text-[9.5px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
-                  {role.company} · {role.date}
-                </p>
+          {/* Top title bar — pops up on hover only */}
+          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
+              <span class="opacity-70">Gallery</span>
+              <span class="opacity-40">·</span>
+              <span class="font-sans font-medium text-white">{photographTeaser?.caption || 'Photograph'}</span>
+            </div>
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
+              ↗
+            </span>
+          </div>
+        </a>
+
+        {/* Reading card (compact) */}
+        <BentoCard
+          category="Reading"
+          title="Books"
+          class="bento-reading h-[152px] shrink-0"
+          reveal
+          bodyClass="px-4 py-3.5 h-full flex items-center"
+        >
+          <div class="flex h-full min-w-0 items-center gap-4">
+            {readingTeaser?.coverImage ? (
+              <div
+                class="relative aspect-[2/3] h-[112px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5"
+              >
+                <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
               </div>
-            ))}
+            ) : (
+              <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
+                📖
+              </div>
+            )}
+            <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+              <span class="inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                {readingTeaser?.status || 'READING'}
+              </span>
+              <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
+                {readingTeaser?.title || 'No book in progress'}
+              </p>
+              <p class="truncate font-sans text-[12px] text-[var(--ink-secondary)]">
+                {readingTeaser?.author || 'check back soon ~'}
+              </p>
+            </div>
           </div>
-          <p class="truncate font-mono text-[9.5px] uppercase tracking-[0.08em] text-[var(--ink-tertiary)]">
-            AWS · Azure · Kubernetes · Terraform · Docker · Linux
-          </p>
-        </div>
-      </BentoCard>
+        </BentoCard>
+      </div>
 
-      {/* Sketch card (tall) — caption revealed on hover */}
-      <BentoCard
-        category="Sketch"
-        title={sketchTeaser?.caption || 'Sketchbook'}
-        href="/archive"
-        class="bento-sketch"
-        reveal
-        bodyClass="px-3.5 pb-3.5 pt-0"
-      >
-        {sketchTeaser?.imageUrl ? (
-          <div class="img-frame">
+      {/* Column 2: Project + Career + Screen */}
+      <div class="bento-col bento-col-2">
+        {/* Project card — completely fills the box, zero borders, top title pops up on hover only */}
+        <a
+          href={projectTeaser?.github || '/projects'}
+          target={projectTeaser?.github ? '_blank' : undefined}
+          rel={projectTeaser?.github ? 'noopener noreferrer' : undefined}
+          class="bento-project group relative flex h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          aria-label={`View ${projectTeaser?.title || 'project'}`}
+        >
+          {projectTeaser?.coverImage ? (
+            <img
+              src={projectTeaser.coverImage}
+              alt={projectTeaser.title}
+              loading="lazy"
+              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center">
+              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
+            </div>
+          )}
+
+          {/* Top title bar — pops up on hover only */}
+          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
+              <span class="opacity-70">Projects</span>
+              <span class="opacity-40">·</span>
+              <span class="font-sans font-medium text-white">{projectTeaser?.title || 'Featured'}</span>
+            </div>
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
+              ↗
+            </span>
+          </div>
+        </a>
+
+        {/* Career card — current job & company, skills pop on hover only */}
+        <BentoCard
+          category="Career"
+          href="https://www.linkedin.com/in/abhi-ragh/"
+          external
+          class="bento-career min-h-[125px] shrink-0"
+          reveal
+          bodyClass="p-4 sm:p-5 h-full flex flex-col justify-center"
+        >
+          <div class="flex flex-col justify-center">
+            <span class="font-mono text-[9.5px] uppercase tracking-wider text-[var(--ink-tertiary)]">
+              Present · Full-time
+            </span>
+            <h3 class="font-serif text-[17px] sm:text-[18px] font-normal leading-snug text-[var(--ink)] mt-0.5">
+              Junior Engineer — Cloud
+            </h3>
+            <p class="font-serif italic text-[14px] text-[var(--ink-secondary)] mt-0.5">
+              Saints & Masters
+            </p>
+            {/* Skills pop up only when hovered */}
+            <div class="mt-2.5 flex flex-wrap gap-1.5 opacity-0 max-h-0 overflow-hidden transition-all duration-300 ease-out group-hover:opacity-100 group-hover:max-h-20">
+              {['AWS', 'Azure', 'Kubernetes', 'Terraform', 'Docker', 'Linux'].map((tech) => (
+                <span class="rounded-full bg-[var(--surface-hover)] px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[var(--ink-secondary)]">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </BentoCard>
+
+        {/* Screen / Animation card */}
+        <BentoCard category="Canvas" title="Sine Flow" class="bento-screen h-[130px] shrink-0" bare>
+          <div class="relative h-full w-full overflow-hidden rounded-[20px] bg-[var(--surface)]">
+            <canvas id="screen-loop" class="absolute inset-0 block h-full w-full"></canvas>
+          </div>
+        </BentoCard>
+      </div>
+
+      {/* Column 3: Obi-Wan GIF + Music (compact + rotating circle) + Sketch (tall) */}
+      <div class="bento-col bento-col-3">
+        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
+        <div
+          class="bento-hello group relative flex h-[200px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          title="Hello there! — Obi-Wan Kenobi"
+        >
+          <img
+            src="/obi-wan-hello-there.gif"
+            alt="Obi-Wan Kenobi saying Hello there"
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        </div>
+
+        {/* Music card — rotating circular vinyl thumbnail matching uploaded screenshot */}
+        <BentoCard
+          category="Music"
+          title="Recently played"
+          class="bento-music h-[105px] shrink-0"
+          reveal
+          bodyClass="px-4 py-3 h-full flex items-center"
+        >
+          <div class="flex w-full min-w-0 items-center gap-3.5">
+            <div
+              class="relative flex aspect-square h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface-hover)] shadow-xs"
+            >
+              <img
+                id="music-art"
+                src=""
+                alt=""
+                class="hidden h-full w-full object-cover rounded-full animate-[spin_12s_linear_infinite]"
+              />
+              <span id="music-art-fallback" class="font-serif text-[18px] text-[var(--ink-tertiary)]">♪</span>
+            </div>
+            <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="font-mono text-[9px] uppercase tracking-wider text-[var(--ink-tertiary)]">Spotify</span>
+              </div>
+              <p id="music-track" class="font-serif line-clamp-1 text-[15px] font-medium leading-tight text-[var(--ink)]">
+                —
+              </p>
+              <p id="music-artist" class="truncate font-mono text-[10.5px] text-[var(--ink-secondary)]">
+                loading spotify…
+              </p>
+            </div>
+          </div>
+        </BentoCard>
+
+        {/* Sketch card (tall) — completely fills the box, zero borders, top title pops up on hover only */}
+        <a
+          href="/archive"
+          class="bento-sketch group relative flex min-h-[420px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+          aria-label="View sketch in archive"
+        >
+          {sketchTeaser?.imageUrl ? (
             <img
               src={sketchTeaser.imageUrl}
               alt={sketchTeaser.caption}
               loading="lazy"
-              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
-            <span class="media-caption">{sketchTeaser.caption}</span>
-          </div>
-        ) : (
-          <div class="img-frame flex items-center justify-center">
-            <span class="font-mono text-[10.5px] text-[var(--ink-tertiary)]">no drafts yet ~</span>
-          </div>
-        )}
-      </BentoCard>
-
-      {/* Reading card (short) */}
-      <BentoCard
-        category="Reading"
-        title={readingTeaser ? 'In progress' : '—'}
-        class="bento-reading"
-        bodyClass="px-3.5 pb-3.5 pt-0"
-      >
-        <div class="flex h-full min-w-0 items-center gap-3">
-          {readingTeaser?.coverImage && (
-            <div
-              class="aspect-[2/3] h-[78%] max-h-[64px] shrink-0 overflow-hidden rounded-[6px] bg-[var(--surface-hover)]"
-            >
-              <img src={readingTeaser.coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
+          ) : (
+            <div class="flex h-full w-full items-center justify-center">
+              <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no drafts yet ~</span>
             </div>
           )}
-          <div class="flex min-w-0 flex-col gap-1">
-            <p class="font-serif truncate text-[14px] leading-snug text-[var(--ink)]">
-              {readingTeaser?.title || 'No book in progress'}
-            </p>
-            <p class="truncate font-mono text-[10px] text-[var(--ink-tertiary)]">
-              {readingTeaser?.author || readingTeaser?.status || 'check back soon ~'}
-            </p>
-          </div>
-        </div>
-      </BentoCard>
 
-      {/* Screen / Animation card (short) — animation fills the box, no title */}
-      <BentoCard category="Screen" title="Animation" class="bento-screen" bare>
-        <canvas id="screen-loop" class="absolute inset-0 block h-full w-full"></canvas>
-      </BentoCard>
+          {/* Top title bar — pops up on hover only */}
+          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
+            <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
+              <span class="opacity-70">Gallery</span>
+              <span class="opacity-40">·</span>
+              <span class="font-sans font-medium text-white">{sketchTeaser?.caption || 'Sketch'}</span>
+            </div>
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-xs text-neutral-900 text-[11px] leading-none transition-transform duration-200 group-hover:scale-105">
+              ↗
+            </span>
+          </div>
+        </a>
+      </div>
     </main>
 
-    <SiteFooter class="mt-5 lg:mt-6" />
   </div>
 
   <style>
     :global(.bento) {
       display: grid;
-      flex: 1 1 auto;
-      min-height: 0;
-      gap: 0.75rem;
+      gap: 0.85rem;
       grid-template-columns: 1fr;
-      grid-template-areas:
-        'intro'
-        'project'
-        'music'
-        'photo'
-        'career'
-        'sketch'
-        'reading'
-        'screen';
     }
 
-    :global(.bento-intro) {
-      grid-area: intro;
-      min-height: 180px;
-    }
-    :global(.bento-project) {
-      grid-area: project;
-      min-height: 250px;
-    }
-    :global(.bento-music) {
-      grid-area: music;
-      min-height: 128px;
-    }
-    :global(.bento-photo) {
-      grid-area: photo;
-      min-height: 250px;
-    }
-    :global(.bento-career) {
-      grid-area: career;
-      min-height: 260px;
-    }
-    :global(.bento-sketch) {
-      grid-area: sketch;
-      min-height: 340px;
-    }
-    :global(.bento-reading) {
-      grid-area: reading;
-      min-height: 92px;
-    }
-    :global(.bento-screen) {
-      grid-area: screen;
-      min-height: 92px;
-    }
-
-    :global(.img-frame) {
-      position: relative;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 9px;
-      background: var(--surface-hover);
-    }
-    :global(.img-frame) img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    :global(.group:hover) :global(.img-frame) img {
-      transform: scale(1.02);
-    }
-
-    /* Caption overlay for media cards: hidden until hover */
-    :global(.media-caption) {
-      position: absolute;
-      inset: auto 0 0 0;
-      padding: 22px 10px 9px;
-      background: linear-gradient(to top, var(--overlay) 0%, transparent 100%);
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      line-height: 1.3;
-      color: #f4f4f5;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
-    :global(.group:hover) :global(.media-caption),
-    :global(.group:focus-visible) :global(.media-caption) {
-      opacity: 1;
-    }
-
-    /* Touch devices have no hover: always show the caption */
-    @media (hover: none) {
-      :global(.media-caption),
-      :global(.hover-reveal) {
-        opacity: 1 !important;
+    @media (max-width: 1023px) {
+      :global(.bento-col) {
+        display: contents;
       }
+      :global(.bento-intro) { order: 1; min-height: 170px; }
+      :global(.bento-hello) { order: 2; min-height: 200px; }
+      :global(.bento-career) { order: 3; min-height: 125px; }
+      :global(.bento-sketch) { order: 4; min-height: 320px; }
+      :global(.bento-project) { order: 5; min-height: 240px; }
+      :global(.bento-photo) { order: 6; min-height: 240px; }
+      :global(.bento-music) { order: 7; min-height: 105px; }
+      :global(.bento-reading) { order: 8; min-height: 152px; }
+      :global(.bento-screen) { order: 9; min-height: 130px; }
     }
 
     @media (min-width: 1024px) {
       :global(.bento) {
-        grid-template-columns: 0.9fr 1.05fr 1fr;
-        grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr) minmax(92px, 0.42fr);
-        grid-template-areas:
-          'intro   project music'
-          'photo   career  sketch'
-          'reading screen  sketch';
+        grid-template-columns: 1fr 1.1fr 1fr;
       }
 
-      :global(.bento-intro),
-      :global(.bento-project),
-      :global(.bento-music),
-      :global(.bento-photo),
-      :global(.bento-career),
-      :global(.bento-sketch),
-      :global(.bento-reading),
-      :global(.bento-screen) {
-        min-height: 0;
+      :global(.bento-col) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
       }
     }
   </style>
@@ -381,6 +397,7 @@ const roles = [
 
         function draw() {
           ctx.clearRect(0, 0, width, height);
+          var inkColor = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#171717';
           var lines = 4;
           for (var i = 0; i < lines; i++) {
             var baseY = height * (0.3 + 0.14 * i);
@@ -393,9 +410,12 @@ const roles = [
               if (x === 0) ctx.moveTo(x, y);
               else ctx.lineTo(x, y);
             }
-            ctx.strokeStyle = 'rgba(23, 23, 23, ' + (0.55 - i * 0.11) + ')';
-            ctx.lineWidth = 1;
+            ctx.save();
+            ctx.strokeStyle = inkColor;
+            ctx.globalAlpha = Math.max(0.08, 0.45 - i * 0.1);
+            ctx.lineWidth = 1.25;
             ctx.stroke();
+            ctx.restore();
           }
 
           if (!prefersReducedMotion) {

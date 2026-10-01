@@ -27,3 +27,6 @@ dist-ssr
 .env*
 .astro
 public/notion-assets/
+
+# Local notes / agent memory
+.brain

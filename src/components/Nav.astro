@@ -14,17 +14,17 @@ const items = [
 ---
 
 <nav
-  class="inline-flex items-center gap-0.5 rounded-[10px] border border-[var(--line)] bg-[var(--surface)] px-1.5 py-1 font-mono text-[11.5px] leading-none"
+  class="inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--surface)]/80 p-1 font-mono text-[11.5px] leading-none backdrop-blur-md shadow-xs"
   aria-label="Main navigation"
 >
   {items.map((item) => (
     <a
       href={item.href}
       class:list={[
-        'rounded-[7px] px-2.5 py-1.5 transition-colors duration-150',
+        'rounded-full px-3 py-1.5 transition-all duration-150',
         active === item.id
-          ? 'text-[var(--ink)]'
-          : 'text-[var(--ink-tertiary)] hover:text-[var(--ink)]',
+          ? 'bg-[var(--surface-hover)] font-medium text-[var(--ink)] shadow-2xs'
+          : 'text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-hover)]/60',
       ]}
       aria-current={active === item.id ? 'page' : undefined}
     >

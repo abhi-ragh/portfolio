@@ -31,18 +31,18 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = [] }) => {
         {displayItems.map((item, index) => (
           <div
             key={item.id || index}
-            className="break-inside-avoid group relative cursor-pointer overflow-hidden rounded-[14px] bg-[var(--surface)] transition-colors duration-200 hover:bg-[var(--surface-hover)]"
+            className="break-inside-avoid group relative cursor-pointer overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300 hover:bg-[var(--surface-hover)]"
             onClick={() => setSelectedItem(item)}
           >
             <img
               src={item.src}
               alt={item.title || 'Archive item'}
               loading="lazy"
-              className="w-full h-auto block object-contain transition-transform duration-500 group-hover:scale-[1.015]"
+              className="w-full h-auto block object-contain transition-transform duration-700 group-hover:scale-[1.02]"
             />
             {item.title && (
-              <div className="pointer-events-none absolute inset-x-2 bottom-2 flex justify-start">
-                <span className="max-w-full truncate rounded-[6px] bg-black/70 px-1.5 py-1 font-mono text-[9.5px] tracking-[0.03em] text-white/80 backdrop-blur-sm">
+              <div className="pointer-events-none absolute inset-0 flex items-end p-3 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <span className="max-w-full truncate rounded-md bg-black/60 px-2.5 py-1 font-mono text-[10.5px] font-medium tracking-wide text-white/90 backdrop-blur-md">
                   {item.title}
                 </span>
               </div>
