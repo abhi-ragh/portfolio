@@ -113,14 +113,22 @@ async function queryDataSource(dataSourceId: string): Promise<any[]> {
   return all;
 }
 
+let cachedActivitiesDataSourceId: string | null = null;
+
 async function queryDatabase(): Promise<any[]> {
-  if (!notion || !NOTION_ACTIVITIES_ID) {
+  if (!notion) {
     return [];
   }
 
-  try {
-    return await queryDataSource(NOTION_ACTIVITIES_ID);
-  } catch {
+  const idToTry = cachedActivitiesDataSourceId || NOTION_ACTIVITIES_ID;
+  if (idToTry) {
+    try {
+      const rows = await queryDataSource(idToTry);
+      cachedActivitiesDataSourceId = idToTry;
+      return rows;
+    } catch {
+      // If initial ID failed, fall through to discovery search
+    }
   }
 
   const resolvedId = await findDataSourceByTitle();
@@ -130,7 +138,9 @@ async function queryDatabase(): Promise<any[]> {
   }
 
   try {
-    return await queryDataSource(resolvedId);
+    const rows = await queryDataSource(resolvedId);
+    cachedActivitiesDataSourceId = resolvedId;
+    return rows;
   } catch (e) {
     console.warn('Notion Activities query failed:', e);
     return [];
@@ -148,7 +158,7 @@ const GRID_ASPECT_RATIO = 2 / 3;
 const ASPECT_TOLERANCE = 0.15;
 
 function checkCoverFitsGrid(width?: number, height?: number): boolean {
-  if (!width || !height) return true;
+  if (!width || !height) return false; // unknown dims → use fallback (preserves aspect ratio)
   const aspect = width / height;
   return Math.abs(aspect - GRID_ASPECT_RATIO) / GRID_ASPECT_RATIO <= ASPECT_TOLERANCE;
 }
@@ -187,7 +197,7 @@ function parseActivity(page: any, props: Record<string, any>): Activity & { rawC
   };
 }
 
-export async function getHomepageActivities(): Promise<Activity[]> {
+export async function getHomepageActivities(isCacheScript = false): Promise<Activity[]> {
   if (!notion || !NOTION_ACTIVITIES_ID) {
     return [];
   }
@@ -199,7 +209,7 @@ export async function getHomepageActivities(): Promise<Activity[]> {
         .map((page: any) => parseActivity(page, page.properties || {}))
         .filter((activity) => activity.published && activity.homepage && activity.rawCover)
         .map(async (activity) => {
-          const cached = await cacheNotionImage(activity.rawCover!, activity.id);
+          const cached = await cacheNotionImage(activity.rawCover!, activity.id, { isCacheScript });
           const fitsGrid = checkCoverFitsGrid(cached.width, cached.height);
           return {
             ...activity,

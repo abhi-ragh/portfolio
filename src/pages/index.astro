@@ -11,29 +11,39 @@ import { getHomepageActivities } from '../lib/books.ts';
 
 let featuredProject = null;
 let restProjects = [];
-let projectColumns = [[], [], []];
-let bookColumns = [[], [], []];
-let mediaColumns = [[], [], []];
-let mediaItems = [];
+let photographs = [];
+let sketches = [];
 let activities = [];
 
 const GAP = 13.6; // 0.85rem, matches the bento gap
+const MEDIA_HEIGHT_FACTOR = 1.26;
+
+const isMedia = (k: string) => k === 'photo' || k === 'sketch';
+
+/** Media cards size to their own ratio capped by MEDIA_HEIGHT_FACTOR; project and book cards are fixed. */
+function cardHeight(item, columnWidth) {
+  if (item.kind === 'project') return 260;
+  if (item.kind === 'book') return 152;
+  const ratio = item.width && item.height ? item.width / item.height : 1.5;
+  const rawHeight = columnWidth / ratio;
+  const maxHeight = columnWidth * MEDIA_HEIGHT_FACTOR;
+  return Math.min(rawHeight, maxHeight);
+}
 
 /**
  * Deals each card into whichever column is currently shortest, using real
  * intrinsic dimensions measured at build time.
  *
  * Columns are sized in `fr` units, so their widths keep a fixed 1 : 1.1 : 1
- * ratio at every viewport. Heights scale uniformly with that ratio, which
- * means the packing decision made here stays correct at any screen size.
+ * ratio at every viewport.
  *
- * Avoids stacking same-type cards by adding a small penalty when the last
- * item in a column matches the current item's kind.
+ * Avoids stacking same-type cards by adding a penalty when the last
+ * item in a column matches the current item's kind or consecutive media.
  */
 function packByHeight(items, widths, seeds = []) {
   const totals = widths.map((_, i) => seeds[i] ?? 0);
   const buckets = widths.map(() => []);
-  const SAME_KIND_PENALTY = 40; // px — enough to nudge to next column
+  const SAME_KIND_PENALTY = 50; // px — enough to nudge to next column
 
   for (const item of items) {
     let bestCol = 0;
@@ -41,10 +51,13 @@ function packByHeight(items, widths, seeds = []) {
 
     for (let i = 0; i < totals.length; i++) {
       let score = totals[i];
-      // Penalize if last item in this column is same kind
       const last = buckets[i][buckets[i].length - 1];
-      if (last && last.kind === item.kind) {
-        score += SAME_KIND_PENALTY;
+      if (last) {
+        if (last.kind === item.kind) {
+          score += SAME_KIND_PENALTY;
+        } else if (isMedia(last.kind) && isMedia(item.kind)) {
+          score += SAME_KIND_PENALTY / 2;
+        }
       }
       if (score < bestScore) {
         bestScore = score;
@@ -59,28 +72,6 @@ function packByHeight(items, widths, seeds = []) {
   return buckets;
 }
 
-/**
- * Ceiling on a media card, as a multiple of the card width so it scales with
- * the fluid columns. Aspect ratio is never touched — a tall image is scaled
- * down to fit and the card then hugs it.
- * Keep in sync with MEDIA_HEIGHT_FACTOR in MediaCard.astro.
- *
- * Deliberately NOT applied here. Planning with the cap makes the estimates
- * scale unevenly — a capped image stops shrinking with the viewport while the
- * uncapped ones keep going — which is what threw the narrow-width columns out
- * of balance. CSS still enforces the cap; the packer just plans without it and
- * absorbs the small difference.
- */
-const MEDIA_HEIGHT_FACTOR = 1.26;
-
-/** Media cards size to their own ratio; project and book cards are fixed. */
-function cardHeight(item, columnWidth) {
-  if (item.kind === 'project') return 260;
-  if (item.kind === 'book') return 152;
-  const ratio = item.width && item.height ? item.width / item.height : 1.5;
-  return columnWidth / ratio;
-}
-
 try {
   // First ticked project stays the wide featured card in column 3.
   // Any extras are packed by height like the media cards.
@@ -93,40 +84,33 @@ try {
 
 try {
   const home = await getHomepageImages();
-  // Photographs and sketches are just media cards — no column is reserved
-  // for either. Every ticked image is packed into the shortest column.
-  mediaItems = [...home.photographs, ...home.sketches].map((item) => ({ ...item, kind: 'media' }));
+  photographs = home.photographs.map((item) => ({ ...item, kind: 'photo' as const }));
+  sketches = home.sketches.map((item) => ({ ...item, kind: 'sketch' as const }));
 } catch (e) {
   console.warn('Failed to fetch homepage images:', e);
 }
 
 try {
   // Every activity ticked on the homepage, each showing its own Status.
-  activities = (await getHomepageActivities()).map((activity) => ({ ...activity, kind: 'book' }));
+  activities = (await getHomepageActivities()).map((activity) => ({ ...activity, kind: 'book' as const }));
 } catch (e) {
   console.warn('Failed to fetch homepage activities:', e);
 }
 
-// Column widths follow the 1fr 1.1fr 1fr grid. Because those are fr units the
-// ratio is constant, so any reference width yields the same packing.
+// Column widths follow the 1fr 1.1fr 1fr grid.
 const COLUMN_RATIOS = [1, 1.1, 1];
 const REFERENCE_WIDTH = 1312;
 const unit = (REFERENCE_WIDTH - GAP * 2) / COLUMN_RATIOS.reduce((a, b) => a + b, 0);
 const columnWidths = COLUMN_RATIOS.map((r) => r * unit);
 
-// Each column already holds fixed-height cards before any packed image lands,
-// so that height is banked up front. Column 3 additionally starts a full row
-// higher, which its GIF + featured project + music card roughly cancel out.
+// Column 2 starts with Career card; Column 3 starts with GIF + featured project + music
 const columnSeeds = [
   0,
   125 + GAP,                    // career
   179 + 260 + 132 + GAP * 3,    // gif + featured project + music
 ];
 
-// Media and extra projects are packed in a single joint pass, so a tall image
-// placed early can still be balanced against a project card later.
-// Interleave by type (round-robin) so activities, images, projects mix naturally.
-// Then pack — seeded for deterministic builds.
+// Interleave by type (round-robin) so activities, images, sketches, projects mix in an organized random order.
 function interleaveByKind<T extends { kind: string }>(items: T[], order: string[]): T[] {
   const buckets = new Map<string, T[]>();
   for (const kind of order) buckets.set(kind, items.filter(i => i.kind === kind));
@@ -145,16 +129,13 @@ function interleaveByKind<T extends { kind: string }>(items: T[], order: string[
 }
 
 const allItems = interleaveByKind([
-  ...mediaItems,
-  ...restProjects.map((project) => ({ ...project, kind: 'project' })),
+  ...photographs,
+  ...sketches,
+  ...restProjects.map((project) => ({ ...project, kind: 'project' as const })),
   ...activities,
-], ['media', 'project', 'book']);
+], ['photo', 'book', 'sketch', 'project']);
 
 const packed = packByHeight(allItems, columnWidths, columnSeeds);
-
-mediaColumns = packed.map((col) => col.filter((item) => item.kind === 'media'));
-projectColumns = packed.map((col) => col.filter((item) => item.kind === 'project'));
-bookColumns = packed.map((col) => col.filter((item) => item.kind === 'book'));
 
 const roles = [
   {
@@ -226,30 +207,34 @@ const roles = [
         </div>
       </div>
 
-      {/* Column 1: media dealt round-robin from the shared pool */}
+      {/* Column 1: cards dealt into the shortest column */}
       <div class="bento-col bento-col-1">
-        {mediaColumns[0].map((item) => (
-          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
-        ))}
-
-        {bookColumns[0].map((book) => (
-          <BookCard
-            title={book.title}
-            author={book.author}
-            coverImage={book.coverImage}
-            status={book.status}
-            coverFitsGrid={book.coverFitsGrid}
-            coverWidth={book.coverWidth}
-            coverHeight={book.coverHeight}
-          />
-        ))}
-
-        {projectColumns[0].map((project) => (
-          <BentoProjectCard
-            title={project.title}
-            coverImage={project.coverImage}
-            github={project.github}
-          />
+        {packed[0].map((item) => (
+          item.kind === 'photo' || item.kind === 'sketch' ? (
+            <MediaCard
+              src={item.imageUrl}
+              caption={item.caption}
+              width={item.width}
+              height={item.height}
+              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+            />
+          ) : item.kind === 'book' ? (
+            <BookCard
+              title={item.title}
+              author={item.author}
+              coverImage={item.coverImage}
+              status={item.status}
+              coverFitsGrid={item.coverFitsGrid}
+              coverWidth={item.coverWidth}
+              coverHeight={item.coverHeight}
+            />
+          ) : (
+            <BentoProjectCard
+              title={item.title}
+              coverImage={item.coverImage}
+              github={item.github}
+            />
+          )
         ))}
       </div>
 
@@ -285,28 +270,32 @@ const roles = [
           </div>
         </BentoCard>
 
-        {mediaColumns[1].map((item) => (
-          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
-        ))}
-
-        {bookColumns[1].map((book) => (
-          <BookCard
-            title={book.title}
-            author={book.author}
-            coverImage={book.coverImage}
-            status={book.status}
-            coverFitsGrid={book.coverFitsGrid}
-            coverWidth={book.coverWidth}
-            coverHeight={book.coverHeight}
-          />
-        ))}
-
-        {projectColumns[1].map((project) => (
-          <BentoProjectCard
-            title={project.title}
-            coverImage={project.coverImage}
-            github={project.github}
-          />
+        {packed[1].map((item) => (
+          item.kind === 'photo' || item.kind === 'sketch' ? (
+            <MediaCard
+              src={item.imageUrl}
+              caption={item.caption}
+              width={item.width}
+              height={item.height}
+              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+            />
+          ) : item.kind === 'book' ? (
+            <BookCard
+              title={item.title}
+              author={item.author}
+              coverImage={item.coverImage}
+              status={item.status}
+              coverFitsGrid={item.coverFitsGrid}
+              coverWidth={item.coverWidth}
+              coverHeight={item.coverHeight}
+            />
+          ) : (
+            <BentoProjectCard
+              title={item.title}
+              coverImage={item.coverImage}
+              github={item.github}
+            />
+          )
         ))}
       </div>
 
@@ -382,31 +371,35 @@ const roles = [
           </div>
         </BentoCard>
 
-        {mediaColumns[2].map((item) => (
-          <MediaCard src={item.imageUrl} caption={item.caption} width={item.width} height={item.height} />
+        {packed[2].map((item) => (
+          item.kind === 'photo' || item.kind === 'sketch' ? (
+            <MediaCard
+              src={item.imageUrl}
+              caption={item.caption}
+              width={item.width}
+              height={item.height}
+              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+            />
+          ) : item.kind === 'book' ? (
+            <BookCard
+              title={item.title}
+              author={item.author}
+              coverImage={item.coverImage}
+              status={item.status}
+              coverFitsGrid={item.coverFitsGrid}
+              coverWidth={item.coverWidth}
+              coverHeight={item.coverHeight}
+            />
+          ) : (
+            <BentoProjectCard
+              title={item.title}
+              coverImage={item.coverImage}
+              github={item.github}
+            />
+          )
         ))}
 
-        {bookColumns[2].map((book) => (
-          <BookCard
-            title={book.title}
-            author={book.author}
-            coverImage={book.coverImage}
-            status={book.status}
-            coverFitsGrid={book.coverFitsGrid}
-            coverWidth={book.coverWidth}
-            coverHeight={book.coverHeight}
-          />
-        ))}
-
-        {projectColumns[2].map((project) => (
-          <BentoProjectCard
-            title={project.title}
-            coverImage={project.coverImage}
-            github={project.github}
-          />
-        ))}
-
-        {mediaItems.length === 0 && (
+        {allItems.length === 0 && (
           <div class="bento-media flex aspect-[3/2] w-full shrink-0 items-center justify-center rounded-[20px] bg-[var(--surface)]">
             <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
           </div>
@@ -430,10 +423,13 @@ const roles = [
       :global(.bento-intro) { order: 1; min-height: 170px; }
       :global(.bento-hello) { order: 2; }
       :global(.bento-career) { order: 3; min-height: 125px; }
-      :global(.bento-project) { order: 4; min-height: 240px; }
-      :global(.bento-media) { order: 5; }
-      :global(.bento-music) { order: 6; min-height: 132px; }
-      :global(.bento-book) { order: 7; min-height: 152px; }
+      :global(.bento-project--wide) { order: 4; min-height: 240px; }
+      :global(.bento-music) { order: 5; min-height: 132px; }
+      :global(.bento-media),
+      :global(.bento-book),
+      :global(.bento-project:not(.bento-project--wide)) {
+        order: 10;
+      }
     }
 
     @media (min-width: 1024px) {

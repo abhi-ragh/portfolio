@@ -59,56 +59,61 @@ function readHomepageFlag(props: Record<string, any>): boolean {
   return false;
 }
 
-export async function getArchiveImages(): Promise<ArchiveImage[]> {
+async function parseAndCacheImages(
+  pages: any[],
+  isCacheScript: boolean
+): Promise<ArchiveImage[]> {
+  const parsed: ArchiveImage[] = pages.map((page: any) => {
+    const props = page.properties || {};
+
+    const captionObj = props.Caption?.title || props.Title?.title || props.Name?.title || [];
+    const caption = captionObj.map((t: any) => t.plain_text).join('') || 'Untitled Frame';
+
+    const filesObj = props.Images?.files || props.Image?.files || props.Files?.files || [];
+    let imageUrl = '';
+    if (filesObj.length > 0) {
+      const fileItem = filesObj[0];
+      imageUrl = fileItem.file?.url || fileItem.external?.url || '';
+    }
+
+    const published = props.Published?.checkbox ??
+                      props.published?.checkbox ??
+                      true;
+
+    return {
+      id: page.id,
+      caption,
+      imageUrl: imageUrl,
+      homepage: readHomepageFlag(props),
+      published,
+      type: looksLikeSketch(caption) ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
+    };
+  });
+
+  const valid = parsed.filter(item => item.published && item.imageUrl);
+
+  const cached = await Promise.all(
+    valid.map(async (item) => {
+      const cachedImage = await cacheNotionImage(item.imageUrl, `archive-${item.id}`, { isCacheScript });
+      return {
+        ...item,
+        imageUrl: cachedImage.url || item.imageUrl,
+        width: cachedImage.width,
+        height: cachedImage.height
+      };
+    })
+  );
+  return cached;
+}
+
+export async function getArchiveImages(isCacheScript = false): Promise<ArchiveImage[]> {
   if (!notion || !NOTION_DATABASE_ID) {
     return [];
   }
 
   try {
     const pages = await queryAllRows(NOTION_DATABASE_ID);
-
-    const parsed: ArchiveImage[] = pages.map((page: any) => {
-      const props = page.properties || {};
-
-      const captionObj = props.Caption?.title || props.Title?.title || props.Name?.title || [];
-      const caption = captionObj.map((t: any) => t.plain_text).join('') || 'Untitled Frame';
-
-      const filesObj = props.Images?.files || props.Image?.files || props.Files?.files || [];
-      let imageUrl = '';
-      if (filesObj.length > 0) {
-        const fileItem = filesObj[0];
-        imageUrl = fileItem.file?.url || fileItem.external?.url || '';
-      }
-
-      const published = props.Published?.checkbox ??
-                        props.published?.checkbox ??
-                        true;
-
-      return {
-        id: page.id,
-        caption,
-        imageUrl: imageUrl,
-        homepage: readHomepageFlag(props),
-        published,
-        type: looksLikeSketch(caption) ? 'SKETCHBOOK DRAFT' : 'FILM PHOTOGRAPHY'
-      };
-    });
-
-    const valid = parsed.filter(item => item.published && item.imageUrl);
-
-    const cached = await Promise.all(
-      valid.map(async (item) => {
-        const cachedImage = await cacheNotionImage(item.imageUrl, `archive-${item.id}`);
-        return {
-          ...item,
-          imageUrl: cachedImage.url,
-          width: cachedImage.width,
-          height: cachedImage.height
-        };
-      })
-    );
-
-    return cached;
+    return await parseAndCacheImages(pages, isCacheScript);
   } catch (error) {
     console.warn('Notion API query notice:', error);
     return [];
@@ -116,18 +121,35 @@ export async function getArchiveImages(): Promise<ArchiveImage[]> {
 }
 
 /**
- * Every row ticked on the homepage is returned. Which column it lands in
- * is decided by the caption guess above, not by the database.
+ * Homepage images with intrinsic dimensions for bento packing.
  */
-export async function getHomepageImages(): Promise<{
+export async function getHomepageImages(isCacheScript = false): Promise<{
   photographs: ArchiveImage[];
   sketches: ArchiveImage[];
 }> {
-  const all = await getArchiveImages();
-  const ticked = all.filter(item => item.homepage);
+  if (!notion || !NOTION_DATABASE_ID) {
+    return { photographs: [], sketches: [] };
+  }
 
-  return {
-    photographs: ticked.filter(item => item.type === 'FILM PHOTOGRAPHY'),
-    sketches: ticked.filter(item => item.type === 'SKETCHBOOK DRAFT')
-  };
+  try {
+    const pages = await queryAllRows(NOTION_DATABASE_ID);
+    const all = await parseAndCacheImages(pages, isCacheScript);
+    const valid = all.filter(item => item.homepage && item.imageUrl);
+
+    return {
+      photographs: valid.filter(item => item.type === 'FILM PHOTOGRAPHY').map(item => ({
+        ...item,
+        width: item.width ?? 1500,
+        height: item.height ?? 1000
+      })),
+      sketches: valid.filter(item => item.type === 'SKETCHBOOK DRAFT').map(item => ({
+        ...item,
+        width: item.width ?? 1000,
+        height: item.height ?? 1500
+      }))
+    };
+  } catch (error) {
+    console.warn('Notion API query notice:', error);
+    return { photographs: [], sketches: [] };
+  }
 }

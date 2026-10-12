@@ -40,113 +40,115 @@ function getProp(props: Record<string, any>, keyNames: string[]) {
   return undefined;
 }
 
-export async function getArchiveProjects(): Promise<Project[]> {
+async function parseAndCacheProjects(pages: any[], isCacheScript: boolean): Promise<Project[]> {
+  const projects: any[] = [];
+
+  for (const page of pages) {
+    const props = page.properties || {};
+
+    // Title
+    const titleProp = getProp(props, ['Title', 'Name', 'Project'])?.title || [];
+    const title = titleProp.map((t: any) => t.plain_text).join('') || 'Untitled Project';
+
+    // Description
+    const descProp = getProp(props, ['Description', 'Summary'])?.rich_text || [];
+    const description = descProp.map((t: any) => t.plain_text).join('') || '';
+
+    // Github URL
+    const github = getProp(props, ['Github', 'GitHub', 'Repository'])?.url || undefined;
+
+    // Cover Image
+    const coverProp = getProp(props, ['Cover image', 'Cover Image', 'Cover', 'Image', 'Thumbnail', 'Thumb']);
+    const coverFiles = coverProp?.files || [];
+    let coverImage: string | undefined = coverFiles.length > 0 ? (coverFiles[0].file?.url || coverFiles[0].external?.url) : undefined;
+    if (!coverImage) {
+      coverImage = page.cover?.external?.url || page.cover?.file?.url;
+    }
+
+    // Screenshots
+    const shotProp = getProp(props, ['Screenshots', 'Screenshot']);
+    const shotFiles = shotProp?.files || [];
+    const screenshots: string[] = shotFiles.map((f: any) => f.file?.url || f.external?.url).filter(Boolean);
+
+    // Tags / Stack
+    const tagsProp = getProp(props, ['Tags', 'Tech', 'Stack', 'Technologies']);
+    let tags = '';
+    if (tagsProp?.multi_select && Array.isArray(tagsProp.multi_select)) {
+      tags = tagsProp.multi_select.map((t: any) => t.name).join(' · ').toUpperCase();
+    } else if (tagsProp?.rich_text && Array.isArray(tagsProp.rich_text)) {
+      tags = tagsProp.rich_text.map((t: any) => t.plain_text).join(' · ').toUpperCase();
+    }
+
+    // Checkboxes & Order
+    const publishedProp = getProp(props, ['Published']);
+    const published = publishedProp?.checkbox ?? true;
+
+    const homepageProp = getProp(props, ['Homepage']);
+    const homepage = homepageProp?.checkbox ?? false;
+
+    const orderProp = getProp(props, ['homepage_order', 'Homepage_Order', 'Order']);
+    const homepageOrder = orderProp?.number ?? 999;
+
+    if (!published) continue;
+
+    projects.push({
+      id: page.id,
+      title,
+      description,
+      github,
+      coverImage,
+      screenshots,
+      tags,
+      homepage,
+      published,
+      homepageOrder
+    });
+  }
+
+  projects.sort((a, b) => (a.homepageOrder || 999) - (b.homepageOrder || 999));
+
+  const cachedProjects = await Promise.all(
+    projects.map(async (project) => {
+      let coverImage = project.coverImage;
+      let coverWidth: number | undefined;
+      let coverHeight: number | undefined;
+      if (coverImage) {
+        const cachedCover = await cacheNotionImage(coverImage, `project-cover-${project.id}`, { isCacheScript });
+        coverImage = cachedCover.url || coverImage;
+        coverWidth = cachedCover.width;
+        coverHeight = cachedCover.height;
+      }
+
+      let screenshots = project.screenshots || [];
+      if (screenshots.length > 0) {
+        screenshots = await Promise.all(
+          screenshots.map(async (shot: string, idx: number) => {
+            const cached = await cacheNotionImage(shot, `project-shot-${project.id}-${idx}`, { isCacheScript });
+            return cached.url || shot;
+          })
+        );
+      }
+
+      return {
+        ...project,
+        coverImage,
+        coverWidth,
+        coverHeight,
+        screenshots
+      };
+    })
+  );
+  return cachedProjects;
+}
+
+export async function getArchiveProjects(isCacheScript = false): Promise<Project[]> {
   if (!notion || !NOTION_PROJECTS_ID) {
     return [];
   }
 
   try {
     const pages: any[] = await queryAllRows(NOTION_PROJECTS_ID);
-
-    const projects: any[] = [];
-
-    for (const page of pages) {
-      const props = page.properties || {};
-
-      // Title
-      const titleProp = getProp(props, ['Title', 'Name', 'Project'])?.title || [];
-      const title = titleProp.map((t: any) => t.plain_text).join('') || 'Untitled Project';
-
-      // Description
-      const descProp = getProp(props, ['Description', 'Summary'])?.rich_text || [];
-      const description = descProp.map((t: any) => t.plain_text).join('') || '';
-
-      // Github URL
-      const github = getProp(props, ['Github', 'GitHub', 'Repository'])?.url || undefined;
-
-      // Cover Image (Case-insensitive check for 'Cover image', 'Cover Image', etc.)
-      const coverProp = getProp(props, ['Cover image', 'Cover Image', 'Cover', 'Image', 'Thumbnail', 'Thumb']);
-      const coverFiles = coverProp?.files || [];
-      let coverImage: string | undefined = coverFiles.length > 0 ? (coverFiles[0].file?.url || coverFiles[0].external?.url) : undefined;
-      if (!coverImage) {
-        coverImage = page.cover?.external?.url || page.cover?.file?.url;
-      }
-
-      // Screenshots
-      const shotProp = getProp(props, ['Screenshots', 'Screenshot']);
-      const shotFiles = shotProp?.files || [];
-      const screenshots: string[] = shotFiles.map((f: any) => f.file?.url || f.external?.url).filter(Boolean);
-
-      // Tags / Stack
-      const tagsProp = getProp(props, ['Tags', 'Tech', 'Stack', 'Technologies']);
-      let tags = '';
-      if (tagsProp?.multi_select && Array.isArray(tagsProp.multi_select)) {
-        tags = tagsProp.multi_select.map((t: any) => t.name).join(' · ').toUpperCase();
-      } else if (tagsProp?.rich_text && Array.isArray(tagsProp.rich_text)) {
-        tags = tagsProp.rich_text.map((t: any) => t.plain_text).join(' · ').toUpperCase();
-      }
-
-      // Checkboxes & Order
-      const publishedProp = getProp(props, ['Published']);
-      const published = publishedProp?.checkbox ?? true;
-
-      const homepageProp = getProp(props, ['Homepage']);
-      const homepage = homepageProp?.checkbox ?? false;
-
-      const orderProp = getProp(props, ['homepage_order', 'Homepage_Order', 'Order']);
-      const homepageOrder = orderProp?.number ?? 999;
-
-      if (!published) continue;
-
-      projects.push({
-        id: page.id,
-        title,
-        description,
-        github,
-        coverImage,
-        screenshots,
-        tags,
-        homepage,
-        published,
-        homepageOrder
-      });
-    }
-
-    projects.sort((a, b) => (a.homepageOrder || 999) - (b.homepageOrder || 999));
-
-    // Cache project cover images and screenshots locally for permanent CDN hosting
-    const cachedProjects = await Promise.all(
-      projects.map(async (project) => {
-        let coverImage = project.coverImage;
-        let coverWidth: number | undefined;
-        let coverHeight: number | undefined;
-        if (coverImage) {
-          const cachedCover = await cacheNotionImage(coverImage, `project-cover-${project.id}`);
-          coverImage = cachedCover.url;
-          coverWidth = cachedCover.width;
-          coverHeight = cachedCover.height;
-        }
-
-        let screenshots = project.screenshots || [];
-        if (screenshots.length > 0) {
-          screenshots = await Promise.all(
-            screenshots.map(async (shot: string, idx: number) =>
-              (await cacheNotionImage(shot, `project-shot-${project.id}-${idx}`)).url
-            )
-          );
-        }
-
-        return {
-          ...project,
-          coverImage,
-          coverWidth,
-          coverHeight,
-          screenshots
-        };
-      })
-    );
-
-    return cachedProjects;
+    return await parseAndCacheProjects(pages, isCacheScript);
   } catch (error) {
     console.warn('Notion Projects query notice:', error);
     return [];
@@ -157,7 +159,7 @@ export async function getArchiveProjects(): Promise<Project[]> {
  * Every project ticked for the homepage, in Homepage Order. Ticking two
  * projects means two project cards — not one.
  */
-export async function getHomepageProjects(): Promise<Project[]> {
-  const allProjects = await getArchiveProjects();
+export async function getHomepageProjects(isCacheScript = false): Promise<Project[]> {
+  const allProjects = await getArchiveProjects(isCacheScript);
   return allProjects.filter(p => p.homepage);
 }
