@@ -1,7 +1,7 @@
 import { notion } from './notion.ts';
 import { cacheNotionImage } from './download.ts';
 
-const rawBooksId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_BOOKS_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_BOOKS_ID : undefined) || '';
+const rawActivitiesId = (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NOTION_ACTIVITIES_ID : undefined) || (typeof process !== 'undefined' ? process.env.NOTION_ACTIVITIES_ID : undefined) || '';
 
 function formatDatabaseId(id: string): string {
   if (!id) return '';
@@ -10,18 +10,27 @@ function formatDatabaseId(id: string): string {
   return cleaned;
 }
 
-export const NOTION_BOOKS_ID = formatDatabaseId(rawBooksId);
+export const NOTION_ACTIVITIES_ID = formatDatabaseId(rawActivitiesId);
 
-export interface Book {
+export type ActivityStatus =
+  | 'Watching'
+  | 'Playing'
+  | 'Reading'
+  | 'Recently Watched'
+  | 'Recently Played'
+  | 'Recently Read';
+
+export interface Activity {
   id: string;
   title: string;
   author: string;
   coverImage?: string;
   coverWidth?: number;
   coverHeight?: number;
-  status: string;
+  status: ActivityStatus;
   homepage: boolean;
   published: boolean;
+  coverFitsGrid: boolean;
 }
 
 function getProp(props: Record<string, any>, keyNames: string[]) {
@@ -35,45 +44,51 @@ function getProp(props: Record<string, any>, keyNames: string[]) {
   return undefined;
 }
 
-/** Preferred ordering when several books are ticked at once. */
 const STATUS_RANK: Record<string, number> = {
+  watching: 0,
+  playing: 0,
   reading: 0,
-  'in progress': 0,
-  read: 1,
-  finished: 1,
+  'recently watched': 1,
+  'recently played': 1,
+  'recently read': 1,
 };
 
-/** The title column can be named anything (e.g. "Task"), so match on its type. */
+const STATUS_CATEGORY: Record<string, 'in-progress' | 'complete'> = {
+  watching: 'in-progress',
+  playing: 'in-progress',
+  reading: 'in-progress',
+  'recently watched': 'complete',
+  'recently played': 'complete',
+  'recently read': 'complete',
+};
+
 function getTitle(props: Record<string, any>): string {
-  const named = getProp(props, ['Title', 'Name', 'Book', 'Task'])?.title;
+  const named = getProp(props, ['Title', 'Name', 'Activity', 'Task'])?.title;
   const richText =
     named || Object.values(props).find((p: any) => p && p.type === 'title')?.title || [];
   return (richText as any[]).map((t: any) => t.plain_text).join('');
 }
 
-/** Status may be a Notion `status`, `select`, or plain text column. */
-function readStatus(props: Record<string, any>): string {
-  const prop = getProp(props, ['Status', 'Reading Status']);
-  if (!prop) return '';
-  if (prop.status?.name) return prop.status.name;
-  if (prop.select?.name) return prop.select.name;
-  if (prop.rich_text) return prop.rich_text.map((t: any) => t.plain_text).join('');
-  if (prop.checkbox) return prop.checkbox ? 'Complete' : '';
-  return '';
+function readStatus(props: Record<string, any>): ActivityStatus {
+  const prop = getProp(props, ['Status', 'Activity Status']);
+  if (!prop) return 'Reading';
+  if (prop.status?.name) return prop.status.name as ActivityStatus;
+  if (prop.select?.name) return prop.select.name as ActivityStatus;
+  if (prop.rich_text) return prop.rich_text.map((t: any) => t.plain_text).join('') as ActivityStatus;
+  if (prop.checkbox) return prop.checkbox ? 'Recently Read' : 'Reading';
+  return 'Reading';
 }
 
-/**
- * Notion's API addresses *data sources*, whose ID is often not the same as the
- * database (or parent page) ID copied from the browser URL. If the configured
- * ID does not resolve, look the data source up by title instead.
- */
 async function findDataSourceByTitle(): Promise<string | null> {
   try {
-    const res = await (notion as any).search({ query: 'Books', page_size: 25 });
+    const res = await (notion as any).search({ query: 'Activities', page_size: 25 });
     const match = (res.results || []).find(
       (item: any) =>
         (item.object === 'data_source' || item.object === 'database') &&
-        (item.title || []).some((t: any) => (t.plain_text || '').trim().toLowerCase() === 'books')
+        (item.title || []).some((t: any) => {
+          const title = (t.plain_text || '').trim().toLowerCase();
+          return title === 'activities' || title === 'books';
+        })
     );
     return match?.id || null;
   } catch {
@@ -81,7 +96,6 @@ async function findDataSourceByTitle(): Promise<string | null> {
   }
 }
 
-/** Notion caps a single query at 100 rows, so follow the cursor. */
 async function queryDataSource(dataSourceId: string): Promise<any[]> {
   const all: any[] = [];
   let cursor: string | undefined = undefined;
@@ -100,27 +114,25 @@ async function queryDataSource(dataSourceId: string): Promise<any[]> {
 }
 
 async function queryDatabase(): Promise<any[]> {
-  if (!notion || !NOTION_BOOKS_ID) {
+  if (!notion || !NOTION_ACTIVITIES_ID) {
     return [];
   }
 
-  // Preferred path: the configured ID is already the data source.
   try {
-    return await queryDataSource(NOTION_BOOKS_ID);
+    return await queryDataSource(NOTION_ACTIVITIES_ID);
   } catch {
-    /* the configured ID may be a database or parent page ID - look it up */
   }
 
   const resolvedId = await findDataSourceByTitle();
   if (!resolvedId) {
-    console.warn('Notion Books: could not resolve a data source id.');
+    console.warn('Notion Activities: could not resolve a data source id.');
     return [];
   }
 
   try {
     return await queryDataSource(resolvedId);
   } catch (e) {
-    console.warn('Notion Books query failed:', e);
+    console.warn('Notion Activities query failed:', e);
     return [];
   }
 }
@@ -128,18 +140,26 @@ async function queryDatabase(): Promise<any[]> {
 function readHomepageFlag(props: Record<string, any>): boolean {
   const prop = getProp(props, ['Homepage']);
   if (typeof prop?.checkbox === 'boolean') return prop.checkbox;
-  // Tolerate the old select shape while the column is being migrated.
   const legacy = prop?.select?.name;
   return typeof legacy === 'string' && legacy.trim() !== '';
 }
 
-function parseBook(page: any, props: Record<string, any>): Book & { rawCover?: string } {
+const GRID_ASPECT_RATIO = 2 / 3;
+const ASPECT_TOLERANCE = 0.15;
+
+function checkCoverFitsGrid(width?: number, height?: number): boolean {
+  if (!width || !height) return true;
+  const aspect = width / height;
+  return Math.abs(aspect - GRID_ASPECT_RATIO) / GRID_ASPECT_RATIO <= ASPECT_TOLERANCE;
+}
+
+function parseActivity(page: any, props: Record<string, any>): Activity & { rawCover?: string } {
   const title = getTitle(props) || 'Untitled';
 
-  const authorProp = getProp(props, ['Author', 'Authors'])?.rich_text || [];
+  const authorProp = getProp(props, ['Author', 'Creator', 'Artist', 'Developer'])?.rich_text || [];
   const author = authorProp.map((t: any) => t.plain_text).join('');
 
-  const status = readStatus(props) || 'Reading';
+  const status = readStatus(props);
 
   const publishedProp = getProp(props, ['Published']);
   const published = publishedProp?.checkbox ?? true;
@@ -162,43 +182,44 @@ function parseBook(page: any, props: Record<string, any>): Book & { rawCover?: s
     status,
     homepage,
     published,
-    rawCover
+    rawCover,
+    coverFitsGrid: true,
   };
 }
 
-/**
- * Every book ticked for the homepage, with its Status (Reading / Read).
- * Ticking three books means three reading cards.
- */
-export async function getHomepageBooks(): Promise<Book[]> {
-  if (!notion || !NOTION_BOOKS_ID) {
+export async function getHomepageActivities(): Promise<Activity[]> {
+  if (!notion || !NOTION_ACTIVITIES_ID) {
     return [];
   }
 
   try {
     const pages = await queryDatabase();
-    // Covers are downloaded after filtering, so unticked books cost nothing.
     const withCovers = await Promise.all(
       pages
-        .map((page: any) => parseBook(page, page.properties || {}))
-        .filter((book) => book.published && book.homepage && book.rawCover)
-        .map(async (book) => {
-          const cached = await cacheNotionImage(book.rawCover!, book.id);
+        .map((page: any) => parseActivity(page, page.properties || {}))
+        .filter((activity) => activity.published && activity.homepage && activity.rawCover)
+        .map(async (activity) => {
+          const cached = await cacheNotionImage(activity.rawCover!, activity.id);
+          const fitsGrid = checkCoverFitsGrid(cached.width, cached.height);
           return {
-            ...book,
+            ...activity,
             coverImage: cached.url,
             coverWidth: cached.width,
-            coverHeight: cached.height
+            coverHeight: cached.height,
+            coverFitsGrid: fitsGrid,
           };
         })
     );
 
-    // Books being read float above ones already finished.
     return withCovers.sort(
       (a, b) => (STATUS_RANK[a.status.toLowerCase()] ?? 2) - (STATUS_RANK[b.status.toLowerCase()] ?? 2)
     );
   } catch (error) {
-    console.warn('Notion Books query notice:', error);
+    console.warn('Notion Activities query notice:', error);
     return [];
   }
+}
+
+export function getStatusCategory(status: ActivityStatus): 'in-progress' | 'complete' {
+  return STATUS_CATEGORY[status.toLowerCase()] || 'in-progress';
 }

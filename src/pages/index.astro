@@ -7,7 +7,7 @@ import BentoProjectCard from '../components/BentoProjectCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { getHomepageProjects } from '../lib/projects.ts';
 import { getHomepageImages } from '../lib/archive.ts';
-import { getHomepageBooks } from '../lib/books.ts';
+import { getHomepageActivities } from '../lib/books.ts';
 
 let featuredProject = null;
 let restProjects = [];
@@ -15,7 +15,7 @@ let projectColumns = [[], [], []];
 let bookColumns = [[], [], []];
 let mediaColumns = [[], [], []];
 let mediaItems = [];
-let books = [];
+let activities = [];
 
 const GAP = 13.6; // 0.85rem, matches the bento gap
 
@@ -26,18 +26,34 @@ const GAP = 13.6; // 0.85rem, matches the bento gap
  * Columns are sized in `fr` units, so their widths keep a fixed 1 : 1.1 : 1
  * ratio at every viewport. Heights scale uniformly with that ratio, which
  * means the packing decision made here stays correct at any screen size.
+ *
+ * Avoids stacking same-type cards by adding a small penalty when the last
+ * item in a column matches the current item's kind.
  */
 function packByHeight(items, widths, seeds = []) {
   const totals = widths.map((_, i) => seeds[i] ?? 0);
   const buckets = widths.map(() => []);
+  const SAME_KIND_PENALTY = 40; // px — enough to nudge to next column
 
   for (const item of items) {
-    let shortest = 0;
-    for (let i = 1; i < totals.length; i++) {
-      if (totals[i] < totals[shortest]) shortest = i;
+    let bestCol = 0;
+    let bestScore = Infinity;
+
+    for (let i = 0; i < totals.length; i++) {
+      let score = totals[i];
+      // Penalize if last item in this column is same kind
+      const last = buckets[i][buckets[i].length - 1];
+      if (last && last.kind === item.kind) {
+        score += SAME_KIND_PENALTY;
+      }
+      if (score < bestScore) {
+        bestScore = score;
+        bestCol = i;
+      }
     }
-    buckets[shortest].push(item);
-    totals[shortest] += cardHeight(item, widths[shortest]) + GAP;
+
+    buckets[bestCol].push(item);
+    totals[bestCol] += cardHeight(item, widths[bestCol]) + GAP;
   }
 
   return buckets;
@@ -85,10 +101,10 @@ try {
 }
 
 try {
-  // Every book ticked on the homepage, each showing its own Status.
-  books = (await getHomepageBooks()).map((book) => ({ ...book, kind: 'book' }));
+  // Every activity ticked on the homepage, each showing its own Status.
+  activities = (await getHomepageActivities()).map((activity) => ({ ...activity, kind: 'book' }));
 } catch (e) {
-  console.warn('Failed to fetch homepage books:', e);
+  console.warn('Failed to fetch homepage activities:', e);
 }
 
 // Column widths follow the 1fr 1.1fr 1fr grid. Because those are fr units the
@@ -109,15 +125,32 @@ const columnSeeds = [
 
 // Media and extra projects are packed in a single joint pass, so a tall image
 // placed early can still be balanced against a project card later.
-const packed = packByHeight(
-  [
-    ...mediaItems,
-    ...restProjects.map((project) => ({ ...project, kind: 'project' })),
-    ...books,
-  ],
-  columnWidths,
-  columnSeeds
-);
+// Interleave by type (round-robin) so activities, images, projects mix naturally.
+// Then pack — seeded for deterministic builds.
+function interleaveByKind<T extends { kind: string }>(items: T[], order: string[]): T[] {
+  const buckets = new Map<string, T[]>();
+  for (const kind of order) buckets.set(kind, items.filter(i => i.kind === kind));
+  const result: T[] = [];
+  let remaining = items.length;
+  while (remaining > 0) {
+    for (const kind of order) {
+      const bucket = buckets.get(kind);
+      if (bucket && bucket.length > 0) {
+        result.push(bucket.shift()!);
+        remaining--;
+      }
+    }
+  }
+  return result;
+}
+
+const allItems = interleaveByKind([
+  ...mediaItems,
+  ...restProjects.map((project) => ({ ...project, kind: 'project' })),
+  ...activities,
+], ['media', 'project', 'book']);
+
+const packed = packByHeight(allItems, columnWidths, columnSeeds);
 
 mediaColumns = packed.map((col) => col.filter((item) => item.kind === 'media'));
 projectColumns = packed.map((col) => col.filter((item) => item.kind === 'project'));
@@ -205,6 +238,9 @@ const roles = [
             author={book.author}
             coverImage={book.coverImage}
             status={book.status}
+            coverFitsGrid={book.coverFitsGrid}
+            coverWidth={book.coverWidth}
+            coverHeight={book.coverHeight}
           />
         ))}
 
@@ -259,6 +295,9 @@ const roles = [
             author={book.author}
             coverImage={book.coverImage}
             status={book.status}
+            coverFitsGrid={book.coverFitsGrid}
+            coverWidth={book.coverWidth}
+            coverHeight={book.coverHeight}
           />
         ))}
 
@@ -353,6 +392,9 @@ const roles = [
             author={book.author}
             coverImage={book.coverImage}
             status={book.status}
+            coverFitsGrid={book.coverFitsGrid}
+            coverWidth={book.coverWidth}
+            coverHeight={book.coverHeight}
           />
         ))}
 

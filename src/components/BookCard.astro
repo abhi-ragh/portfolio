@@ -4,41 +4,143 @@ interface Props {
   author?: string;
   coverImage?: string;
   status?: string;
+  coverFitsGrid?: boolean;
+  coverWidth?: number;
+  coverHeight?: number;
 }
 
-const { title, author, coverImage, status } = Astro.props;
+const { title, author, coverImage, status, coverFitsGrid = true, coverWidth, coverHeight } = Astro.props;
 
-// "Read" books are dimmed so whatever you are reading right now stands out.
-const isFinished = (status || '').toLowerCase() === 'read' ||
-                  (status || '').toLowerCase() === 'finished';
+const statusLower = (status || '').toLowerCase();
+const isFinished = statusLower.startsWith('recently');
+const category = isFinished ? 'complete' : 'in-progress';
+
+const statusConfig: Record<string, {
+  badgeColor: 'amber' | 'emerald' | 'blue' | 'violet' | 'rose' | 'cyan';
+  hoverAnimation: string;
+  coverHoverAnimation: string;
+  fallbackAnimation: string;
+}> = {
+  'watching': {
+    badgeColor: 'blue',
+    hoverAnimation: 'hover:shadow-[0_0_40px_-5px_rgba(59,130,246,0.5)] hover:border-blue-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.18] group-hover:rotate-[1deg] group-hover:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.4)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_20px_40px_-10px_rgba(59,130,246,0.3)]',
+  },
+  'playing': {
+    badgeColor: 'violet',
+    hoverAnimation: 'hover:shadow-[0_0_40px_-5px_rgba(168,85,247,0.5)] hover:border-violet-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.15] group-hover:-rotate-[1deg] group-hover:shadow-[0_25px_50px_-12px_rgba(168,85,247,0.4)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_20px_40px_-10px_rgba(168,85,247,0.3)]',
+  },
+  'reading': {
+    badgeColor: 'amber',
+    hoverAnimation: 'hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.5)] hover:border-amber-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.16] group-hover:shadow-[0_25px_50px_-12px_rgba(245,158,11,0.4)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.3)]',
+  },
+  'recently watched': {
+    badgeColor: 'cyan',
+    hoverAnimation: 'hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.4)] hover:border-cyan-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.12] group-hover:translate-y-[-4px] group-hover:shadow-[0_20px_40px_-10px_rgba(6,182,212,0.35)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_15px_30px_-8px_rgba(6,182,212,0.25)]',
+  },
+  'recently played': {
+    badgeColor: 'rose',
+    hoverAnimation: 'hover:shadow-[0_0_30px_-5px_rgba(244,63,94,0.4)] hover:border-rose-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.12] group-hover:translate-y-[-4px] group-hover:shadow-[0_20px_40px_-10px_rgba(244,63,94,0.35)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_15px_30px_-8px_rgba(244,63,94,0.25)]',
+  },
+  'recently read': {
+    badgeColor: 'emerald',
+    hoverAnimation: 'hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.4)] hover:border-emerald-500/30',
+    coverHoverAnimation: 'group-hover:scale-[1.12] group-hover:translate-y-[-4px] group-hover:shadow-[0_20px_40px_-10px_rgba(16,185,129,0.35)]',
+    fallbackAnimation: 'group-hover:scale-[1.02] group-hover:shadow-[0_15px_30px_-8px_rgba(16,185,129,0.25)]',
+  },
+};
+
+const config = statusConfig[statusLower] || statusConfig.reading;
+
+const badgeStyles = {
+  amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+  emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+  blue: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
+  violet: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
+  cyan: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
+  rose: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
+  neutral: 'bg-[var(--surface-hover)] text-[var(--ink-tertiary)]',
+};
+
+const aspectRatio = coverWidth && coverHeight ? coverWidth / coverHeight : 2 / 3;
+const targetAspectRatio = 2 / 3;
+const aspectDiff = Math.abs(aspectRatio - targetAspectRatio) / targetAspectRatio;
+const needsFallback = !coverFitsGrid || aspectDiff > 0.15;
+
+const coverHeightPx = 112;
+const coverWidthPx = Math.round(coverHeightPx * aspectRatio);
+const useFallbackDimensions = needsFallback;
+const displayWidth = useFallbackDimensions ? '75px' : `${Math.round(coverHeightPx * targetAspectRatio)}px`;
+const displayHeight = `${coverHeightPx}px`;
+const objectFit = needsFallback ? 'contain' : 'cover';
+const backgroundStyle = needsFallback ? 'bg-[var(--surface)]' : 'bg-[var(--surface-hover)]';
+
+const coverHoverClass = '';
+const cardHoverClass = '';
 ---
 
 <article
   class:list={[
     'bento-book group relative flex h-[152px] shrink-0 items-center gap-4 overflow-visible rounded-[20px] bg-[var(--surface)] px-4 py-3.5 transition-all duration-300 hover:z-20',
     isFinished && 'opacity-75',
+    cardHoverClass,
   ]}
+  data-status={statusLower}
+  data-category={category}
 >
-  {/* Cover pops up out of the card on hover */}
-  {
-    coverImage ? (
-      <div class="relative aspect-[2/3] h-[112px] shrink-0 origin-bottom overflow-hidden rounded-[8px] bg-[var(--surface-hover)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-all duration-300 ease-out group-hover:z-10 group-hover:scale-[1.16] group-hover:shadow-[0_22px_44px_-10px_rgba(0,0,0,0.55)]">
-        <img src={coverImage} alt="" loading="lazy" class="h-full w-full object-cover" />
-      </div>
-    ) : (
-      <div class="flex aspect-[2/3] h-[112px] shrink-0 items-center justify-center rounded-[8px] bg-[var(--surface-hover)] font-mono text-[13px] text-[var(--ink-tertiary)] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]">
-        📖
-      </div>
-    )
-  }
+  {coverImage ? (
+    <div
+      class:list={[
+        'relative shrink-0 origin-bottom overflow-hidden rounded-[8px]',
+        backgroundStyle,
+        'shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]',
+        'ring-1 ring-black/5',
+        'transition-all duration-500 ease-out',
+        coverHoverClass,
+        needsFallback && 'group-hover:z-10',
+      ]}
+      style={`width: ${displayWidth}; height: ${displayHeight};`}
+    >
+      <img
+        src={coverImage}
+        alt=""
+        loading="lazy"
+        class="h-full w-full"
+        style={`object-fit: ${objectFit};`}
+      />
+      {needsFallback && (
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      )}
+    </div>
+  ) : (
+    <div
+      class:list={[
+        'flex shrink-0 items-center justify-center rounded-[8px]',
+        backgroundStyle,
+        'shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]',
+        'transition-all duration-500 ease-out',
+        coverHoverClass,
+      ]}
+      style={`width: ${displayWidth}; height: ${displayHeight};`}
+    >
+      <span class="text-[24px] transition-transform duration-300 group-hover:scale-110">🎮</span>
+    </div>
+  )}
 
   <div class="flex min-w-0 flex-1 flex-col gap-1.5">
     <span
       class:list={[
-        'inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider',
-        isFinished
-          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-          : 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+        'inline-block w-fit rounded px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border',
+        badgeStyles[config.badgeColor],
       ]}
     >
       {status || 'Reading'}
