@@ -72,67 +72,62 @@ const badgeStyles = {
 };
 
 const aspectRatio = coverWidth && coverHeight ? coverWidth / coverHeight : 2 / 3;
-const targetAspectRatio = 2 / 3;
-const aspectDiff = Math.abs(aspectRatio - targetAspectRatio) / targetAspectRatio;
-const needsFallback = !coverFitsGrid || aspectDiff > 0.15;
 
-const coverHeightPx = 112;
-const coverWidthPx = Math.round(coverHeightPx * aspectRatio);
-const useFallbackDimensions = needsFallback;
-const displayWidth = useFallbackDimensions ? '75px' : `${Math.round(coverHeightPx * targetAspectRatio)}px`;
-const displayHeight = `${coverHeightPx}px`;
-const objectFit = needsFallback ? 'contain' : 'cover';
-const backgroundStyle = needsFallback ? 'bg-[var(--surface)]' : 'bg-[var(--surface-hover)]';
+// Max bounds within the 152px card (card padding is py-3.5)
+const MAX_HEIGHT = 112;
+const MAX_WIDTH = 135;
 
-const coverHoverClass = '';
-const cardHoverClass = '';
+let displayWidthPx: number;
+let displayHeightPx: number;
+
+if (aspectRatio <= 1) {
+  // Portrait / square: scale by height
+  displayHeightPx = MAX_HEIGHT;
+  displayWidthPx = Math.round(displayHeightPx * aspectRatio);
+  if (displayWidthPx > MAX_WIDTH) {
+    displayWidthPx = MAX_WIDTH;
+    displayHeightPx = Math.round(displayWidthPx / aspectRatio);
+  }
+} else {
+  // Landscape / horizontal: fit within MAX_WIDTH while keeping height balanced
+  displayWidthPx = MAX_WIDTH;
+  displayHeightPx = Math.round(displayWidthPx / aspectRatio);
+  if (displayHeightPx > 85) {
+    displayHeightPx = 85;
+    displayWidthPx = Math.round(displayHeightPx * aspectRatio);
+  }
+}
+
+const displayWidth = `${displayWidthPx}px`;
+const displayHeight = `${displayHeightPx}px`;
 ---
 
 <article
   class:list={[
     'bento-book group relative flex h-[152px] shrink-0 items-center gap-4 overflow-visible rounded-[20px] bg-[var(--surface)] px-4 py-3.5 transition-all duration-300 hover:z-20',
     isFinished && 'opacity-75',
-    cardHoverClass,
   ]}
   data-status={statusLower}
   data-category={category}
 >
   {coverImage ? (
     <div
-      class:list={[
-        'relative shrink-0 origin-bottom overflow-hidden rounded-[8px]',
-        backgroundStyle,
-        'shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]',
-        'ring-1 ring-black/5',
-        'transition-all duration-500 ease-out',
-        coverHoverClass,
-        needsFallback && 'group-hover:z-10',
-      ]}
+      class="relative shrink-0 overflow-hidden rounded-[8px] border border-[var(--line)] shadow-xs transition-transform duration-500 ease-out group-hover:scale-[1.03]"
       style={`width: ${displayWidth}; height: ${displayHeight};`}
     >
       <img
         src={coverImage}
-        alt=""
+        alt={title || 'Cover image'}
         loading="lazy"
-        class="h-full w-full"
-        style={`object-fit: ${objectFit};`}
+        class="h-full w-full object-cover block"
       />
-      {needsFallback && (
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-      )}
     </div>
   ) : (
     <div
-      class:list={[
-        'flex shrink-0 items-center justify-center rounded-[8px]',
-        backgroundStyle,
-        'shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)]',
-        'transition-all duration-500 ease-out',
-        coverHoverClass,
-      ]}
+      class="flex shrink-0 items-center justify-center rounded-[8px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs transition-transform duration-500 ease-out group-hover:scale-[1.03]"
       style={`width: ${displayWidth}; height: ${displayHeight};`}
     >
-      <span class="text-[24px] transition-transform duration-300 group-hover:scale-110">🎮</span>
+      <span class="text-[24px]">🎮</span>
     </div>
   )}
 
