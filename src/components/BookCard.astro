@@ -25,28 +25,9 @@ const statusLower = (status || '').toLowerCase();
 const isFinished = statusLower.startsWith('recently');
 const category = isFinished ? 'complete' : 'in-progress';
 
-const statusConfig: Record<string, {
-  badgeColor: 'amber' | 'emerald' | 'blue' | 'violet' | 'rose' | 'cyan';
-}> = {
-  'watching': { badgeColor: 'blue' },
-  'playing': { badgeColor: 'violet' },
-  'reading': { badgeColor: 'amber' },
-  'recently watched': { badgeColor: 'cyan' },
-  'recently played': { badgeColor: 'rose' },
-  'recently read': { badgeColor: 'emerald' },
-};
-
-const config = statusConfig[statusLower] || statusConfig.reading;
-
-const badgeStyles = {
-  amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
-  emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-  blue: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
-  violet: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20',
-  cyan: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20',
-  rose: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
-  neutral: 'bg-[var(--surface-hover)] text-[var(--ink-tertiary)]',
-};
+// Quiet status label — neutral mono chip, no colored pills or dots
+const badgeClass =
+  'inline-flex items-center rounded-full bg-[var(--surface-hover)] px-2 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.05em] text-[var(--ink-tertiary)]';
 
 const aspectRatio = coverWidth && coverHeight ? coverWidth / coverHeight : 2 / 3;
 const isHorizontal = aspectRatio > 1.15;
@@ -94,13 +75,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
           loading="lazy"
           class="h-full w-full object-cover block transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
-        <span
-          class:list={[
-            'absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border shadow-xs backdrop-blur-md',
-            badgeStyles[config.badgeColor],
-          ]}
-        >
-          <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
+        <span class:list={[badgeClass, 'absolute top-2.5 left-2.5 bg-[var(--surface)]/90 backdrop-blur-sm']}>
           {status || 'Playing'}
         </span>
       </div>
@@ -172,15 +147,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
     {hasTitle && (
       <div class="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-2">
         <div class="flex items-center gap-2">
-          <span
-            class:list={[
-              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
-              badgeStyles[config.badgeColor],
-            ]}
-          >
-            <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
-            {status || 'Reading'}
-          </span>
+          <span class={badgeClass}>{status || 'Reading'}</span>
         </div>
         <div class="flex flex-col gap-1">
           <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-2">
@@ -219,15 +186,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
     {hasTitle && (
       <div class="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-2">
         <div class="flex items-center gap-2">
-          <span
-            class:list={[
-              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
-              badgeStyles[config.badgeColor],
-            ]}
-          >
-            <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
-            {status || 'Reading'}
-          </span>
+          <span class={badgeClass}>{status || 'Reading'}</span>
         </div>
         <div class="flex flex-col gap-1">
           <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-2">
@@ -291,15 +250,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 
     {/* Top Header: Badge */}
     <div class="relative z-10 flex w-full justify-between items-center mb-2">
-      <span
-        class:list={[
-          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
-          badgeStyles[config.badgeColor],
-        ]}
-      >
-        <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
-        {status || 'Reading'}
-      </span>
+      <span class={badgeClass}>{status || 'Reading'}</span>
     </div>
 
     {/* Center: Book Cover with realistic drop-shadow */}
@@ -367,15 +318,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 
     {/* Top Header: Badge */}
     <div class="relative z-10 flex w-full items-center mb-1">
-      <span
-        class:list={[
-          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
-          badgeStyles[config.badgeColor],
-        ]}
-      >
-        <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
-        {status || 'Reading'}
-      </span>
+      <span class={badgeClass}>{status || 'Reading'}</span>
     </div>
 
     {/* Fanned stack of cover cards */}
