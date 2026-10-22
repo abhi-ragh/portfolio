@@ -20,10 +20,21 @@ const MEDIA_HEIGHT_FACTOR = 1.26;
 
 const isMedia = (k: string) => k === 'photo' || k === 'sketch';
 
-/** Media cards size to their own ratio capped by MEDIA_HEIGHT_FACTOR; project and book cards are fixed. */
+/** Media cards size to their own ratio capped by MEDIA_HEIGHT_FACTOR; project and book cards are variant-aware. */
 function cardHeight(item, columnWidth) {
   if (item.kind === 'project') return 260;
-  if (item.kind === 'book') return 152;
+  if (item.kind === 'book') {
+    if (item.variant === 'horizontal') {
+      const ratio = item.coverWidth && item.coverHeight ? item.coverWidth / item.coverHeight : 1.6;
+      return Math.round(Math.min(360, columnWidth - 28) / ratio) + 55;
+    }
+    if (item.variant === 'vertical-tall') {
+      const ratio = item.coverWidth && item.coverHeight ? item.coverWidth / item.coverHeight : 0.67;
+      const targetWidth = Math.min(270, columnWidth - 28);
+      return Math.min(440, Math.round(targetWidth / ratio) + 55);
+    }
+    return 190;
+  }
   const ratio = item.width && item.height ? item.width / item.height : 1.5;
   const rawHeight = columnWidth / ratio;
   const maxHeight = columnWidth * MEDIA_HEIGHT_FACTOR;
@@ -92,7 +103,26 @@ try {
 
 try {
   // Every activity ticked on the homepage, each showing its own Status.
-  activities = (await getHomepageActivities()).map((activity) => ({ ...activity, kind: 'book' as const }));
+  // Horizontal covers specifically get 'horizontal'; vertical covers are assigned among the 3 vertical designs.
+  const rawActivities = await getHomepageActivities();
+  const verticalDesigns = ['split-left', 'split-right', 'vertical-tall'] as const;
+  let verticalIdx = 0;
+
+  activities = rawActivities.map((activity) => {
+    const aspect = activity.coverWidth && activity.coverHeight
+      ? activity.coverWidth / activity.coverHeight
+      : 0.67;
+    const isHorizontal = aspect > 1.15;
+    const variant = isHorizontal
+      ? ('horizontal' as const)
+      : verticalDesigns[(verticalIdx++) % verticalDesigns.length];
+
+    return {
+      ...activity,
+      kind: 'book' as const,
+      variant,
+    };
+  });
 } catch (e) {
   console.warn('Failed to fetch homepage activities:', e);
 }
@@ -224,9 +254,9 @@ const roles = [
               author={item.author}
               coverImage={item.coverImage}
               status={item.status}
-              coverFitsGrid={item.coverFitsGrid}
               coverWidth={item.coverWidth}
               coverHeight={item.coverHeight}
+              variant={item.variant}
             />
           ) : (
             <BentoProjectCard
@@ -285,9 +315,9 @@ const roles = [
               author={item.author}
               coverImage={item.coverImage}
               status={item.status}
-              coverFitsGrid={item.coverFitsGrid}
               coverWidth={item.coverWidth}
               coverHeight={item.coverHeight}
+              variant={item.variant}
             />
           ) : (
             <BentoProjectCard
@@ -386,9 +416,9 @@ const roles = [
               author={item.author}
               coverImage={item.coverImage}
               status={item.status}
-              coverFitsGrid={item.coverFitsGrid}
               coverWidth={item.coverWidth}
               coverHeight={item.coverHeight}
+              variant={item.variant}
             />
           ) : (
             <BentoProjectCard
