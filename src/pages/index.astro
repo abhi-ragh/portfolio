@@ -261,7 +261,7 @@ const roles = [
 
     <main class="bento">
       {/* About — spans the first two columns */}
-      <div class="bento-intro flex shrink-0 flex-col px-7 pt-8 pb-8 sm:px-10 lg:px-14 lg:pt-10 lg:pb-6">
+      <div class="bento-intro mb-12 flex shrink-0 flex-col px-7 pt-8 pb-8 sm:px-10 lg:px-14 lg:pt-8 lg:pb-7">
         <div class="bento-about-text flex h-full flex-col gap-0">
           {/* Row 1 + 2: heading and subtext, left aligned */}
           <div class="shrink-0">
@@ -292,7 +292,7 @@ const roles = [
           </div>
 
           {/* Row 4: coffee + text, then draw text hugging cat — all one line */}
-          <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 lg:mt-3">
+          <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-4 lg:mt-5">
             <div class="flex min-w-0 items-center gap-2">
               <img
                 src="/coffee-sleep.jpg"
@@ -417,7 +417,7 @@ const roles = [
       <div class="bento-col bento-col-3">
         {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
         <div
-          class="bento-hello group relative block shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300 aspect-[480/208] w-full"
+          class="bento-hello group relative block shrink-0 overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300 aspect-[480/208] w-full"
           title="Hello there! — Obi-Wan Kenobi"
         >
           <img
@@ -438,7 +438,7 @@ const roles = [
             category="Featured"
           />
         ) : (
-          <div class="bento-project bento-project--wide group relative flex h-[260px] shrink-0 items-center justify-center overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300">
+          <div class="bento-project bento-project--wide group relative flex h-[260px] shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300">
             <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
           </div>
         )}
@@ -515,7 +515,7 @@ const roles = [
         ))}
 
         {allItems.length === 0 && (
-          <div class="bento-media flex aspect-[3/2] w-full shrink-0 items-center justify-center rounded-[20px] bg-[var(--surface)]">
+          <div class="bento-media flex aspect-[3/2] w-full shrink-0 items-center justify-center rounded-[12px] bg-[var(--surface)]">
             <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no frames yet ~</span>
           </div>
         )}

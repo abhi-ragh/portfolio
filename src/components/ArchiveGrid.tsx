@@ -31,7 +31,7 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = [] }) => {
         {displayItems.map((item, index) => (
           <div
             key={item.id || index}
-            className="break-inside-avoid group relative cursor-pointer overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300 hover:bg-[var(--surface-hover)]"
+            className="break-inside-avoid group relative cursor-pointer overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300 hover:bg-[var(--surface-hover)]"
             onClick={() => setSelectedItem(item)}
           >
             <img

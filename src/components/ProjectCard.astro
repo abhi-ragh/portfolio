@@ -10,7 +10,7 @@ const { project, showMedia = true } = Astro.props;
 const isExternal = Boolean(project.github);
 ---
 
-<article class="group relative flex flex-col overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300 hover:bg-[var(--surface-hover)]">
+<article class="group relative flex flex-col overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300 hover:bg-[var(--surface-hover)]">
   {/* Full-cell clickable link overlay */}
   <a
     href={project.github || '/projects'}

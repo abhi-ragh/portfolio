@@ -13,10 +13,10 @@ const { src, caption, href = '/archive', category = 'Gallery', width, height } =
 
 <a
   href={href}
-  class="bento-media group relative block w-full shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+  class="bento-media group relative block w-full shrink-0 overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300"
   aria-label={caption ? `View ${caption} in gallery` : 'View in gallery'}
 >
-  <div class="relative block overflow-hidden rounded-[20px]">
+  <div class="relative block overflow-hidden rounded-[12px]">
     <img
       src={src}
       alt={caption || 'Archive image'}
