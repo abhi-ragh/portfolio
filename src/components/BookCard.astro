@@ -81,7 +81,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 
     {coverImage ? (
       <div
-        class="relative z-10 w-full overflow-hidden rounded-[12px] border border-black/10 shadow-xs bg-[var(--surface-hover)]"
+        class="relative z-10 w-full overflow-hidden rounded-[12px] shadow-xs bg-[var(--surface-hover)]"
         style={aspectRatio ? `aspect-ratio: ${aspectRatio};` : 'aspect-ratio: 16/10;'}
       >
         <img
@@ -101,7 +101,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
         </span>
       </div>
     ) : (
-      <div class="relative z-10 flex aspect-[16/10] w-full items-center justify-center rounded-[12px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs">
+      <div class="relative z-10 flex aspect-[16/10] w-full items-center justify-center rounded-[12px] bg-[var(--surface-hover)] shadow-xs">
         <span class="text-[28px]">🎮</span>
       </div>
     )}
@@ -146,7 +146,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 
     {coverImage ? (
       <div
-        class="relative shrink-0 overflow-hidden rounded-[10px] border border-black/10 shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        class="relative shrink-0 overflow-hidden rounded-[10px] shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <img
@@ -158,7 +158,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
       </div>
     ) : (
       <div
-        class="flex shrink-0 items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+        class="flex shrink-0 items-center justify-center rounded-[10px] bg-[var(--surface-hover)] shadow-xs"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <span class="text-[28px]">📖</span>
@@ -240,7 +240,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 
     {coverImage ? (
       <div
-        class="relative shrink-0 overflow-hidden rounded-[10px] border border-black/10 shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        class="relative shrink-0 overflow-hidden rounded-[10px] shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <img
@@ -252,7 +252,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
       </div>
     ) : (
       <div
-        class="flex shrink-0 items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+        class="flex shrink-0 items-center justify-center rounded-[10px] bg-[var(--surface-hover)] shadow-xs"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <span class="text-[28px]">📖</span>
@@ -302,7 +302,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
     <div class="relative z-10 flex w-full items-center justify-center py-2">
       {coverImage ? (
         <div
-          class="relative w-auto max-w-[260px] overflow-hidden rounded-[10px] border border-black/10 shadow-lg shadow-black/15 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          class="relative w-auto max-w-[260px] overflow-hidden rounded-[10px] shadow-lg shadow-black/15 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           style={aspectRatio ? `aspect-ratio: ${aspectRatio}; max-height: 280px;` : 'aspect-ratio: 2/3; max-height: 280px;'}
         >
           <img
@@ -314,7 +314,7 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
         </div>
       ) : (
         <div
-          class="flex aspect-[2/3] w-[180px] items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+          class="flex aspect-[2/3] w-[180px] items-center justify-center rounded-[10px] bg-[var(--surface-hover)] shadow-xs"
         >
           <span class="text-[36px]">📖</span>
         </div>
