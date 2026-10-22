@@ -194,10 +194,10 @@ const unit = (REFERENCE_WIDTH - GAP * 2) / COLUMN_RATIOS.reduce((a, b) => a + b,
 const columnWidths = COLUMN_RATIOS.map((r) => r * unit);
 
 // Baseline heights before dynamic items are packed:
-// Col 1 & 2 start below bento-intro in row 2 (~498px at reference width).
+// Col 1 & 2 start below bento-intro in row 2 (~400px at reference width).
 // Col 2 also starts with the fixed Career card.
 // Col 3 starts at top with GIF + featured project + music.
-const H_INTRO = 498;
+const H_INTRO = 432;
 const columnSeeds = [
   H_INTRO + GAP,
   H_INTRO + GAP + 125 + GAP,
@@ -261,24 +261,60 @@ const roles = [
 
     <main class="bento">
       {/* About — spans the first two columns */}
-      <div class="bento-intro flex shrink-0 flex-col gap-8 px-8 pt-10 pb-12 sm:px-14 sm:pt-12 sm:pb-16 lg:px-20">
-        <div class="bento-about-text flex flex-col gap-10 sm:gap-12">
-          <h1 class="font-serif text-[clamp(30px,4vw,52px)] font-normal leading-[1.2] tracking-tight text-[var(--ink)]">
-            Hello there! I'm <strong class="font-medium text-[var(--ink)]">Abhiragh</strong>.
-          </h1>
-
-          <div class="flex flex-col gap-8 font-serif text-[clamp(15px,1.4vw,17px)] leading-[2] text-[var(--ink-secondary)] sm:gap-10">
-            <p>
-              I do a little bit of everything, but <strong class="font-medium text-[var(--ink)]">breaking things</strong> (<span class="font-serif italic text-[var(--ink)]">& maybe fixing them</span>) is kind of my thing.
+      <div class="bento-intro flex shrink-0 flex-col px-7 pt-8 pb-8 sm:px-10 lg:px-14 lg:pt-10 lg:pb-6">
+        <div class="bento-about-text flex h-full flex-col gap-0">
+          {/* Row 1 + 2: heading and subtext, left aligned */}
+          <div class="shrink-0">
+            <h1 class="font-['Caveat'] text-[clamp(40px,4.6vw,66px)] font-semibold leading-none tracking-tight text-[var(--ink)]">
+              Hello There!! I'm Abhiragh :)
+            </h1>
+            <p class="mt-5 font-['Caveat'] text-[clamp(17px,1.9vw,26px)] leading-snug text-[var(--ink)] lg:mt-8">
+              <mark>Who am I</mark> is a question I haven't found an answer to <mark>yet,</mark> to put it simply
             </p>
+          </div>
 
-            <p>
-              Currently trying to figure out this whole <span class="text-[var(--ink)] underline decoration-dotted decoration-[var(--ink-tertiary)] underline-offset-[5px]">work-life balance</span> thing, but so far, Only thing I got is a <strong class="font-medium italic text-[var(--ink)]">messed-up sleep schedule</strong>.
-            </p>
+          {/* Row 3: one inline row — text, GIF, text, small gaps */}
+          <div class="mt-6 flex flex-wrap items-center gap-3 min-[1280px]:flex-nowrap lg:gap-6 lg:mt-4">
+            <span class="font-['Caveat'] text-[clamp(18px,1.9vw,27px)] leading-none whitespace-nowrap text-[var(--ink)]">
+              I've got a <mark>Computer</mark>
+            </span>
+            <video
+              src="/computer.mp4"
+              autoplay
+              muted
+              loop
+              playsinline
+              class="h-[84px] w-[160px] shrink-0 rounded-[6px] object-top object-cover lg:h-[108px] lg:w-[206px]"
+            ></video>
+            <span class="font-['Caveat'] text-[clamp(18px,1.9vw,27px)] leading-none whitespace-nowrap text-[var(--ink)]">
+              and I do <mark>silly</mark> things with it.
+            </span>
+          </div>
 
-            <p>
-              Outside of work, I'm trying to <strong class="font-medium text-[var(--ink)]">read more</strong>, <span class="font-serif italic text-[var(--ink)]">draw more</span>, and <span class="font-serif italic text-[var(--ink-secondary)]">Learn Random things ig....</span>
-            </p>
+          {/* Row 4: coffee + text, then draw text hugging cat — all one line */}
+          <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 lg:mt-3">
+            <div class="flex min-w-0 items-center gap-2">
+              <img
+                src="/coffee-sleep.jpg"
+                alt="Sleepy creature holding coffee"
+                class="w-[64px] shrink-0 object-cover mix-blend-multiply lg:h-[78px] lg:w-[68px]"
+                loading="lazy"
+              />
+              <span class="font-['Caveat'] text-[clamp(16px,1.8vw,26px)] leading-tight whitespace-nowrap text-[var(--ink)]">
+                Also I run (partially) on <mark>coffee</mark>
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-['Caveat'] text-[clamp(16px,1.8vw,26px)] leading-tight whitespace-nowrap text-[var(--ink)]">
+                And I <mark>draw</mark> stuff when I'm <mark>Bored</mark>
+              </span>
+              <img
+                src="/sketch-cat.png"
+                alt="Cat chilling in a chair sketch"
+                class="w-[80px] shrink-0 mix-blend-multiply lg:w-[76px]"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -495,11 +531,22 @@ const roles = [
       grid-template-columns: 1fr;
     }
 
+    .bento-about-text mark {
+      background: #e4e4e4;
+      color: var(--ink);
+      border-radius: 2px;
+      padding: 1px 4px;
+    }
+
+    .bento-about-text h1 {
+      transform: skewX(12deg);
+    }
+
     @media (max-width: 1023px) {
       :global(.bento-col) {
         display: contents;
       }
-      :global(.bento-intro) { order: 1; min-height: 170px; }
+      :global(.bento-intro) { order: 1; min-height: 430px; }
       :global(.bento-hello) { order: 2; }
       :global(.bento-career) { order: 3; min-height: 125px; }
       :global(.bento-project--wide) { order: 4; min-height: 240px; }
@@ -518,12 +565,18 @@ const roles = [
       }
 
       :global(.bento-about-text) {
-        max-width: 720px;
+        max-width: 100%;
       }
 
       :global(.bento-intro) {
         grid-column: 1 / 3;
         grid-row: 1;
+        height: 432px;
+        overflow-y: auto;
+        scrollbar-width: none;
+      }
+      :global(.bento-intro::-webkit-scrollbar) {
+        display: none;
       }
 
       :global(.bento-col-1) { grid-column: 1; grid-row: 2; }
@@ -534,6 +587,14 @@ const roles = [
         display: flex;
         flex-direction: column;
         gap: 0.85rem;
+      }
+    }
+
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      :global(.bento-intro) {
+        height: auto;
+        min-height: 432px;
+        overflow: visible;
       }
     }
   </style>
