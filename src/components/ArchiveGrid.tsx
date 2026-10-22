@@ -38,10 +38,10 @@ export const ArchiveGrid: React.FC<ArchiveGridProps> = ({ items = [] }) => {
               src={item.src}
               alt={item.title || 'Archive item'}
               loading="lazy"
-              className="w-full h-auto block object-contain transition-transform duration-700 group-hover:scale-[1.02]"
+              className="w-full h-auto block object-contain transition-transform duration-700 group-hover:scale-[1.01]"
             />
             {item.title && (
-              <div className="pointer-events-none absolute inset-0 flex items-end p-3 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="pointer-events-none absolute inset-0 flex items-end p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <span className="max-w-full truncate rounded-md bg-black/60 px-2.5 py-1 font-mono text-[10.5px] font-medium tracking-wide text-white/90 backdrop-blur-md">
                   {item.title}
                 </span>
