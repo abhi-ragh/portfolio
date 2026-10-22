@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
+import TopBar from '../components/TopBar.astro';
 import BentoCard from '../components/BentoCard.astro';
 import MediaCard from '../components/MediaCard.astro';
 import BentoProjectCard from '../components/BentoProjectCard.astro';
@@ -235,29 +235,7 @@ const roles = [
 <Base>
   <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-8 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
     {/* Top bar — nav on the left, socials on the right */}
-    <div class="mb-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 sm:mb-9">
-      <Nav active="home" />
-
-      <div
-        class="flex shrink-0 items-center gap-2 whitespace-nowrap font-mono text-[11.5px] tracking-[0.02em] text-[var(--ink-tertiary)]"
-      >
-        <a href="mailto:abhiragh0@gmail.com" class="transition-colors hover:text-[var(--ink)]">email</a>
-        <span aria-hidden="true" class="opacity-50">·</span>
-        <a
-          href="https://www.github.com/abhi-ragh"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="transition-colors hover:text-[var(--ink)]">github</a
-        >
-        <span aria-hidden="true" class="opacity-50">·</span>
-        <a
-          href="https://www.linkedin.com/in/abhi-ragh/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="transition-colors hover:text-[var(--ink)]">linkedin</a
-        >
-      </div>
-    </div>
+    <TopBar />
 
     <main class="bento">
       {/* About — spans the first two columns */}

@@ -5,6 +5,9 @@ interface Props {
 
 const { active = '' } = Astro.props;
 
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href);
+
 const items = [
   { id: 'home', label: 'abhiragh', href: '/' },
   { id: 'projects', label: 'Projects', href: '/projects' },
@@ -25,7 +28,7 @@ const items = [
           ? 'bg-[var(--surface-hover)] font-medium text-[var(--ink)] shadow-2xs'
           : 'text-[var(--ink-secondary)] hover:text-[var(--ink)] hover:bg-[var(--surface-hover)]/60',
       ]}
-      aria-current={active === item.id ? 'page' : undefined}
+      aria-current={isCurrent(item.href) ? 'page' : undefined}
     >
       {item.label}
     </a>

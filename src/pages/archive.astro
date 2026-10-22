@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import Nav from '../components/Nav.astro';
+import TopBar from '../components/TopBar.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ArchiveGrid from '../components/ArchiveGrid';
 import { getArchiveImages } from '../lib/archive.ts';
@@ -15,9 +15,9 @@ try {
 
 <Base title="Gallery — abhiragh a r">
   <div class="mx-auto flex min-h-dvh w-full max-w-[1560px] flex-col px-5 pt-6 pb-5 sm:px-8 sm:pt-7 lg:px-12 xl:px-16 lg:pb-7">
-    <Nav active="gallery" />
+    <TopBar />
 
-    <main class="mt-8 flex-1 lg:mt-10">
+    <main class="flex-1">
       <div class="mb-8 flex flex-col gap-2 lg:mb-10">
         <h1 class="font-serif text-[38px] font-medium leading-none tracking-tight text-[var(--ink)] sm:text-[48px]">some clicks and sketches</h1>
         <p class="font-mono text-[11px] tracking-[0.04em] text-[var(--ink-tertiary)]">
