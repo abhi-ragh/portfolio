@@ -18,22 +18,19 @@ const isExternal = !href && Boolean(github);
   target={isExternal ? '_blank' : undefined}
   rel={isExternal ? 'noopener noreferrer' : undefined}
   class:list={[
-    'bento-project group relative block h-[260px] shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300',
+    'bento-project group relative block h-[260px] w-full shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300',
     wide && 'bento-project--wide',
   ]}
   aria-label={`View ${title || 'project'}`}
 >
   {
     coverImage ? (
-      /* Resting: fills the box, cropped and pushed in.
-         Hover: only the top band is given up, so the crop relaxes to reveal
-         a little more of the thumbnail and the title has room above it. */
-      <div class="absolute inset-0 flex items-end justify-center">
+      <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
         <img
           src={coverImage}
           alt={title}
           loading="lazy"
-          class="block h-full w-full scale-[1.08] object-cover transition-all duration-500 ease-out group-hover:h-auto group-hover:w-auto group-hover:max-h-[calc(100%-2.75rem)] group-hover:scale-100"
+          class="block h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-105"
         />
       </div>
     ) : (

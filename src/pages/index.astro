@@ -16,71 +16,129 @@ let sketches = [];
 let activities = [];
 
 const GAP = 13.6; // 0.85rem, matches the bento gap
-const MEDIA_HEIGHT_FACTOR = 1.26;
 
-const isMedia = (k: string) => k === 'photo' || k === 'sketch';
-
-/** Media cards size to their own ratio capped by MEDIA_HEIGHT_FACTOR; project and book cards are variant-aware. */
-function cardHeight(item, columnWidth) {
+/** Exact intrinsic heights for each card type at column width without resizing or capping */
+function cardHeight(item: any, columnWidth: number) {
   if (item.kind === 'project') return 260;
   if (item.kind === 'book') {
     if (item.variant === 'horizontal') {
       const ratio = item.coverWidth && item.coverHeight ? item.coverWidth / item.coverHeight : 1.6;
-      return Math.round(Math.min(360, columnWidth - 28) / ratio) + 55;
+      return Math.round((columnWidth - 32) / ratio) + 68;
     }
     if (item.variant === 'vertical-tall') {
-      const ratio = item.coverWidth && item.coverHeight ? item.coverWidth / item.coverHeight : 0.67;
-      const targetWidth = Math.min(270, columnWidth - 28);
-      return Math.min(440, Math.round(targetWidth / ratio) + 55);
+      return 360;
     }
-    return 190;
+    return 204;
   }
   const ratio = item.width && item.height ? item.width / item.height : 1.5;
-  const rawHeight = columnWidth / ratio;
-  const maxHeight = columnWidth * MEDIA_HEIGHT_FACTOR;
-  return Math.min(rawHeight, maxHeight);
+  return Math.round(columnWidth / ratio);
+}
+
+function orderBucket<T extends { kind: string }>(bucket: T[]): T[] {
+  if (bucket.length <= 1) return bucket;
+  const result: T[] = [];
+  const pool = [...bucket];
+  while (pool.length > 0) {
+    const last = result[result.length - 1];
+    let nextIdx = 0;
+    if (last) {
+      const diffIdx = pool.findIndex(x => x.kind !== last.kind);
+      if (diffIdx !== -1) nextIdx = diffIdx;
+    }
+    result.push(pool.splice(nextIdx, 1)[0]);
+  }
+  return result;
 }
 
 /**
- * Deals each card into whichever column is currently shortest, using real
- * intrinsic dimensions measured at build time.
- *
- * Columns are sized in `fr` units, so their widths keep a fixed 1 : 1.1 : 1
- * ratio at every viewport.
- *
- * Avoids stacking same-type cards by adding a penalty when the last
- * item in a column matches the current item's kind or consecutive media.
+ * Finds the optimal partition across 3 columns to minimize height differences,
+ * ensuring columns stay visually balanced without artificial resizing.
  */
-function packByHeight(items, widths, seeds = []) {
-  const totals = widths.map((_, i) => seeds[i] ?? 0);
-  const buckets = widths.map(() => []);
-  const SAME_KIND_PENALTY = 50; // px — enough to nudge to next column
+function packItems<T extends { kind: string }>(
+  items: T[],
+  widths: number[],
+  seeds: number[]
+): T[][] {
+  if (!items.length) return [[], [], []];
 
-  for (const item of items) {
-    let bestCol = 0;
+  if (items.length <= 11) {
     let bestScore = Infinity;
+    let bestAssignment: number[] | null = null;
 
-    for (let i = 0; i < totals.length; i++) {
-      let score = totals[i];
-      const last = buckets[i][buckets[i].length - 1];
-      if (last) {
-        if (last.kind === item.kind) {
-          score += SAME_KIND_PENALTY;
-        } else if (isMedia(last.kind) && isMedia(item.kind)) {
-          score += SAME_KIND_PENALTY / 2;
+    function search(idx: number, currentAssignment: number[], currentTotals: number[]) {
+      if (idx === items.length) {
+        const diff = Math.max(...currentTotals) - Math.min(...currentTotals);
+        if (diff < bestScore) {
+          bestScore = diff;
+          bestAssignment = [...currentAssignment];
         }
+        return;
       }
-      if (score < bestScore) {
-        bestScore = score;
-        bestCol = i;
+      for (let c = 0; c < 3; c++) {
+        currentAssignment[idx] = c;
+        const h = cardHeight(items[idx], widths[c]) + GAP;
+        currentTotals[c] += h;
+        search(idx + 1, currentAssignment, currentTotals);
+        currentTotals[c] -= h;
       }
     }
 
-    buckets[bestCol].push(item);
-    totals[bestCol] += cardHeight(item, widths[bestCol]) + GAP;
+    search(0, new Array(items.length).fill(0), [...seeds]);
+    const buckets: T[][] = [[], [], []];
+    if (bestAssignment) {
+      for (let i = 0; i < items.length; i++) {
+        buckets[(bestAssignment as number[])[i]].push(items[i]);
+      }
+    }
+    return buckets.map(b => orderBucket(b));
   }
 
-  return buckets;
+  // Fast greedy + local search optimization for > 11 items
+  const totals = [...seeds];
+  const assignment = new Array(items.length).fill(0);
+  for (let i = 0; i < items.length; i++) {
+    let shortest = 0;
+    for (let c = 1; c < 3; c++) {
+      if (totals[c] < totals[shortest]) shortest = c;
+    }
+    assignment[i] = shortest;
+    totals[shortest] += cardHeight(items[i], widths[shortest]) + GAP;
+  }
+
+  for (let pass = 0; pass < 50; pass++) {
+    let improved = false;
+    const currentDiff = Math.max(...totals) - Math.min(...totals);
+
+    for (let i = 0; i < items.length; i++) {
+      const fromCol = assignment[i];
+      const hFrom = cardHeight(items[i], widths[fromCol]) + GAP;
+
+      for (let toCol = 0; toCol < 3; toCol++) {
+        if (toCol === fromCol) continue;
+        const hTo = cardHeight(items[i], widths[toCol]) + GAP;
+        const newTotals = [...totals];
+        newTotals[fromCol] -= hFrom;
+        newTotals[toCol] += hTo;
+        const newDiff = Math.max(...newTotals) - Math.min(...newTotals);
+
+        if (newDiff < currentDiff - 1) {
+          totals[fromCol] -= hFrom;
+          totals[toCol] += hTo;
+          assignment[i] = toCol;
+          improved = true;
+          break;
+        }
+      }
+      if (improved) break;
+    }
+    if (!improved) break;
+  }
+
+  const buckets: T[][] = [[], [], []];
+  for (let i = 0; i < items.length; i++) {
+    buckets[assignment[i]].push(items[i]);
+  }
+  return buckets.map(b => orderBucket(b));
 }
 
 try {
@@ -133,39 +191,25 @@ const REFERENCE_WIDTH = 1312;
 const unit = (REFERENCE_WIDTH - GAP * 2) / COLUMN_RATIOS.reduce((a, b) => a + b, 0);
 const columnWidths = COLUMN_RATIOS.map((r) => r * unit);
 
-// Column 2 starts with Career card; Column 3 starts with GIF + featured project + music
+// Baseline heights before dynamic items are packed:
+// Col 1 & 2 start below bento-intro in row 2 (~498px at reference width).
+// Col 2 also starts with the fixed Career card.
+// Col 3 starts at top with GIF + featured project + music.
+const H_INTRO = 498;
 const columnSeeds = [
-  0,
-  125 + GAP,                    // career
-  179 + 260 + 132 + GAP * 3,    // gif + featured project + music
+  H_INTRO + GAP,
+  H_INTRO + GAP + 125 + GAP,
+  (columnWidths[2] * (208 / 480)) + 260 + 132 + 3 * GAP,
 ];
 
-// Interleave by type (round-robin) so activities, images, sketches, projects mix in an organized random order.
-function interleaveByKind<T extends { kind: string }>(items: T[], order: string[]): T[] {
-  const buckets = new Map<string, T[]>();
-  for (const kind of order) buckets.set(kind, items.filter(i => i.kind === kind));
-  const result: T[] = [];
-  let remaining = items.length;
-  while (remaining > 0) {
-    for (const kind of order) {
-      const bucket = buckets.get(kind);
-      if (bucket && bucket.length > 0) {
-        result.push(bucket.shift()!);
-        remaining--;
-      }
-    }
-  }
-  return result;
-}
-
-const allItems = interleaveByKind([
+const allItems = [
   ...photographs,
   ...sketches,
   ...restProjects.map((project) => ({ ...project, kind: 'project' as const })),
   ...activities,
-], ['photo', 'book', 'sketch', 'project']);
+];
 
-const packed = packByHeight(allItems, columnWidths, columnSeeds);
+const packed = packItems(allItems, columnWidths, columnSeeds);
 
 const roles = [
   {
@@ -366,9 +410,9 @@ const roles = [
           reveal
           bodyClass="px-4 py-3 h-full flex items-center"
         >
-          <div class="flex w-full min-w-0 items-center gap-3.5">
+          <div class="flex w-full min-w-0 items-center gap-5 pl-3">
             <div
-              class="relative flex aspect-square h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface-hover)] shadow-xs transition-all duration-300 ease-out group-hover:h-[70px] group-hover:w-[70px]"
+              class="relative flex aspect-square h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface-hover)] shadow-xs transition-all duration-300 ease-out group-hover:h-[84px] group-hover:w-[84px]"
             >
               <img
                 id="music-art"
@@ -376,14 +420,14 @@ const roles = [
                 alt=""
                 class="hidden h-full w-full object-cover rounded-full animate-[spin_12s_linear_infinite]"
               />
-              <span id="music-art-fallback" class="font-serif text-[18px] text-[var(--ink-tertiary)]">♪</span>
+              <span id="music-art-fallback" class="font-serif text-[22px] text-[var(--ink-tertiary)]">♪</span>
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
               <div class="flex items-center gap-1.5">
                 <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span class="font-mono text-[9px] uppercase tracking-wider text-[var(--ink-tertiary)]">Spotify</span>
               </div>
-              <p id="music-track" class="font-serif line-clamp-1 text-[15px] font-medium leading-tight text-[var(--ink)]">
+              <p id="music-track" class="font-serif line-clamp-1 text-[17px] font-medium leading-tight text-[var(--ink)]">
                 —
               </p>
               <p id="music-artist" class="truncate font-mono text-[10.5px] text-[var(--ink-secondary)]">
@@ -464,21 +508,12 @@ const roles = [
 
     @media (min-width: 1024px) {
       :global(.bento) {
-        --breakout: 6rem;
         grid-template-columns: 1fr 1.1fr 1fr;
         grid-template-rows: auto 1fr;
       }
 
-      /* About keeps its position but yields width so the project can grow into it */
       :global(.bento-about-text) {
-        max-width: min(720px, calc(100% - var(--breakout)));
-      }
-
-      /* Only the featured project breaks out — safe in column 3, which sits
-         clear of the columns below it. Extras stay at column width. */
-      :global(.bento-project--wide) {
-        margin-left: calc(var(--breakout) * -1);
-        width: calc(100% + var(--breakout));
+        max-width: 720px;
       }
 
       :global(.bento-intro) {

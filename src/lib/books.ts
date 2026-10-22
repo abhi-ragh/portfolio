@@ -164,7 +164,7 @@ function checkCoverFitsGrid(width?: number, height?: number): boolean {
 }
 
 function parseActivity(page: any, props: Record<string, any>): Activity & { rawCover?: string } {
-  const title = getTitle(props) || 'Untitled';
+  const title = getTitle(props);
 
   const authorProp = getProp(props, ['Author', 'Creator', 'Artist', 'Developer'])?.rich_text || [];
   const author = authorProp.map((t: any) => t.plain_text).join('');

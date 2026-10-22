@@ -9,27 +9,14 @@ interface Props {
 }
 
 const { src, caption, href = '/archive', category = 'Gallery', width, height } = Astro.props;
-
-/**
- * Ceiling on a media card, matching MEDIA_HEIGHT_FACTOR in pages/index.astro.
- * Height is capped at a multiple of the card width, so the cap scales with the
- * fluid columns instead of fighting them. Expressed as a width percentage
- * because the image's own ratio converts the height limit into a width limit,
- * which is what lets the card shrink to hug the picture.
- */
-const MEDIA_HEIGHT_FACTOR = 1.26;
-const ratio = width && height ? width / height : null;
-const maxWidth = ratio
-  ? `min(100%, ${(MEDIA_HEIGHT_FACTOR * ratio * 100).toFixed(2)}%)`
-  : '100%';
 ---
 
 <a
   href={href}
-  class="bento-media group mx-auto block w-fit max-w-full shrink-0"
-  style={`max-width:${maxWidth}`}
+  class="bento-media group relative block w-full shrink-0 overflow-hidden rounded-[20px] bg-[var(--surface)] transition-all duration-300"
+  aria-label={caption ? `View ${caption} in gallery` : 'View in gallery'}
 >
-  <span class="relative block overflow-hidden rounded-[20px]">
+  <div class="relative block overflow-hidden rounded-[20px]">
     <img
       src={src}
       alt={caption || 'Archive image'}
@@ -51,5 +38,5 @@ const maxWidth = ratio
         ↗
       </span>
     </div>
-  </span>
+  </div>
 </a>

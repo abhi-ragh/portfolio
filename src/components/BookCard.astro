@@ -50,25 +50,40 @@ const aspectRatio = coverWidth && coverHeight ? coverWidth / coverHeight : 2 / 3
 const isHorizontal = aspectRatio > 1.15;
 const activeVariant = variant || (isHorizontal ? 'horizontal' : 'split-left');
 
-// Dimensions for split-left and split-right cards (taller cover: 148px)
-const SPLIT_HEIGHT = 148;
-const splitWidthPx = Math.min(108, Math.round(SPLIT_HEIGHT * aspectRatio));
+// No title → render the card as image only, with no reserved title space
+const hasTitle = Boolean(title && title.trim());
+
+// Dimensions for split-left and split-right cards
+const SPLIT_HEIGHT = 164;
+const splitWidthPx = Math.min(125, Math.round(SPLIT_HEIGHT * aspectRatio));
 const splitWidth = `${splitWidthPx}px`;
 const splitHeight = `${SPLIT_HEIGHT}px`;
 ---
 
-{/* 1. HORIZONTAL COVER VARIANT (Top-Left in user sketch) */}
+{/* 1. HORIZONTAL COVER VARIANT */}
 {activeVariant === 'horizontal' && (
   <article
     class:list={[
-      'bento-book bento-book--horizontal group relative mx-auto flex w-full max-w-[360px] flex-col justify-between overflow-hidden rounded-[20px] bg-[var(--surface)] p-3.5 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
-      isFinished && 'opacity-75',
+      'bento-book bento-book--horizontal group relative flex w-full flex-col justify-between overflow-hidden rounded-[20px] bg-[var(--surface)] p-4 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
+      isFinished && 'opacity-85',
     ]}
     data-status={statusLower}
     data-category={category}
   >
+    {/* Ambient cover glow */}
+    {coverImage && (
+      <div
+        class="pointer-events-none absolute -right-8 -bottom-8 h-48 w-48 rounded-full opacity-15 blur-3xl transition-opacity duration-500 group-hover:opacity-25"
+        style={`background-image: url('${coverImage}'); background-size: cover;`}
+        aria-hidden="true"
+      />
+    )}
+
     {coverImage ? (
-      <div class="relative w-full overflow-hidden rounded-[12px] border border-[var(--line)] shadow-xs aspect-[16/10] bg-[var(--surface-hover)]">
+      <div
+        class="relative z-10 w-full overflow-hidden rounded-[12px] border border-black/10 shadow-xs bg-[var(--surface-hover)]"
+        style={aspectRatio ? `aspect-ratio: ${aspectRatio};` : 'aspect-ratio: 16/10;'}
+      >
         <img
           src={coverImage}
           alt={title || 'Cover image'}
@@ -77,33 +92,36 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
         />
         <span
           class:list={[
-            'absolute top-2.5 left-2.5 rounded px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border shadow-xs backdrop-blur-md',
+            'absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border shadow-xs backdrop-blur-md',
             badgeStyles[config.badgeColor],
           ]}
         >
+          <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
           {status || 'Playing'}
         </span>
       </div>
     ) : (
-      <div class="flex aspect-[16/10] w-full items-center justify-center rounded-[12px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs">
+      <div class="relative z-10 flex aspect-[16/10] w-full items-center justify-center rounded-[12px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs">
         <span class="text-[28px]">🎮</span>
       </div>
     )}
 
-    {/* Bottom: Title — Author centered */}
-    <div class="mt-3 flex items-center justify-center gap-2 px-2 text-center">
-      <p class="font-serif text-[15px] sm:text-[16px] leading-tight text-[var(--ink)] truncate max-w-[65%]">
-        {title || 'Untitled'}
-      </p>
-      {author && (
-        <>
-          <span class="font-serif text-[12px] text-[var(--ink-tertiary)] opacity-60 shrink-0">—</span>
-          <p class="font-serif italic text-[13px] sm:text-[14px] text-[var(--ink-secondary)] truncate max-w-[35%]">
-            {author}
-          </p>
-        </>
-      )}
-    </div>
+    {/* Bottom: Title — Author */}
+    {hasTitle && (
+      <div class="relative z-10 mt-3 flex items-center justify-center gap-2 px-2 text-center">
+        <p class="font-serif text-[16px] sm:text-[17px] font-normal leading-tight text-[var(--ink)] truncate max-w-[65%]">
+          {title}
+        </p>
+        {author && (
+          <>
+            <span class="font-serif text-[12px] text-[var(--ink-tertiary)] opacity-60 shrink-0">—</span>
+            <p class="font-serif italic text-[13.5px] text-[var(--ink-secondary)] truncate max-w-[35%]">
+              {author}
+            </p>
+          </>
+        )}
+      </div>
+    )}
   </article>
 )}
 
@@ -111,15 +129,24 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
 {activeVariant === 'split-left' && (
   <article
     class:list={[
-      'bento-book bento-book--split-left group relative mx-auto flex min-h-[190px] w-full max-w-[360px] shrink-0 items-center gap-4 overflow-visible rounded-[20px] bg-[var(--surface)] p-4 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
-      isFinished && 'opacity-75',
+      'bento-book bento-book--split-left group relative flex min-h-[196px] w-full shrink-0 items-center gap-5 overflow-hidden rounded-[20px] bg-[var(--surface)] p-4 sm:p-5 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
+      isFinished && 'opacity-85',
     ]}
     data-status={statusLower}
     data-category={category}
   >
+    {/* Ambient cover glow */}
+    {coverImage && (
+      <div
+        class="pointer-events-none absolute -right-8 -bottom-8 h-48 w-48 rounded-full opacity-15 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
+        style={`background-image: url('${coverImage}'); background-size: cover;`}
+        aria-hidden="true"
+      />
+    )}
+
     {coverImage ? (
       <div
-        class="relative shrink-0 overflow-hidden rounded-[8px] border border-[var(--line)] shadow-xs transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        class="relative shrink-0 overflow-hidden rounded-[10px] border border-black/10 shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <img
@@ -131,70 +158,89 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
       </div>
     ) : (
       <div
-        class="flex shrink-0 items-center justify-center rounded-[8px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+        class="flex shrink-0 items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
-        <span class="text-[24px]">📖</span>
+        <span class="text-[28px]">📖</span>
       </div>
     )}
 
-    <div class="flex min-w-0 flex-1 flex-col justify-between h-[148px] py-0.5">
-      <div class="flex justify-end">
-        <span
-          class:list={[
-            'inline-block w-fit rounded px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border',
-            badgeStyles[config.badgeColor],
-          ]}
-        >
-          {status || 'Reading'}
-        </span>
+    {hasTitle && (
+      <div class="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-2">
+        <div class="flex items-center gap-2">
+          <span
+            class:list={[
+              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
+              badgeStyles[config.badgeColor],
+            ]}
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
+            {status || 'Reading'}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-2">
+            {title}
+          </h4>
+          {author && (
+            <p class="font-serif italic text-[13.5px] sm:text-[14px] text-[var(--ink-secondary)] truncate">
+              {author}
+            </p>
+          )}
+        </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
-          {title || 'Untitled'}
-        </p>
-        <p class="truncate font-serif italic text-[13px] text-[var(--ink-secondary)]">
-          {author || 'check back soon ~'}
-        </p>
-      </div>
-    </div>
+    )}
   </article>
 )}
 
-{/* 3. SPLIT-RIGHT VARIANT (Bottom-Left in user sketch: Status top-left, Title/Author bottom-left, Cover Right) */}
+{/* 3. SPLIT-RIGHT VARIANT */}
 {activeVariant === 'split-right' && (
   <article
     class:list={[
-      'bento-book bento-book--split-right group relative mx-auto flex min-h-[190px] w-full max-w-[360px] shrink-0 items-center gap-4 overflow-visible rounded-[20px] bg-[var(--surface)] p-4 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
-      isFinished && 'opacity-75',
+      'bento-book bento-book--split-right group relative flex min-h-[196px] w-full shrink-0 items-center gap-5 overflow-hidden rounded-[20px] bg-[var(--surface)] p-4 sm:p-5 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
+      isFinished && 'opacity-85',
     ]}
     data-status={statusLower}
     data-category={category}
   >
-    <div class="flex min-w-0 flex-1 flex-col justify-between h-[148px] py-0.5">
-      <div>
-        <span
-          class:list={[
-            'inline-block w-fit rounded px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border',
-            badgeStyles[config.badgeColor],
-          ]}
-        >
-          {status || 'Reading'}
-        </span>
+    {/* Ambient cover glow */}
+    {coverImage && (
+      <div
+        class="pointer-events-none absolute -left-8 -bottom-8 h-48 w-48 rounded-full opacity-15 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
+        style={`background-image: url('${coverImage}'); background-size: cover;`}
+        aria-hidden="true"
+      />
+    )}
+
+    {hasTitle && (
+      <div class="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-2">
+        <div class="flex items-center gap-2">
+          <span
+            class:list={[
+              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
+              badgeStyles[config.badgeColor],
+            ]}
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
+            {status || 'Reading'}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-2">
+            {title}
+          </h4>
+          {author && (
+            <p class="font-serif italic text-[13.5px] sm:text-[14px] text-[var(--ink-secondary)] truncate">
+              {author}
+            </p>
+          )}
+        </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <p class="font-serif line-clamp-2 text-[16px] leading-snug text-[var(--ink)]">
-          {title || 'Untitled'}
-        </p>
-        <p class="truncate font-serif italic text-[13px] text-[var(--ink-secondary)]">
-          {author || 'check back soon ~'}
-        </p>
-      </div>
-    </div>
+    )}
 
     {coverImage ? (
       <div
-        class="relative shrink-0 overflow-hidden rounded-[8px] border border-[var(--line)] shadow-xs transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        class="relative shrink-0 overflow-hidden rounded-[10px] border border-black/10 shadow-md shadow-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
         <img
@@ -206,63 +252,87 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
       </div>
     ) : (
       <div
-        class="flex shrink-0 items-center justify-center rounded-[8px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+        class="flex shrink-0 items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
         style={`width: ${splitWidth}; height: ${splitHeight};`}
       >
-        <span class="text-[24px]">📖</span>
+        <span class="text-[28px]">📖</span>
       </div>
     )}
   </article>
 )}
 
-{/* 4. VERTICAL-TALL VARIANT (Bottom-Right in user sketch / Pic 2: Taller card, little space on left & right) */}
+{/* 4. VERTICAL-TALL VARIANT */}
 {activeVariant === 'vertical-tall' && (
   <article
     class:list={[
-      'bento-book bento-book--tall group relative mx-auto flex w-full max-w-[270px] flex-col items-center justify-between overflow-hidden rounded-[20px] bg-[var(--surface)] p-3.5 sm:p-4 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
-      isFinished && 'opacity-75',
+      'bento-book bento-book--tall group relative flex w-full flex-col items-center justify-between overflow-hidden rounded-[20px] bg-[var(--surface)] p-5 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
+      isFinished && 'opacity-85',
     ]}
     data-status={statusLower}
     data-category={category}
   >
-    <div class="relative w-full flex items-center justify-center pt-0.5">
+    {/* Ambient cover glow */}
+    {coverImage && (
+      <div
+        class="pointer-events-none absolute inset-0 overflow-hidden opacity-15 transition-opacity duration-500 group-hover:opacity-25"
+        aria-hidden="true"
+      >
+        <img
+          src={coverImage}
+          alt=""
+          class="h-full w-full object-cover blur-2xl scale-125"
+        />
+      </div>
+    )}
+
+    {/* Top Header: Badge */}
+    <div class="relative z-10 flex w-full justify-between items-center mb-2">
+      <span
+        class:list={[
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
+          badgeStyles[config.badgeColor],
+        ]}
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
+        {status || 'Reading'}
+      </span>
+    </div>
+
+    {/* Center: Book Cover with realistic drop-shadow */}
+    <div class="relative z-10 flex w-full items-center justify-center py-2">
       {coverImage ? (
         <div
-          class="relative w-full overflow-hidden rounded-[10px] border border-[var(--line)] shadow-sm transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-          style={`aspect-ratio: ${aspectRatio}; max-height: 380px;`}
+          class="relative w-auto max-w-[260px] overflow-hidden rounded-[10px] border border-black/10 shadow-lg shadow-black/15 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          style={aspectRatio ? `aspect-ratio: ${aspectRatio}; max-height: 280px;` : 'aspect-ratio: 2/3; max-height: 280px;'}
         >
           <img
             src={coverImage}
             alt={title || 'Cover image'}
             loading="lazy"
-            class="h-full w-full object-cover block"
+            class="h-full w-full object-contain block"
           />
-          <span
-            class:list={[
-              'absolute top-2.5 left-2.5 rounded px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider border shadow-xs backdrop-blur-md',
-              badgeStyles[config.badgeColor],
-            ]}
-          >
-            {status || 'Reading'}
-          </span>
         </div>
       ) : (
         <div
-          class="flex aspect-[2/3] w-full items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
+          class="flex aspect-[2/3] w-[180px] items-center justify-center rounded-[10px] border border-[var(--line)] bg-[var(--surface-hover)] shadow-xs"
         >
           <span class="text-[36px]">📖</span>
         </div>
       )}
     </div>
 
-    {/* Bottom: Title and Author stacked & centered */}
-    <div class="mt-3 flex flex-col items-center text-center w-full px-1">
-      <p class="font-serif line-clamp-1 text-[16px] leading-snug text-[var(--ink)]">
-        {title || 'Untitled'}
-      </p>
-      <p class="font-serif italic text-[13px] text-[var(--ink-secondary)] truncate w-full mt-0.5">
-        {author || 'check back soon ~'}
-      </p>
-    </div>
+    {/* Bottom: Title and Author */}
+    {hasTitle && (
+      <div class="relative z-10 mt-2 flex flex-col items-center text-center w-full px-2">
+        <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-1">
+          {title}
+        </h4>
+        {author && (
+          <p class="font-serif italic text-[13.5px] sm:text-[14px] text-[var(--ink-secondary)] truncate w-full mt-0.5">
+            {author}
+          </p>
+        )}
+      </div>
+    )}
   </article>
 )}
