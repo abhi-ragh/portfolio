@@ -3,16 +3,18 @@ interface Props {
   title?: string;
   author?: string;
   coverImage?: string;
+  covers?: string[];
   status?: string;
   coverWidth?: number;
   coverHeight?: number;
-  variant?: 'horizontal' | 'split-left' | 'split-right' | 'vertical-tall';
+  variant?: 'horizontal' | 'split-left' | 'split-right' | 'vertical-tall' | 'stack';
 }
 
 const {
   title,
   author,
   coverImage,
+  covers,
   status,
   coverWidth,
   coverHeight,
@@ -48,7 +50,9 @@ const badgeStyles = {
 
 const aspectRatio = coverWidth && coverHeight ? coverWidth / coverHeight : 2 / 3;
 const isHorizontal = aspectRatio > 1.15;
-const activeVariant = variant || (isHorizontal ? 'horizontal' : 'split-left');
+const stackCovers = (covers?.length ? covers : coverImage ? [coverImage] : []).slice(0, 3);
+const activeVariant =
+  variant || (stackCovers.length >= 2 ? 'stack' : isHorizontal ? 'horizontal' : 'split-left');
 
 // No title → render the card as image only, with no reserved title space
 const hasTitle = Boolean(title && title.trim());
@@ -324,6 +328,87 @@ const splitHeight = `${SPLIT_HEIGHT}px`;
     {/* Bottom: Title and Author */}
     {hasTitle && (
       <div class="relative z-10 mt-2 flex flex-col items-center text-center w-full px-2">
+        <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-1">
+          {title}
+        </h4>
+        {author && (
+          <p class="font-serif italic text-[13.5px] sm:text-[14px] text-[var(--ink-secondary)] truncate w-full mt-0.5">
+            {author}
+          </p>
+        )}
+      </div>
+    )}
+  </article>
+)}
+
+{/* 5. STACK VARIANT — fanned cover cards when the activity has 2+ images */}
+{activeVariant === 'stack' && stackCovers.length >= 2 && (
+  <article
+    class:list={[
+      'bento-book bento-book--stack group relative flex w-full flex-col items-center overflow-hidden rounded-[20px] bg-[var(--surface)] px-5 pt-5 pb-2.5 transition-all duration-300 hover:z-20 hover:bg-[var(--surface-hover)]',
+      isFinished && 'opacity-85',
+    ]}
+    data-status={statusLower}
+    data-category={category}
+  >
+    {/* Ambient glow from front cover */}
+    {stackCovers[0] && (
+      <div
+        class="pointer-events-none absolute inset-0 overflow-hidden opacity-12 transition-opacity duration-500 group-hover:opacity-20"
+        aria-hidden="true"
+      >
+        <img
+          src={stackCovers[0]}
+          alt=""
+          class="h-full w-full object-cover blur-2xl scale-125"
+        />
+      </div>
+    )}
+
+    {/* Top Header: Badge */}
+    <div class="relative z-10 flex w-full items-center mb-1">
+      <span
+        class:list={[
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider border backdrop-blur-sm shadow-2xs',
+          badgeStyles[config.badgeColor],
+        ]}
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-current opacity-80"></span>
+        {status || 'Reading'}
+      </span>
+    </div>
+
+    {/* Fanned stack of cover cards */}
+    <div class="relative z-10 flex w-full flex-1 items-center justify-center pb-6 pt-2">
+      {/* Back card(s) — rotated right, higher */}
+      {stackCovers.slice(1).map((src, i) => (
+        <div
+          class:list={[
+            'absolute w-[52%] max-w-[188px] overflow-hidden rounded-[12px] shadow-lg shadow-black/15 transition-transform duration-500 ease-out',
+            i === stackCovers.slice(1).length - 1 ? 'translate-x-[22%] -translate-y-[8%] rotate-[11deg] group-hover:rotate-[9deg]' : 'translate-x-[8%] -translate-y-[2%] rotate-[4deg]',
+          ]}
+          style="aspect-ratio: 2/3;"
+        >
+          <img src={src} alt="" loading="lazy" class="h-full w-full object-cover block" />
+        </div>
+      ))}
+      {/* Front card — rotated left, lower, overlapping */}
+      <div
+        class="relative w-[52%] max-w-[188px] overflow-hidden rounded-[12px] shadow-xl shadow-black/25 -translate-x-[12%] -rotate-[9deg] transition-transform duration-500 ease-out group-hover:-translate-x-[10%] group-hover:-rotate-[7deg] group-hover:scale-[1.02]"
+        style="aspect-ratio: 2/3;"
+      >
+        <img
+          src={stackCovers[0]}
+          alt={title || 'Cover image'}
+          loading="lazy"
+          class="h-full w-full object-cover block"
+        />
+      </div>
+    </div>
+
+    {/* Bottom: Title and Author */}
+    {hasTitle && (
+      <div class="relative z-10 mt-0.5 flex flex-col items-center text-center w-full px-2">
         <h4 class="font-serif text-[18px] sm:text-[20px] font-normal leading-snug tracking-tight text-[var(--ink)] line-clamp-1">
           {title}
         </h4>

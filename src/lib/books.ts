@@ -25,6 +25,7 @@ export interface Activity {
   title: string;
   author: string;
   coverImage?: string;
+  covers?: string[];
   coverWidth?: number;
   coverHeight?: number;
   status: ActivityStatus;
@@ -163,7 +164,7 @@ function checkCoverFitsGrid(width?: number, height?: number): boolean {
   return Math.abs(aspect - GRID_ASPECT_RATIO) / GRID_ASPECT_RATIO <= ASPECT_TOLERANCE;
 }
 
-function parseActivity(page: any, props: Record<string, any>): Activity & { rawCover?: string } {
+function parseActivity(page: any, props: Record<string, any>): Activity & { rawCovers?: string[] } {
   const title = getTitle(props);
 
   const authorProp = getProp(props, ['Author', 'Creator', 'Artist', 'Developer'])?.rich_text || [];
@@ -179,20 +180,22 @@ function parseActivity(page: any, props: Record<string, any>): Activity & { rawC
 
   const coverProp = getProp(props, ['Cover', 'Cover Image', 'Image', 'Thumbnail']);
   const coverFiles = coverProp?.files || [];
-  const rawCover =
-    coverFiles.length > 0 ? coverFiles[0].file?.url || coverFiles[0].external?.url : undefined;
+  const rawCovers = coverFiles
+    .map((f: any) => f.file?.url || f.external?.url)
+    .filter(Boolean) as string[];
 
   return {
     id: page.id,
     title,
     author,
     coverImage: undefined,
+    covers: [],
     coverWidth: undefined,
     coverHeight: undefined,
     status,
     homepage,
     published,
-    rawCover,
+    rawCovers,
     coverFitsGrid: true,
   };
 }
@@ -207,15 +210,21 @@ export async function getHomepageActivities(isCacheScript = false): Promise<Acti
     const withCovers = await Promise.all(
       pages
         .map((page: any) => parseActivity(page, page.properties || {}))
-        .filter((activity) => activity.published && activity.homepage && activity.rawCover)
+        .filter((activity) => activity.published && activity.homepage && activity.rawCovers?.length)
         .map(async (activity) => {
-          const cached = await cacheNotionImage(activity.rawCover!, activity.id, { isCacheScript });
-          const fitsGrid = checkCoverFitsGrid(cached.width, cached.height);
+          const cached = await Promise.all(
+            activity.rawCovers!.map((url, idx) =>
+              cacheNotionImage(url, idx === 0 ? activity.id : `${activity.id}-${idx}`, { isCacheScript })
+            )
+          );
+          const primary = cached[0];
+          const fitsGrid = checkCoverFitsGrid(primary.width, primary.height);
           return {
             ...activity,
-            coverImage: cached.url,
-            coverWidth: cached.width,
-            coverHeight: cached.height,
+            coverImage: primary.url,
+            covers: cached.map((c) => c.url).filter(Boolean),
+            coverWidth: primary.width,
+            coverHeight: primary.height,
             coverFitsGrid: fitsGrid,
           };
         })
