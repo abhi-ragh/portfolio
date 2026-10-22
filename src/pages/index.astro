@@ -328,7 +328,7 @@ const roles = [
               caption={item.caption}
               width={item.width}
               height={item.height}
-              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+              category={item.kind === 'sketch' ? 'Sketch' : undefined}
             />
           ) : item.kind === 'book' ? (
             <BookCard
@@ -390,7 +390,7 @@ const roles = [
               caption={item.caption}
               width={item.width}
               height={item.height}
-              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+              category={item.kind === 'sketch' ? 'Sketch' : undefined}
             />
           ) : item.kind === 'book' ? (
             <BookCard
@@ -492,7 +492,7 @@ const roles = [
               caption={item.caption}
               width={item.width}
               height={item.height}
-              category={item.kind === 'sketch' ? 'Sketch' : 'Photograph'}
+              category={item.kind === 'sketch' ? 'Sketch' : undefined}
             />
           ) : item.kind === 'book' ? (
             <BookCard

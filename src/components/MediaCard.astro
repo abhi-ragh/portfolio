@@ -8,7 +8,7 @@ interface Props {
   height?: number;
 }
 
-const { src, caption, href = '/archive', category = 'Gallery', width, height } = Astro.props;
+const { src, caption, href = '/archive', category, width, height } = Astro.props;
 ---
 
 <a
@@ -27,8 +27,12 @@ const { src, caption, href = '/archive', category = 'Gallery', width, height } =
     {/* Top title bar — pops up on hover only */}
     <div class="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/60 via-black/25 to-transparent opacity-0 -translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0">
       <div class="flex items-center gap-1.5 font-mono text-[11px] text-white">
-        <span class="opacity-70">{category}</span>
-        <span class="opacity-40">·</span>
+        {category && (
+          <>
+            <span class="opacity-70">{category}</span>
+            <span class="opacity-40">·</span>
+          </>
+        )}
         <span class="truncate font-sans font-medium text-white">{caption}</span>
       </div>
       <span
