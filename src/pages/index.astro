@@ -240,8 +240,8 @@ const roles = [
       <div class="bento-intro mb-12 flex shrink-0 flex-col pt-8 pb-8 lg:pt-8 lg:pb-7">
         <div class="bento-about-text flex flex-col">
           {/* Top row: GIF on the left, name beside it */}
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-4 sm:gap-x-7">
-            <div class="relative aspect-[480/208] w-[clamp(130px,22vw,290px)] shrink-0 overflow-hidden rounded-[10px] bg-[var(--surface)]">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-4 sm:gap-x-8">
+            <div class="relative aspect-[480/208] w-[clamp(150px,26vw,420px)] shrink-0 overflow-hidden rounded-[10px] bg-[var(--surface)]">
               <img
                 src="/obi-wan-hello-there.gif"
                 alt="Obi-Wan Kenobi saying Hello there"
@@ -249,19 +249,19 @@ const roles = [
                 class="absolute inset-0 h-full w-full object-cover"
               />
             </div>
-            <h1 class="font-['Caveat'] text-[clamp(34px,4.8vw,70px)] font-semibold leading-none tracking-tight text-[var(--ink)]">
+            <h1 class="font-['Caveat'] text-[clamp(44px,8vw,140px)] font-semibold leading-none tracking-tight text-[var(--ink)]">
               I'm Abhiragh :)
             </h1>
           </div>
 
           {/* Who am I */}
-          <p class="mt-8 font-['Caveat'] text-[clamp(18px,2.1vw,29px)] leading-snug text-[var(--ink)] sm:mt-10">
+          <p class="mt-8 w-full font-['Caveat'] text-[clamp(18px,2.9vw,46px)] leading-snug text-[var(--ink)] sm:mt-10">
             <mark>Who am I</mark> is a question I haven't found an answer to <mark>yet,</mark> to put it simply
           </p>
 
-          {/* Computer line */}
-          <div class="mt-6 flex flex-wrap items-center gap-3 lg:mt-8 lg:gap-6 min-[1280px]:flex-nowrap">
-            <span class="font-['Caveat'] text-[clamp(17px,2.1vw,29px)] leading-none whitespace-nowrap text-[var(--ink)]">
+          {/* Computer line — spread across the full width on desktop */}
+          <div class="mt-6 flex w-full flex-wrap items-center gap-3 lg:mt-8 xl:flex-nowrap xl:justify-between lg:gap-5">
+            <span class="font-['Caveat'] text-[clamp(17px,2.9vw,42px)] leading-none whitespace-nowrap text-[var(--ink)]">
               I've got a <mark>Computer</mark>
             </span>
             <video
@@ -270,28 +270,28 @@ const roles = [
               muted
               loop
               playsinline
-              class="h-[84px] w-[160px] shrink-0 rounded-[6px] object-top object-cover lg:h-[132px] lg:w-[250px]"
+              class="h-[84px] w-[160px] shrink-0 rounded-[6px] object-top object-cover lg:h-[137px] lg:w-[260px] xl:h-[168px] xl:w-[320px]"
             ></video>
-            <span class="font-['Caveat'] text-[clamp(17px,2.1vw,29px)] leading-none whitespace-nowrap text-[var(--ink)]">
+            <span class="font-['Caveat'] text-[clamp(17px,2.9vw,42px)] leading-none whitespace-nowrap text-[var(--ink)]">
               and I do <mark>silly</mark> things with it.
             </span>
           </div>
 
-          {/* Coffee + draw */}
-          <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-4 lg:mt-7">
+          {/* Coffee + draw — opposite ends of the row on desktop */}
+          <div class="mt-5 flex w-full flex-wrap items-center gap-x-5 gap-y-4 lg:mt-7 xl:justify-between">
             <div class="flex min-w-0 items-center gap-2">
               <img
                 src="/coffee-sleep.jpg"
                 alt="Sleepy creature holding coffee"
-                class="w-[64px] shrink-0 object-cover mix-blend-multiply lg:h-[78px] lg:w-[68px]"
+                class="w-[64px] shrink-0 object-cover mix-blend-multiply lg:h-[92px] lg:w-[76px]"
                 loading="lazy"
               />
-              <span class="font-['Caveat'] text-[clamp(17px,2.1vw,29px)] leading-tight whitespace-nowrap text-[var(--ink)]">
+              <span class="font-['Caveat'] text-[clamp(17px,2.9vw,42px)] leading-tight whitespace-normal text-[var(--ink)] xl:whitespace-nowrap">
                 Also I run (partially) on <mark>coffee</mark>
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-['Caveat'] text-[clamp(17px,2.1vw,29px)] leading-tight whitespace-nowrap text-[var(--ink)]">
+              <span class="font-['Caveat'] text-[clamp(17px,2.9vw,42px)] leading-tight whitespace-normal text-[var(--ink)] xl:whitespace-nowrap">
                 And I <mark>draw</mark> stuff when I'm <mark>Bored</mark>
               </span>
               <img
