@@ -193,15 +193,13 @@ const REFERENCE_WIDTH = 1312;
 const unit = (REFERENCE_WIDTH - GAP * 2) / COLUMN_RATIOS.reduce((a, b) => a + b, 0);
 const columnWidths = COLUMN_RATIOS.map((r) => r * unit);
 
-// Baseline heights before dynamic items are packed:
-// Col 1 & 2 start below bento-intro in row 2 (~400px at reference width).
-// Col 2 also starts with the fixed Career card.
-// Col 3 starts at top with GIF + featured project + music.
-const H_INTRO = 432;
+// Row 1 is the intro + GIF only. Every card starts in row 2, so the
+// packing seeds only account for the fixed card at the top of each column:
+// Col 1 featured project, Col 2 career, Col 3 music.
 const columnSeeds = [
-  H_INTRO + GAP,
-  H_INTRO + GAP + 125 + GAP,
-  (columnWidths[2] * (208 / 480)) + 260 + 132 + 3 * GAP,
+  260 + GAP,
+  125 + GAP,
+  132 + GAP,
 ];
 
 const allItems = [
@@ -297,8 +295,36 @@ const roles = [
         </div>
       </div>
 
-      {/* Column 1: cards dealt into the shortest column */}
+      {/* Hero right: only the GIF sits beside the intro */}
+      <div
+        class="bento-hello group relative block shrink-0 overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300 aspect-[480/208] w-full"
+        title="Hello there! — Obi-Wan Kenobi"
+      >
+        <img
+          src="/obi-wan-hello-there.gif"
+          alt="Obi-Wan Kenobi saying Hello there"
+          loading="lazy"
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+      </div>
+
+      {/* Column 1: featured project + cards dealt into the shortest column */}
       <div class="bento-col bento-col-1">
+        {/* Featured project — starts the grid below the hero */}
+        {featuredProject ? (
+          <BentoProjectCard
+            wide
+            title={featuredProject.title}
+            coverImage={featuredProject.coverImage}
+            github={featuredProject.github}
+            category="Featured"
+          />
+        ) : (
+          <div class="bento-project bento-project--wide group relative flex h-[260px] shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300">
+            <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
+          </div>
+        )}
+
         {packed[0].map((item) => (
           item.kind === 'photo' || item.kind === 'sketch' ? (
             <MediaCard
@@ -329,7 +355,7 @@ const roles = [
         ))}
       </div>
 
-      {/* Column 2: Career + Screen + Books */}
+      {/* Column 2: Career + media */}
       <div class="bento-col bento-col-2">
         {/* Career card — current job & company, skills pop on hover only */}
         <BentoCard
@@ -391,36 +417,8 @@ const roles = [
         ))}
       </div>
 
-      {/* Column 3: Obi-Wan GIF + Project + Music + media */}
+      {/* Column 3: Music + media */}
       <div class="bento-col bento-col-3">
-        {/* Obi-Wan Kenobi GIF box — full-bleed, no title overlay */}
-        <div
-          class="bento-hello group relative block shrink-0 overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300 aspect-[480/208] w-full"
-          title="Hello there! — Obi-Wan Kenobi"
-        >
-          <img
-            src="/obi-wan-hello-there.gif"
-            alt="Obi-Wan Kenobi saying Hello there"
-            loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          />
-        </div>
-
-        {/* Featured project — the one wide card, directly under the GIF */}
-        {featuredProject ? (
-          <BentoProjectCard
-            wide
-            title={featuredProject.title}
-            coverImage={featuredProject.coverImage}
-            github={featuredProject.github}
-            category="Featured"
-          />
-        ) : (
-          <div class="bento-project bento-project--wide group relative flex h-[260px] shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[var(--surface)] transition-all duration-300">
-            <span class="font-mono text-[11px] text-[var(--ink-tertiary)]">no featured project yet ~</span>
-          </div>
-        )}
-
         {/* Music card — rotating circular vinyl thumbnail matching uploaded screenshot */}
         <BentoCard
           category="Recently played"
@@ -524,10 +522,10 @@ const roles = [
       :global(.bento-col) {
         display: contents;
       }
-      :global(.bento-intro) { order: 1; min-height: 430px; }
+      :global(.bento-intro) { order: 1; }
       :global(.bento-hello) { order: 2; }
-      :global(.bento-career) { order: 3; min-height: 125px; }
-      :global(.bento-project--wide) { order: 4; min-height: 240px; }
+      :global(.bento-project--wide) { order: 3; min-height: 240px; }
+      :global(.bento-career) { order: 4; min-height: 125px; }
       :global(.bento-music) { order: 5; min-height: 132px; }
       :global(.bento-media),
       :global(.bento-book),
@@ -549,30 +547,23 @@ const roles = [
       :global(.bento-intro) {
         grid-column: 1 / 3;
         grid-row: 1;
-        height: 432px;
-        overflow-y: auto;
-        scrollbar-width: none;
+        height: auto;
       }
-      :global(.bento-intro::-webkit-scrollbar) {
-        display: none;
+
+      :global(.bento-hello) {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: start;
       }
 
       :global(.bento-col-1) { grid-column: 1; grid-row: 2; }
       :global(.bento-col-2) { grid-column: 2; grid-row: 2; }
-      :global(.bento-col-3) { grid-column: 3; grid-row: 1 / span 2; }
+      :global(.bento-col-3) { grid-column: 3; grid-row: 2; }
 
       :global(.bento-col) {
         display: flex;
         flex-direction: column;
         gap: 0.85rem;
-      }
-    }
-
-    @media (min-width: 1024px) and (max-width: 1439px) {
-      :global(.bento-intro) {
-        height: auto;
-        min-height: 432px;
-        overflow: visible;
       }
     }
   </style>
